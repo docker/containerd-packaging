@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+
+IMPORT_PATH?=/go/src/github.com/containerd/containerd
+GO_BUILD=go build -ldflags "$${LDFLAGS:-} -B 0x$$(head -c20 /dev/urandom|od -An -tx1 |tr -d ' \n')" -a
+INSTALL_DIR=debian/containerd
+
+%:
+	dh $@ --with systemd
+
+bin/%: ## Create containerd binaries
+	@mkdir -p bin/
+	$(GO_BUILD) -o $@ $(IMPORT_PATH)/cmd/$*
+
+override_dh_auto_build: bin/containerd bin/containerd-shim bin/ctr
+
+override_dh_auto_install: bin/containerd bin/containerd-shim bin/ctr
+	# set -x so we can see what's being installed where
+	for binary in $^; do \
+		dest=$$(basename $$binary); \
+		(set -x; install -D -m 0755 $$binary $(INSTALL_DIR)/usr/bin/$$dest); \
+	done
+	install -D -m 0644 /root/common/containerd.service $(INSTALL_DIR)/lib/systemd/system/containerd.service
+	install -D -m 0644 /root/common/containerd.toml $(INSTALL_DIR)/etc/containerd.toml

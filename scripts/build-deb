@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -e
+
+(set -x; dpkg-buildpackage -uc -us)
+mv -v ../*.deb /out
+mv -v ../*.changes /out
