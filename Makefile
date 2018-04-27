@@ -1,5 +1,6 @@
 GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
-TAG?=v1.1.0
+VERSION?=1.0.3
+TAG?=v$(VERSION)
 REF?=$(shell git ls-remote https://github.com/containerd/containerd.git | grep 'refs/tags/$(TAG)$$' | awk '{print $$1}')
 GOVERSION?=1.10.1
 
@@ -20,6 +21,9 @@ clean:
 	$(CHOWN_TO_USER) build/
 	$(RM) -r build/
 
+.PHONY: rpm
+rpm: centos7
+
 .PHONY: deb
 deb: ubuntu-xenial
 
@@ -28,3 +32,8 @@ ubuntu-xenial:
 	$(BUILD)
 	$(RUN)
 	$(CHOWN_TO_USER) build/
+
+.PHONY: centos
+centos: 
+	docker  build --build-arg TAG=$(TAG) -t rpmbuild-$@ -f dockerfiles/$@.dockerfile .
+	$(MAKE) -C rpm TAG=$(TAG) VERSION=$(VERSION) $@
