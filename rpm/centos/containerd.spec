@@ -70,7 +70,7 @@ low-level storage and network attachments, etc.
 mkdir -p src/%(dirname %{import_path})
 ln -s ../../.. src/%{import_path}
 #rpm -e $(rpm -qa | grep -i golang)
-curl -fSL "https://golang.org/dl/go1.9.5.linux-amd64.tar.gz" | tar xzC /usr/local
+curl -fSL "https://golang.org/dl/go1.10.1.linux-amd64.tar.gz" | tar xzC /usr/local
 export GOPATH=$(pwd):/%{gopath}
 export LDFLAGS="-X %{import_path}/version.Package=%{import_path} -X %{import_path}/version.Version=%{tag} -X %{import_path}/version.Revision=%{commit}"
 %gobuild -o bin/containerd %{import_path}/cmd/containerd
@@ -99,7 +99,7 @@ install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
 
 
 %files
-%license LICENSE.code
+%license LICENSE
 %doc README.md
 %{_bindir}/containerd
 %{_bindir}/containerd-shim
