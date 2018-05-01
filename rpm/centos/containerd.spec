@@ -28,7 +28,7 @@ AutoReq: no
 %define gobuild(o:) go build -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \\n')" -a -v -x %{?**};
 %endif
 
-%define SHA256SUM0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+%define SHA256SUM0 08f057ece7e518b14cce2e9737228a5a899a7b58b78248a03e02f4a6c079eeaf
 %global import_path github.com/containerd/containerd
 
 Name: containerd
@@ -62,7 +62,7 @@ low-level storage and network attachments, etc.
 
 
 %prep
-#echo "%SHA256SUM0 %SOURCE0" | sha256sum -c -
+echo "%SHA256SUM0 /root/rpmbuild/SOURCES/%{tag}.tar.gz" | sha256sum -c -
 %autosetup -n containerd-%{version}
 
 
