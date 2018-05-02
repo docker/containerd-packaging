@@ -12,7 +12,7 @@ BUILD=docker build \
 	 --build-arg REF="$(REF)" \
 	 -f dockerfiles/$@.dockerfile \
 	 -t $(BUILDER_IMAGE) .
-RUN=docker run --rm -v "$(CURDIR)/build/$@:/out" -it $(BUILDER_IMAGE)
+RUN=docker run --rm -v "$(CURDIR)/build/$@:/out" -i $(BUILDER_IMAGE)
 CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
 CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
 
