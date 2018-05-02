@@ -11,9 +11,11 @@ pipeline {
   }
   post {
     success {
-      if(params.ARCHIVE_PKGS) {
-        archiveArtifacts(artifacts: 'build/**/containerd_*.deb')
-        archiveArtifacts(artifacts: 'rpm/**/containerd-*.rpm')
+      script {
+        if(params.ARCHIVE_PKGS) {
+          archiveArtifacts(artifacts: 'build/**/containerd_*.deb')
+          archiveArtifacts(artifacts: 'rpm/**/containerd-*.rpm')
+        }
       }
     }
     always {
