@@ -20,7 +20,7 @@ pipeline {
                 archiveArtifacts(artifacts: 'build/**/containerd_*.deb')
               }
             }
-            deleteDir()
+            sh 'make clean'
           }
         }
         stage('rpm') {
@@ -31,7 +31,7 @@ pipeline {
                 archiveArtifacts(artifacts: 'rpm/**/containerd-*.rpm')
               }
             }
-            deleteDir()
+            sh 'make clean'
           }
         }
       }
