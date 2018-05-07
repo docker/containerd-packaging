@@ -12,6 +12,7 @@ bin/%: ## Create containerd binaries
 	$(GO_BUILD) -o $@ $(IMPORT_PATH)/cmd/$*
 
 override_dh_auto_build: bin/containerd bin/containerd-shim bin/ctr
+	cd /go/src/github.com/containerd/containerd && make man
 
 override_dh_auto_install: bin/containerd bin/containerd-shim bin/ctr
 	# set -x so we can see what's being installed where

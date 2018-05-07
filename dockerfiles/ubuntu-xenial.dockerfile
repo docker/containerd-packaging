@@ -1,7 +1,7 @@
 FROM ubuntu:xenial
 
 # Install some pre-reqs
-RUN apt-get update && apt-get install -y curl devscripts equivs
+RUN apt-get update && apt-get install -y curl devscripts equivs git
 
 # Install golang since the package managed one probably is too old and ppa's don't cover all distros
 ARG GOVERSION
@@ -9,6 +9,8 @@ ARG GOARCH
 RUN curl -fsSL "https://golang.org/dl/go${GOVERSION}.linux-${GOARCH}.tar.gz" | tar xzC /usr/local
 ENV GOPATH /go
 ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
+# needed for man pages
+RUN go get -u github.com/cpuguy83/go-md2man
 
 ENV IMPORT_PATH github.com/containerd/containerd
 ENV GO_SRC_PATH /go/src/${IMPORT_PATH}
