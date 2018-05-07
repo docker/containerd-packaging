@@ -70,6 +70,10 @@ echo "%SHA256SUM0 /root/rpmbuild/SOURCES/%{tag}.tar.gz" | sha256sum -c -
 mkdir -p src/%(dirname %{import_path})
 ln -s ../../.. src/%{import_path}
 curl -fSL "https://golang.org/dl/go1.10.1.linux-amd64.tar.gz" | tar xzC /usr/local
+# needed for man pages
+go get -u github.com/cpuguy83/go-md2man
+make man
+
 export GOPATH=$(pwd):/%{gopath}
 export LDFLAGS="-X %{import_path}/version.Package=%{import_path} -X %{import_path}/version.Version=%{tag} -X %{import_path}/version.Revision=%{commit}"
 %gobuild -o bin/containerd %{import_path}/cmd/containerd
@@ -84,6 +88,11 @@ install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
 
+# install manpages
+install -d %{buildroot}%{_mandir}/man1
+install -p -m 644 man/*.1 $RPM_BUILD_ROOT/%{_mandir}/man1
+install -d %{buildroot}%{_mandir}/man5
+install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 %post
 %systemd_post containerd.service
@@ -105,6 +114,8 @@ install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
 %{?with_ctr:%{_bindir}/ctr}
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
+/%{_mandir}/man1/*
+/%{_mandir}/man5/*
 %config(noreplace) %{_sysconfdir}/containerd/config.toml
 
 
