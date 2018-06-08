@@ -1,0 +1,7 @@
+#!/bin/bash
+
+CONTAINERD=$1
+
+yum install -y $CONTAINERD
+
+containerd --version
