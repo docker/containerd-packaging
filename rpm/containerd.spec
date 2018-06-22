@@ -27,7 +27,7 @@ Source2: containerd.toml
 ExclusiveArch: %{go_arches}
 BuildRequires: systemd
 %{?go_compiler:BuildRequires: compiler(go-compiler)}
-BuildRequires: golang >= 1.9
+BuildRequires: golang >= %{_min_go_version}
 BuildRequires: protobuf-compiler
 BuildRequires: pkgconfig(protobuf) >= 3
 BuildRequires: btrfs-progs-devel
