@@ -30,16 +30,15 @@ AutoReq: no
 
 %define SHA256SUM0 08f057ece7e518b14cce2e9737228a5a899a7b58b78248a03e02f4a6c079eeaf
 %global import_path github.com/containerd/containerd
+%global gopath %{getenv:GOPATH}
 
 Name: containerd
 Version: %{getenv:VERSION}
-%global commit  %{getenv:REF}
-%global tag v%{version}
-Release: 1
+Release: 1%{dist}
 Summary: An industry-standard container runtime
 License: ASL 2.0
 URL: https://containerd.io
-Source0: https://%{import_path}/archive/%{tag}.tar.gz
+Source0: containerd
 Source1: containerd.service
 Source2: containerd.toml
 BuildRequires: systemd
@@ -57,25 +56,28 @@ low-level storage and network attachments, etc.
 
 
 %prep
-echo "%SHA256SUM0 /root/rpmbuild/SOURCES/%{tag}.tar.gz" | sha256sum -c -
-%autosetup -n containerd-%{version}
+rm -rf %{_topdir}/BUILD/
+# Copy over our source code from our gopath to our source directory
+cp -rf /go/src/%{import_path} %{_topdir}/SOURCES/containerd
+# symlink the go source path to our build directory
+ln -s /go/src/%{import_path} %{_topdir}/BUILD
+cd %{_topdir}/BUILD/
 
 
 %build
-mkdir -p src/%(dirname %{import_path})
-ln -s ../../.. src/%{import_path}
+cd %{_topdir}/BUILD
 # needed for man pages
 go get -u github.com/cpuguy83/go-md2man
 make man
 
-export GOPATH=$(pwd):/%{gopath}
-export LDFLAGS="-X %{import_path}/version.Package=%{import_path} -X %{import_path}/version.Version=%{tag} -X %{import_path}/version.Revision=%{commit}"
+export LDFLAGS="-X %{import_path}/version.Package=%{import_path} -X %{import_path}/version.Version=%{getenv:VERSION} -X %{import_path}/version.Revision=%{getenv:REF}"
 %gobuild -o bin/containerd %{import_path}/cmd/containerd
 %gobuild -o bin/containerd-shim %{import_path}/cmd/containerd-shim
 %gobuild -o bin/ctr %{import_path}/cmd/ctr
 
 
 %install
+cd %{_topdir}/BUILD
 install -D -m 0755 bin/containerd %{buildroot}%{_bindir}/containerd
 install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
 install -D -m 0755 bin/ctr %{buildroot}%{_bindir}/ctr

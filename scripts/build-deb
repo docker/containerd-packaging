@@ -2,6 +2,27 @@
 
 set -e
 
+VERSION="$(git -C "${GO_SRC_PATH}" describe --tags)"
+# Check if we're on a tagged version, change VERSION to dev build if not
+if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD >/dev/null 2>&1; then
+    git_date=$(date --date "@$(git -C "${GO_SRC_PATH}" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
+    git_sha=$(git -C "${GO_SRC_PATH}" rev-parse --short HEAD)
+    # export VERSION here so it gets picked up by debian/rules
+    VERSION="${git_date}~${git_sha}"
+    # prepend a `0` so it'll never be greater than non-dev versions
+    cat > debian/nightly.changelog <<-EOF
+containerd (0.${VERSION}-1) nightly; urgency=medium
+
+  * Nightly release for ${git_sha}
+
+ -- containerd team <help@containerd.io>  $(date --rfc-2822)
+
+EOF
+    cat debian/changelog >> debian/nightly.changelog
+    cat debian/nightly.changelog
+    mv debian/nightly.changelog debian/changelog
+fi
+export VERSION
 (set -x; dpkg-buildpackage -uc -us)
 mv -v ../*.deb /out
 mv -v ../*.changes /out
