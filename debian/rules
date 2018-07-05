@@ -24,4 +24,4 @@ override_dh_auto_install: bin/containerd bin/containerd-shim bin/ctr
 		(set -x; install -D -m 0755 $$binary $(INSTALL_DIR)/usr/bin/$$dest); \
 	done
 	install -D -m 0644 /root/common/containerd.service $(INSTALL_DIR)/lib/systemd/system/containerd.service
-	install -D -m 0644 /root/common/containerd.toml $(INSTALL_DIR)/etc/containerd.toml
+	install -D -m 0644 /root/common/containerd.toml $(INSTALL_DIR)/etc/containerd/config.toml
