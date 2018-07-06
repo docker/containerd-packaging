@@ -1,9 +1,8 @@
 #!/usr/bin/make -f
 
 # IMPORT_PATH and GO_SRC_PATH are defined in the dockerfile
-# VERSION is defined in scripts/build-deb
-REF=$(shell git -C $${GO_SRC_PATH} rev-parse HEAD)
-LDFLAGS=-X $${IMPORT_PATH}/version.Package=$${IMPORT_PATH} -X $${IMPORT_PATH}/version.Version=$${VERSION} -X $${IMPORT_PATH}/version.Revision=$(REF)
+# VERSION and REF are defined in scripts/build-deb
+LDFLAGS=-X $${IMPORT_PATH}/version.Package=$${IMPORT_PATH} -X $${IMPORT_PATH}/version.Version=$${VERSION} -X $${IMPORT_PATH}/version.Revision=$${REF}
 GO_BUILD=go build -ldflags "$(LDFLAGS) -B 0x$$(head -c20 /dev/urandom|od -An -tx1 |tr -d ' \n')" -a
 INSTALL_DIR=debian/containerd
 

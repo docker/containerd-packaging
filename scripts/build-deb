@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION="$(git -C "${GO_SRC_PATH}" describe --tags)"
+VERSION="$(git -C "${GO_SRC_PATH}" describe --tags | sed 's/^v//')"
 # Check if we're on a tagged version, change VERSION to dev build if not
 if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD >/dev/null 2>&1; then
     git_date=$(date --date "@$(git -C "${GO_SRC_PATH}" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
@@ -22,6 +22,8 @@ EOF
     cat debian/nightly.changelog
     mv debian/nightly.changelog debian/changelog
 fi
+REF=$(git -C "${GO_SRC_PATH}" rev-parse HEAD)
+export REF
 export VERSION
 (set -x; dpkg-buildpackage -uc -us)
 mv -v ../*.deb /out

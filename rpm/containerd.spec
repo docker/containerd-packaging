@@ -33,8 +33,8 @@ AutoReq: no
 %global gopath %{getenv:GOPATH}
 
 Name: containerd
-Version: %{getenv:VERSION}
-Release: 1%{dist}
+Version: %{getenv:RPM_VERSION}
+Release: %{getenv:RPM_RELEASE_VERSION}%{dist}
 Summary: An industry-standard container runtime
 License: ASL 2.0
 URL: https://containerd.io
