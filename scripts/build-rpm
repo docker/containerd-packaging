@@ -13,7 +13,7 @@ RPM_RELEASE_VERSION=$(echo "${RPM_VER_BITS}" | cut -f2 -d' ')
 # Check if we're on a tagged version, change VERSION to dev build if not
 if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD >/dev/null 2>&1; then
     git_date=$(date --date "@$(git -C "${GO_SRC_PATH}" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
-    git_sha=$(git -C "${GO_SRC_PATH}" rev-parse --short HEAD)
+    git_sha=$(git -C "${GO_SRC_PATH}" log -1 --pretty='%h')
     VERSION="0.${git_date}~${git_sha}"
     RPM_RELEASE_VERSION=0
     RPM_VERSION="$VERSION"
