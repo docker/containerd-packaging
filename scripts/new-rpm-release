@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+VERSION="$1"
+if [ -z "$VERSION" ]; then
+    echo "Usage: $0 <VERSION>"
+    exit 1
+fi
+RPM_VERSION="$VERSION"
+RPM_RELEASE_VERSION=2
+case "$VERSION" in
+    *rc*)
+        rc_num=${VERSION#*-rc}
+        RPM_RELEASE_VERSION="1.$rc_num.rc$rc_num"
+        RPM_VERSION=${VERSION%-rc*}
+        ;;
+esac
+RPM_ITERATION=1
+
+while grep "$RPM_VERSION-$RPM_RELEASE_VERSION-$RPM_ITERATION" rpm/containerd.spec >/dev/null 2>&1;do
+    ((++RPM_ITERATION))
+done
+
+cat > rpm/new.changelog << EOF
+* $(date +"%a %b %d %Y") $(git config user.name) <$(git config user.email)> - $RPM_VERSION-$RPM_RELEASE_VERSION-$RPM_ITERATION
+- TODO: Insert release changes here
+
+EOF
+
+cleanup() {
+    rm rpm/new.changelog
+}
+
+trap cleanup EXIT
+
+sed -i '/%changelog/ r rpm/new.changelog' rpm/containerd.spec
