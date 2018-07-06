@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+gen-test-ver() {
+    local version=$1
+    local suffix=$2
+    local base_release_ver=$3
+    test_num=${version#*-${suffix}.}
+    echo "${base_release_ver}.${test_num}.${suffix}.${test_num}"
+}
+
+gen-rpm-ver-bits() {
+    VERSION=$1
+    case "$VERSION" in
+        *beta*)
+            result="${VERSION%-beta.*} $(gen-test-ver "${VERSION}" beta 1)"
+            ;;
+        *rc*)
+            result="${VERSION%-rc.*} $(gen-test-ver "${VERSION}" rc 2)"
+            ;;
+        *)
+            result="${VERSION} 3"
+    esac
+    echo "$result"
+}

@@ -25,6 +25,7 @@ COPY common/containerd.toml /root/rpmbuild/SOURCES/containerd.toml
 COPY common/containerd.service /root/rpmbuild/SOURCES/containerd.service
 COPY rpm/containerd.spec /root/rpmbuild/SPECS/containerd.spec
 COPY scripts/build-rpm /build-rpm
+COPY scripts/.rpm-helpers /.rpm-helpers
 
 RUN mkdir -p /go
 ARG REF

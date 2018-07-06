@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
 
+source /.rpm-helpers
+
 set -e
 
 VERSION="$(git -C "${GO_SRC_PATH}" describe --tags | sed 's/^v//')"
-RPM_VERSION="$VERSION"
-RPM_RELEASE_VERSION=2
-case "$VERSION" in
-    *rc*)
-        rc_num=${VERSION#*-rc.}
-        RPM_RELEASE_VERSION="1.$rc_num.rc$rc_num"
-        RPM_VERSION=${VERSION%-rc.*}
-        ;;
-esac
+RPM_VER_BITS=$(gen-rpm-ver-bits "${VERSION}")
+RPM_VERSION=$(echo "${RPM_VER_BITS}" | cut -f1 -d' ')
+RPM_RELEASE_VERSION=$(echo "${RPM_VER_BITS}" | cut -f2 -d' ')
 
 
 # Check if we're on a tagged version, change VERSION to dev build if not
