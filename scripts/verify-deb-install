@@ -1,9 +1,0 @@
-#!/bin/bash
-
-CONTAINERD=$1
-
-apt-get update && apt-get install -y runc
-
-dpkg -i $CONTAINERD
-
-containerd --version
