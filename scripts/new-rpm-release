@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+source scripts/.rpm-helpers
+
+VERSION="$1"
+if [ -z "$VERSION" ]; then
+    echo "Usage: $0 <VERSION>"
+    exit 1
+fi
+RPM_VER_BITS=$(gen-rpm-ver-bits "${VERSION}")
+RPM_VERSION=$(echo "${RPM_VER_BITS}" | cut -f1 -d' ')
+RPM_RELEASE_VERSION=$(echo "${RPM_VER_BITS}" | cut -f2 -d' ')
+RPM_ITERATION=1
+
+while grep "$RPM_VERSION-$RPM_RELEASE_VERSION-$RPM_ITERATION" rpm/containerd.spec >/dev/null 2>&1;do
+    ((++RPM_ITERATION))
+done
+
+cat > rpm/new.changelog << EOF
+* $(date +"%a %b %d %Y") $(git config user.name) <$(git config user.email)> - $RPM_VERSION-$RPM_RELEASE_VERSION-$RPM_ITERATION
+- TODO: Insert release changes here
+
+EOF
+
+cleanup() {
+    rm rpm/new.changelog
+}
+
+trap cleanup EXIT
+
+sed -i '/%changelog/ r rpm/new.changelog' rpm/containerd.spec

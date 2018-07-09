@@ -1,7 +1,9 @@
 #!/usr/bin/make -f
 
-IMPORT_PATH?=/go/src/github.com/containerd/containerd
-GO_BUILD=go build -ldflags "$${LDFLAGS:-} -B 0x$$(head -c20 /dev/urandom|od -An -tx1 |tr -d ' \n')" -a
+# IMPORT_PATH and GO_SRC_PATH are defined in the dockerfile
+# VERSION and REF are defined in scripts/build-deb
+LDFLAGS=-X $${IMPORT_PATH}/version.Package=$${IMPORT_PATH} -X $${IMPORT_PATH}/version.Version=$${VERSION} -X $${IMPORT_PATH}/version.Revision=$${REF}
+GO_BUILD=go build -ldflags "$(LDFLAGS) -B 0x$$(head -c20 /dev/urandom|od -An -tx1 |tr -d ' \n')" -a
 INSTALL_DIR=debian/containerd
 
 %:
@@ -9,7 +11,8 @@ INSTALL_DIR=debian/containerd
 
 bin/%: ## Create containerd binaries
 	@mkdir -p bin/
-	$(GO_BUILD) -o $@ $(IMPORT_PATH)/cmd/$*
+	@echo "$(GO_BUILD) -o $@ $${IMPORT_PATH}/cmd/$*"
+	@$(GO_BUILD) -o $@ $${IMPORT_PATH}/cmd/$*
 
 override_dh_auto_build: bin/containerd bin/containerd-shim bin/ctr
 
@@ -20,4 +23,4 @@ override_dh_auto_install: bin/containerd bin/containerd-shim bin/ctr
 		(set -x; install -D -m 0755 $$binary $(INSTALL_DIR)/usr/bin/$$dest); \
 	done
 	install -D -m 0644 /root/common/containerd.service $(INSTALL_DIR)/lib/systemd/system/containerd.service
-	install -D -m 0644 /root/common/containerd.toml $(INSTALL_DIR)/etc/containerd.toml
+	install -D -m 0644 /root/common/containerd.toml $(INSTALL_DIR)/etc/containerd/config.toml

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+GOVERSION=${GOVERSION:-1.10.3}
+HOST_ARCH=${HOST_ARCH:-$(uname -m)}
+DL_ARCH=${HOST_ARCH}
+
+
+# Why do they name them differently than their `uname -m` counterparts?
+# ¯\_(ツ)_/¯
+case $HOST_ARCH in
+x86_64)
+	DL_ARCH="amd64"
+	;;
+aarch64)
+	DL_ARCH="arm64"
+	;;
+armv7l)
+	DL_ARCH="armv6l"
+	;;
+esac
+
+echo "https://dl.google.com/go/go${GOVERSION}.linux-${DL_ARCH}.tar.gz"

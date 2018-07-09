@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+source /.rpm-helpers
+
+set -e
+
+VERSION="$(git -C "${GO_SRC_PATH}" describe --tags | sed 's/^v//')"
+RPM_VER_BITS=$(gen-rpm-ver-bits "${VERSION}")
+RPM_VERSION=$(echo "${RPM_VER_BITS}" | cut -f1 -d' ')
+RPM_RELEASE_VERSION=$(echo "${RPM_VER_BITS}" | cut -f2 -d' ')
+
+
+# Check if we're on a tagged version, change VERSION to dev build if not
+if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD >/dev/null 2>&1; then
+    git_date=$(date --date "@$(git -C "${GO_SRC_PATH}" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
+    git_sha=$(git -C "${GO_SRC_PATH}" log -1 --pretty='%h')
+    VERSION="0.${git_date}~${git_sha}"
+    RPM_RELEASE_VERSION=0
+    RPM_VERSION="$VERSION"
+fi
+REF=$(git -C "${GO_SRC_PATH}" rev-parse HEAD)
+
+export REF
+export RPM_RELEASE_VERSION
+export RPM_VERSION
+export VERSION
+
+(set -x; rpmbuild -ba SPECS/containerd.spec)
