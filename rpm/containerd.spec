@@ -8,7 +8,6 @@ AutoReq: no
 %undefine __find_prereq
 %undefine __find_conflicts
 %undefine __find_obsoletes
-%undefine _disable_source_fetch
 
 # Build policy set to nothing
 %define __spec_install_post %{nil}
