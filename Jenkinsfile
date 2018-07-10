@@ -23,56 +23,77 @@ def saveS3(def Map args=[:]) {
 		secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
 		credentialsId: 'ci@docker-qa.aws'
 	]]) {
-		sh("${awscli} s3 cp --only-show-errors '${args.name}' '${destS3Uri}'")
+		sh("${awscli} s3 cp --only-show-errors ${args.name} '${destS3Uri}'")
 	}
 }
 
+def usePersonalRepo() {
+	return params.CONTAINERD_REPO != 'containerd/containerd'
+}
+
+def buildPersonalPackage(String pkgType) {
+	def containerdDir = params.CONTAINERD_REPO.tokenize('/')[1]
+	sh("git clone -b ${params.GIT_REF} --single-branch https://github.com/${params.CONTAINERD_REPO}")
+	sh("make CONTAINERD_DIR=${containerdDir}  ${pkgType}")
+}
+
+def removeContainerdDir() {
+	def containerdDir = params.CONTAINERD_REPO.tokenize('/')[1]
+	sh("rm -rf ${containerdDir}")
+}
+
 parallel([
-	"ubuntu-xenial" : { ->
+	"DEB" : { ->
 		wrappedNode(label: 'x86_64&&ubuntu', cleanWorkspace: true) {
 			checkout scm
 			try {
-				stage('Build Ubuntu Xenial') {
-					if (params.CONTAINERD_REPO != 'containerd/containerd') {
-						sh("git clone -b ${params.GIT_REF} --single-branch https://github.com/${params.CONTAINERD_REPO}")
-						sh("make CONTAINERD_REPO=containerd RUN_REF=${params.GIT_REF} ubuntu-xenial")
+				stage('Build DEB') {
+					if (usePersonalRepo()) {
+						buildPersonalPackage('deb')
 					} else {
-						sh("make ubuntu-xenial")
+						sh("make deb")
 					}
 				}
-				stage('Verify Containerd Install') {
-					sh("make verify-ubuntu-xenial")
-				}
-				stage('Bundle Ubuntu Xenial') {
+				stage('Archive DEB') {
 					if (params.ARCHIVE) {
-						saveS3(name: "build/ubuntu-xenial/containerd_1.1.0-1_amd64.deb", awscli_image: DEFAULT_AWS_IMAGE)
+						print('Pushing deb file to S3 bucket.')
+						saveS3(name: "build/DEB/*.deb", awscli_image: DEFAULT_AWS_IMAGE)
+					} else {
+						print('Skipping archiving of deb.')
 					}
 				}
 			} finally {
 				sh("make clean")
-				if (params.CONTAINERD_REPO != 'containerd/containerd') {
-					sh("rm -rf containerd")
+				if (usePersonalRepo()) {
+					removeContainerdDir()
 				}
 			}
 		}
 	},
-	"centos" : { ->
+	"RPM" : { ->
 		wrappedNode(label: 'x86_64&&ubuntu', cleanWorkspace: true) {
 			checkout scm
 			try {
-				stage('Build Centos') {
-					sh("make centos")
+				stage('Build RPM') {
+					if (usePersonalRepo()) {
+						buildPersonalPackage('rpm')
+					} else {
+						sh("make rpm")
+					}
 				}
-				stage('Verify Containerd Install') {
-					sh("make verify-rpm-centos")
-				}
-				stage('Bundle Centos') {
+				stage('Archive RPM') {
 					if (params.ARCHIVE) {
-						saveS3(name: "rpm/rpmbuild/RPMS/x86_64/containerd-1.1.0-1.el7.x86_64.rpm", awscli_image: DEFAULT_AWS_IMAGE)
+						print('Pushing rpm file to S3 bucket.')
+						saveS3(name: "build/RPMS/x86_64/*.rpm", awscli_image: DEFAULT_AWS_IMAGE)
+					} else {
+						print('Skipping archiving of rpm.')
 					}
 				}
 			} finally {
 				sh("make clean")
+				if (usePersonalRepo()) {
+					removeContainerdDir()
+				}
 			}
 		}
 	},
