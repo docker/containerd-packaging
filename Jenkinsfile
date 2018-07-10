@@ -4,8 +4,6 @@ properties(
 	[
 		parameters(
 			[
-				string(name: 'CONTAINERD_REPO', defaultValue: 'containerd/containerd', description: 'The repo to build the packages from.'),
-				string(name: 'GIT_REF', defaultValue: 'master', description: 'The git ref to build the packages with.'),
 				booleanParam(name: 'ARCHIVE', defaultValue: false, description: 'Archive the build artifacts by pushing to an S3 bucket.'),
 			]
 		)
@@ -27,32 +25,13 @@ def saveS3(def Map args=[:]) {
 	}
 }
 
-def usePersonalRepo() {
-	return params.CONTAINERD_REPO != 'containerd/containerd'
-}
-
-def buildPersonalPackage(String pkgType) {
-	def containerdDir = params.CONTAINERD_REPO.tokenize('/')[1]
-	sh("git clone -b ${params.GIT_REF} --single-branch https://github.com/${params.CONTAINERD_REPO}")
-	sh("make CONTAINERD_DIR=${containerdDir}  ${pkgType}")
-}
-
-def removeContainerdDir() {
-	def containerdDir = params.CONTAINERD_REPO.tokenize('/')[1]
-	sh("rm -rf ${containerdDir}")
-}
-
 parallel([
 	"DEB" : { ->
 		wrappedNode(label: 'x86_64&&ubuntu', cleanWorkspace: true) {
 			checkout scm
 			try {
 				stage('Build DEB') {
-					if (usePersonalRepo()) {
-						buildPersonalPackage('deb')
-					} else {
-						sh("make deb")
-					}
+					sh("make deb")
 				}
 				stage('Archive DEB') {
 					if (params.ARCHIVE) {
@@ -64,9 +43,6 @@ parallel([
 				}
 			} finally {
 				sh("make clean")
-				if (usePersonalRepo()) {
-					removeContainerdDir()
-				}
 			}
 		}
 	},
@@ -75,11 +51,7 @@ parallel([
 			checkout scm
 			try {
 				stage('Build RPM') {
-					if (usePersonalRepo()) {
-						buildPersonalPackage('rpm')
-					} else {
-						sh("make rpm")
-					}
+					sh("make rpm")
 				}
 				stage('Archive RPM') {
 					if (params.ARCHIVE) {
@@ -91,9 +63,6 @@ parallel([
 				}
 			} finally {
 				sh("make clean")
-				if (usePersonalRepo()) {
-					removeContainerdDir()
-				}
 			}
 		}
 	},
