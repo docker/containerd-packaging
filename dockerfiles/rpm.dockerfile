@@ -6,7 +6,6 @@ RUN yum groupinstall -y "Development Tools"
 RUN yum remove -y git
 RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release
 RUN yum install -y \
-   btrfs-progs-devel \
    pkgconfig \
    tar \
    cmake \
