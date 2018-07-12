@@ -23,10 +23,6 @@ AutoReq: no
 %global debug_package %{nil}
 %endif
 
-%if ! 0%{?gobuild:1}
-%define gobuild(o:) go build -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \\n')" -a -x %{?**};
-%endif
-
 %define SHA256SUM0 08f057ece7e518b14cce2e9737228a5a899a7b58b78248a03e02f4a6c079eeaf
 %global import_path github.com/containerd/containerd
 %global gopath %{getenv:GOPATH}
@@ -42,6 +38,7 @@ Source1: containerd.service
 Source2: containerd.toml
 BuildRequires: systemd
 BuildRequires: btrfs-progs-devel
+BuildRequires: libseccomp-devel
 %{?systemd_requires}
 # https://github.com/containerd/containerd/issues/1508#issuecomment-335566293
 Requires: runc >= 1.0.0
@@ -69,10 +66,10 @@ cd %{_topdir}/BUILD
 go get -u github.com/cpuguy83/go-md2man
 make man
 
-export LDFLAGS="-X %{import_path}/version.Package=%{import_path} -X %{import_path}/version.Version=%{getenv:VERSION} -X %{import_path}/version.Revision=%{getenv:REF}"
-%gobuild -o bin/containerd %{import_path}/cmd/containerd
-%gobuild -o bin/containerd-shim %{import_path}/cmd/containerd-shim
-%gobuild -o bin/ctr %{import_path}/cmd/ctr
+%define make_containerd(o:) make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} %{?**};
+%make_containerd bin/containerd
+%make_containerd bin/containerd-shim
+%make_containerd bin/ctr
 
 
 %install

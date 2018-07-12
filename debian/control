@@ -5,7 +5,8 @@ Maintainer: Containerd team <help@containerd.io>
 Build-Depends: btrfs-tools,
                debhelper,
                dh-systemd,
-               pkg-config
+               pkg-config,
+               libseccomp-dev
 Standards-Version: 4.1.4
 Homepage: https://containerd.io
 Vcs-Browser: https://github.com/containerd/containerd
