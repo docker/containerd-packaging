@@ -25,5 +25,7 @@ REF=$(git -C "${GO_SRC_PATH}" rev-parse HEAD)
 export REF
 export VERSION
 (set -x; dpkg-buildpackage -uc -us)
-mv -v ../*.deb /out
-mv -v ../*.changes /out
+OUT_DIR="/out/$(dpkg --print-architecture)"
+mkdir -p "${OUT_DIR}"
+mv -v ../*.deb "${OUT_DIR}"
+mv -v ../*.changes "${OUT_DIR}"
