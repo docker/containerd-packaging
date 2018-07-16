@@ -31,5 +31,6 @@ RUN mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-reco
 
 # Copy over our entrypoint
 COPY scripts/build-deb /build-deb
+COPY scripts/.helpers /.helpers
 
 ENTRYPOINT ["/build-deb"]
