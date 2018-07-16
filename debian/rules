@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-INSTALL_DIR=debian/containerd
+INSTALL_DIR=debian/containerd.io
 
 %:
 	dh $@ --with systemd
