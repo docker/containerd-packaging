@@ -7,9 +7,6 @@ Build-Depends: btrfs-tools,
                dh-systemd,
                pkg-config,
                libseccomp-dev
-Provides: containerd
-Conflicts: containerd
-Replaces: containerd
 Standards-Version: 4.1.4
 Homepage: https://containerd.io
 Vcs-Browser: https://github.com/containerd/containerd
@@ -20,4 +17,7 @@ Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          runc.io
+Provides: containerd
+Conflicts: containerd
+Replaces: containerd
 Description: An open and reliable container runtime
