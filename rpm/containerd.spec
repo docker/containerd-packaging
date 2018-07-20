@@ -66,10 +66,14 @@ cd %{_topdir}/BUILD
 go get -u github.com/cpuguy83/go-md2man
 make man
 
-%define make_containerd(o:) make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} %{?**};
+pushd /go/src/%{import_path}
+%define make_containerd(o:) make VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} %{?**};
 %make_containerd bin/containerd
+/go/src/%{import_path}/bin/containerd --version
 %make_containerd bin/containerd-shim
 %make_containerd bin/ctr
+/go/src/%{import_path}/bin/ctr --version
+popd
 
 
 %install
