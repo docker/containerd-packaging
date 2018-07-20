@@ -1,14 +1,10 @@
 FROM centos:7
 
-RUN yum groupinstall -y "Development Tools"
-
 # Install git (git2u) through the IUS repository since it's more up to date
-RUN yum remove -y git
 RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release
 RUN yum install -y \
-   pkgconfig \
-   tar \
-   cmake \
+   make \
+   gcc \
    rpm-build \
    git2u
 
