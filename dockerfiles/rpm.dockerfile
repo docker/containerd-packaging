@@ -10,8 +10,6 @@ RUN yum install -y \
    tar \
    cmake \
    rpm-build \
-   rpmdevtools \
-   rpmbuildtools \
    git2u
 
 # Install golang since the package managed one probably is too old and ppa's don't cover all distros
