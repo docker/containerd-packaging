@@ -36,6 +36,8 @@ URL: https://containerd.io
 Source0: containerd
 Source1: containerd.service
 Source2: containerd.toml
+BuildRequires: make
+BuildRequires: gcc
 BuildRequires: systemd
 BuildRequires: btrfs-progs-devel
 BuildRequires: libseccomp-devel

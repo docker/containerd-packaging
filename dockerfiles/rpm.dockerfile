@@ -3,8 +3,6 @@ FROM centos:7
 # Install git (git2u) through the IUS repository since it's more up to date
 RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release
 RUN yum install -y \
-   make \
-   gcc \
    rpm-build \
    git2u
 
