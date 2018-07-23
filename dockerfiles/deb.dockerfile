@@ -1,11 +1,15 @@
+# Install golang since the package managed one probably is too old and ppa's don't cover all distros
+FROM alpine:latest as golang
+RUN apk add curl
+ARG GO_DL_URL
+RUN curl -fsSL "${GO_DL_URL}" | tar xzC /usr/local
+
 FROM ubuntu:bionic
 
 # Install some pre-reqs
 RUN apt-get update && apt-get install -y curl devscripts equivs git
 
-# Install golang since the package managed one probably is too old and ppa's don't cover all distros
-ARG GO_DL_URL
-RUN curl -fsSL "${GO_DL_URL}" | tar xzC /usr/local
+COPY --from=golang /usr/local/go /usr/local/go/
 ENV GOPATH /go
 ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 
