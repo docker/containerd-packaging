@@ -4,23 +4,21 @@ RUN apk add curl
 ARG GO_DL_URL
 RUN curl -fsSL "${GO_DL_URL}" | tar xzC /usr/local
 
-FROM ubuntu:bionic
-
-# Install some pre-reqs
-RUN apt-get update && apt-get install -y curl devscripts equivs git
-
-COPY --from=golang /usr/local/go /usr/local/go/
-ENV GOPATH /go
-ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
-
-ENV IMPORT_PATH github.com/containerd/containerd
-ENV GO_SRC_PATH /go/src/${IMPORT_PATH}
-
-# Clone our source down from github
+FROM alpine:latest as containerd
+RUN apk add git
 ARG REF
-RUN mkdir -p ${GO_SRC_PATH}
-RUN git clone https://${IMPORT_PATH}.git ${GO_SRC_PATH}
-RUN git -C ${GO_SRC_PATH} checkout ${REF}
+ENV IMPORT_PATH github.com/containerd/containerd
+RUN git clone https://${IMPORT_PATH}.git /containerd
+RUN git -C /containerd checkout ${REF}
+
+FROM ubuntu:bionic
+RUN apt-get update && apt-get install -y curl devscripts equivs git
+ENV GOPATH /go
+ENV GO_SRC_PATH /go/src/github.com/containerd/containerd
+ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
+ARG REF
+COPY --from=golang /usr/local/go /usr/local/go/
+COPY --from=containerd /containerd ${GO_SRC_PATH}
 
 # Set up debian packaging files
 RUN mkdir -p /root/containerd
