@@ -41,6 +41,7 @@ BuildRequires: gcc
 BuildRequires: systemd
 BuildRequires: btrfs-progs-devel
 BuildRequires: libseccomp-devel
+BuildRequires: go-md2man
 %{?systemd_requires}
 # https://github.com/containerd/containerd/issues/1508#issuecomment-335566293
 Requires: runc >= 1.0.0
@@ -64,8 +65,6 @@ cd %{_topdir}/BUILD/
 
 %build
 cd %{_topdir}/BUILD
-# needed for man pages
-go get -u github.com/cpuguy83/go-md2man
 make man
 
 pushd /go/src/%{import_path}
