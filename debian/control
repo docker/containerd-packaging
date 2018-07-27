@@ -1,4 +1,4 @@
-Source: containerd
+Source: containerd.io
 Section: devel
 Priority: optional
 Maintainer: Containerd team <help@containerd.io>
@@ -12,9 +12,12 @@ Homepage: https://containerd.io
 Vcs-Browser: https://github.com/containerd/containerd
 XS-Go-Import-Path: github.com/containerd/containerd
 
-Package: containerd
+Package: containerd.io
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-         runc
+         runc.io
+Provides: containerd
+Conflicts: containerd
+Replaces: containerd
 Description: An open and reliable container runtime

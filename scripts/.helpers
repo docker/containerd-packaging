@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+control_field() {
+    field=$1
+    if ! grep "${field}" debian/control >/dev/null 2>&1; then
+        echo "Field '${field}' not available in debian/control, is that a mistake?"
+        exit 1
+    fi
+    # strip field itself and trailing/leading whitespace
+    grep "${field}" debian/control | sed -e "s/${field}://" -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+}

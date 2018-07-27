@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source /.helpers
+
 set -e
 
 VERSION="$(git -C "${GO_SRC_PATH}" describe --tags | sed 's/^v//')"
@@ -7,14 +9,15 @@ VERSION="$(git -C "${GO_SRC_PATH}" describe --tags | sed 's/^v//')"
 if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD >/dev/null 2>&1; then
     git_date=$(date --date "@$(git -C "${GO_SRC_PATH}" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
     git_sha=$(git -C "${GO_SRC_PATH}" log -1 --pretty='%h')
+    # export VERSION here so it gets picked up by debian/rules
     VERSION="${git_date}~${git_sha}"
     # prepend a `0` so it'll never be greater than non-dev versions
     cat > debian/nightly.changelog <<-EOF
-containerd (0.${VERSION}-1) nightly; urgency=medium
+$(control_field Package) (0.${VERSION}-1) nightly; urgency=medium
 
   * Nightly release for ${git_sha}
 
- -- containerd team <help@containerd.io>  $(date --rfc-2822)
+ -- $(control_field Maintainer)  $(date --rfc-2822)
 
 EOF
     cat debian/changelog >> debian/nightly.changelog

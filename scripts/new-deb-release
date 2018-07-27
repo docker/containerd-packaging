@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source scripts/.helpers
+
 VERSION=$1
 if [ -z "$VERSION" ]; then
     echo "Usage: $0 <VERSION>"
@@ -15,7 +17,7 @@ while grep "$NEW_DEB_VERSION-$DEB_ITERATION" debian/changelog >/dev/null 2>&1;do
 done
 
 cat > debian/new.changelog <<-EOF
-containerd (${NEW_DEB_VERSION}-${DEB_ITERATION}) release; urgency=${URGENCY}
+$(control_field Package) (${NEW_DEB_VERSION}-${DEB_ITERATION}) release; urgency=${URGENCY}
 
   * TODO: Insert release changes here
 

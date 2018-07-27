@@ -27,7 +27,10 @@ AutoReq: no
 %global import_path github.com/containerd/containerd
 %global gopath %{getenv:GOPATH}
 
-Name: containerd
+Name: containerd.io
+Provides: containerd
+Obsoletes: containerd
+Conflicts: containerd
 Version: %{getenv:RPM_VERSION}
 Release: %{getenv:RPM_RELEASE_VERSION}%{dist}
 Summary: An industry-standard container runtime
@@ -44,7 +47,7 @@ BuildRequires: libseccomp-devel
 BuildRequires: go-md2man
 %{?systemd_requires}
 # https://github.com/containerd/containerd/issues/1508#issuecomment-335566293
-Requires: runc >= 1.0.0
+Requires: runc.io >= 1.0.0
 
 %description
 containerd is an industry-standard container runtime with an emphasis on
