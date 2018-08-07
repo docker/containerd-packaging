@@ -6,8 +6,9 @@ After=network.target
 [Service]
 ExecStartPre=/sbin/modprobe overlay
 ExecStart=/usr/bin/containerd
-Delegate=yes
+ExecStartPost=/usr/libexec/containerd-offline-installer /var/lib/containerd/runc.tar docker.io/docker/runc:v1.0.0-rc5
 KillMode=process
+Delegate=yes
 
 [Install]
 WantedBy=multi-user.target

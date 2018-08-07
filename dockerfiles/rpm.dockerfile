@@ -10,6 +10,12 @@ ARG REF
 RUN git clone https://github.com/containerd/containerd.git /containerd
 RUN git -C /containerd checkout ${REF}
 
+FROM alpine:latest as offline-install
+RUN apk add git
+ARG OFFLINE_INSTALL_REF
+RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
+RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
+
 FROM centos:7
 # Install git (git2u) through the IUS repository since it's more up to date
 RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release
@@ -20,8 +26,9 @@ ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 ENV GO_SRC_PATH /go/src/github.com/containerd/containerd
 COPY --from=golang /usr/local/go /usr/local/go/
 COPY --from=containerd /containerd ${GO_SRC_PATH}
-COPY common/containerd.toml /root/rpmbuild/SOURCES/containerd.toml
-COPY common/containerd.service /root/rpmbuild/SOURCES/containerd.service
+COPY --from=offline-install /offline-install /go/src/github.com/crosbymichael/offline-install
+COPY common/ /root/rpmbuild/SOURCES/
+COPY runc.tar /root/rpmbuild/SOURCES/runc.tar
 COPY rpm/containerd.spec /root/rpmbuild/SPECS/containerd.spec
 COPY scripts/build-rpm /build-rpm
 COPY scripts/.rpm-helpers /.rpm-helpers
