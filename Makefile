@@ -33,6 +33,19 @@ else
 CONTAINERD_SOCK:=/var/run/containerd/containerd.sock
 endif
 
+CONTAINERD_REPO?=containerd/containerd
+CONTAINERD_BRANCH?=release/1.1
+CONTAINERD_DIR?=$(shell basename $(CONTAINERD_REPO))
+CONTAINERD_MOUNT?=C:\go\src\github.com\containerd\containerd
+WINDOWS_BINARIES=containerd ctr containerd-shim
+WINDOWS_BUILDER=dockereng/windows-go-builder:go1.10.3-win1803
+
+# Build tags seccomp and apparmor are needed by CRI plugin.
+BUILDTAGS ?= seccomp apparmor
+GO_TAGS=$(if $(BUILDTAGS),-tags "$(BUILDTAGS)",)
+GO_LDFLAGS=-ldflags '-s -w -X $(PKG)/version.Version=$(VERSION) -X $(PKG)/version.Revision=$(REVISION) -X $(PKG)/version.Package=$(PKG) $(EXTRA_LDFLAGS)'
+SHIM_GO_LDFLAGS=-ldflags '-s -w -X $(PKG)/version.Version=$(VERSION) -X $(PKG)/version.Revision=$(REVISION) -X $(PKG)/version.Package=$(PKG) -extldflags "-static"'
+
 all: rpm deb
 
 .PHONY: clean
@@ -40,6 +53,7 @@ clean:
 	-$(CHOWN_TO_USER) build/
 	-$(RM) -r build/
 	-$(RM) runc.tar
+	-$(RM) -r $(CONTAINERD_DIR)
 
 runc.tar:
 	sudo $(CTR) -a $(CONTAINERD_SOCK) content fetch docker.io/docker/runc:$(RUNC_REF)
@@ -56,3 +70,20 @@ deb: runc.tar
 	$(BUILD)
 	$(RUN)
 	$(CHOWN_TO_USER) build/
+
+$(CONTAINERD_DIR):
+	git clone git@github.com:$(CONTAINERD_REPO)
+	git -C $(CONTAINERD_DIR) checkout $(CONTAINERD_BRANCH)
+
+cmd/%:
+	docker run --rm -v "$(CURDIR)/$(CONTAINERD_DIR):$(CONTAINERD_MOUNT)" -w "$(CONTAINERD_MOUNT)" $(WINDOWS_BUILDER) $(GO_BUILD_FLAGS) $(GO_LDFLAGS) $(GO_TAGS) ./$@
+
+cmd/containerd-shim:
+	docker run --rm -e CGO_ENABLED=0 -v "$(CURDIR)/$(CONTAINERD_DIR):$(CONTAINERD_MOUNT)" -w "$(CONTAINERD_MOUNT)" $(WINDOWS_BUILDER) $(GO_BUILD_FLAGS) $(SHIM_GO_LDFLAGS) $(GO_TAGS) ./$@
+
+.PHONY: windows-binaries
+windows-binaries: $(CONTAINERD_DIR)
+	for binary in $(WINDOWS_BINARIES); do \
+		$(MAKE) cmd/$$binary; \
+	done
+	ls $(CONTAINERD_DIR) | grep '.exe'
