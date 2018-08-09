@@ -1,11 +1,11 @@
 # Install golang since the package managed one probably is too old and ppa's don't cover all distros
 FROM alpine:latest as golang
-RUN apk add curl
+RUN apk -u --no-cache add curl
 ARG GO_DL_URL
 RUN curl -fsSL "${GO_DL_URL}" | tar xzC /usr/local
 
 FROM alpine:latest as containerd
-RUN apk add git
+RUN apk -u --no-cache add git
 ARG REF
 ENV IMPORT_PATH github.com/containerd/containerd
 RUN git clone https://${IMPORT_PATH}.git /containerd
