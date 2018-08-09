@@ -33,7 +33,6 @@ def saveS3(def Map args=[:]) {
 }
 
 parallel([
-/*
 	"DEB" : { ->
 		wrappedNode(label: 'x86_64&&ubuntu', cleanWorkspace: true) {
 			checkout scm
@@ -43,9 +42,9 @@ parallel([
 				}
 				stage('Archive DEB') {
 					if (params.ARCHIVE) {
-						print('Pushing deb file to S3 bucket.') */
-//						saveS3(name: "build/DEB/*.deb", awscli_image: DEFAULT_AWS_IMAGE)
-/*					} else {
+						print('Pushing deb file to S3 bucket.')
+						saveS3(name: "build/DEB/*.deb", awscli_image: DEFAULT_AWS_IMAGE)
+					} else {
 						print('Skipping archiving of deb.')
 					}
 				}
@@ -63,9 +62,9 @@ parallel([
 				}
 				stage('Archive RPM') {
 					if (params.ARCHIVE) {
-						print('Pushing rpm file to S3 bucket.') */
-//						saveS3(name: "build/RPMS/x86_64/*.rpm", awscli_image: DEFAULT_AWS_IMAGE)
-/*					} else {
+						print('Pushing rpm file to S3 bucket.')
+						saveS3(name: "build/RPMS/x86_64/*.rpm", awscli_image: DEFAULT_AWS_IMAGE)
+					} else {
 						print('Skipping archiving of rpm.')
 					}
 				}
@@ -74,7 +73,6 @@ parallel([
 			}
 		}
 	},
-*/
 	'WINDOWS': { ->
 		node('windows-1803') {
 			checkout scm
