@@ -39,6 +39,7 @@ URL: https://containerd.io
 Source0: containerd
 Source1: containerd.service
 Source2: containerd.toml
+Source3: containerd-offline-installer
 BuildRequires: make
 BuildRequires: gcc
 BuildRequires: systemd
@@ -46,8 +47,6 @@ BuildRequires: btrfs-progs-devel
 BuildRequires: libseccomp-devel
 BuildRequires: go-md2man
 %{?systemd_requires}
-# https://github.com/containerd/containerd/issues/1508#issuecomment-335566293
-Requires: runc.io >= 1.0.0
 
 %description
 containerd is an industry-standard container runtime with an emphasis on
@@ -61,6 +60,7 @@ low-level storage and network attachments, etc.
 rm -rf %{_topdir}/BUILD/
 # Copy over our source code from our gopath to our source directory
 cp -rf /go/src/%{import_path} %{_topdir}/SOURCES/containerd
+cp -rf /go/src/github.com/crosbymichael/offline-install %{_topdir}/SOURCES/containerd-offline-installer
 # symlink the go source path to our build directory
 ln -s /go/src/%{import_path} %{_topdir}/BUILD
 cd %{_topdir}/BUILD/
@@ -79,12 +79,17 @@ pushd /go/src/%{import_path}
 /go/src/%{import_path}/bin/ctr --version
 popd
 
+pushd /go/src/github.com/crosbymichael/offline-install
+go build -o %{_topdir}/BUILD/bin/containerd-offline-installer main.go
+popd
 
 %install
 cd %{_topdir}/BUILD
 install -D -m 0755 bin/containerd %{buildroot}%{_bindir}/containerd
 install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
+install -D -m 0755 bin/containerd-offline-installer %{buildroot}%{_libexecdir}/containerd-offline-installer
 install -D -m 0755 bin/ctr %{buildroot}%{_bindir}/ctr
+install -D -m 0644 %{_topdir}/SOURCES/runc.tar %{buildroot}%{_sharedstatedir}/containerd/runc.tar
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
 
@@ -111,9 +116,11 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %doc README.md
 %{_bindir}/containerd
 %{_bindir}/containerd-shim
+%{_libexecdir}/containerd-offline-installer
 %{?with_ctr:%{_bindir}/ctr}
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
+%{_sharedstatedir}/containerd/runc.tar
 /%{_mandir}/man1/*
 /%{_mandir}/man5/*
 %config(noreplace) %{_sysconfdir}/containerd/config.toml

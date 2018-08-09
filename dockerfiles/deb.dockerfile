@@ -11,6 +11,12 @@ ENV IMPORT_PATH github.com/containerd/containerd
 RUN git clone https://${IMPORT_PATH}.git /containerd
 RUN git -C /containerd checkout ${REF}
 
+FROM alpine:latest as offline-install
+RUN apk add git
+ARG OFFLINE_INSTALL_REF
+RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
+RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
+
 FROM ubuntu:bionic
 RUN apt-get update && apt-get install -y curl devscripts equivs git
 ENV GOPATH /go
@@ -19,11 +25,13 @@ ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 ARG REF
 COPY --from=golang /usr/local/go /usr/local/go/
 COPY --from=containerd /containerd ${GO_SRC_PATH}
+COPY --from=offline-install /offline-install /go/src/github.com/crosbymichael/offline-install
 
 # Set up debian packaging files
 RUN mkdir -p /root/containerd
 COPY debian/ /root/containerd/debian
 COPY common/ /root/common
+COPY runc.tar /root/runc.tar
 WORKDIR /root/containerd
 
 # Install all of our build dependencies, if any
