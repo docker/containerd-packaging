@@ -10,6 +10,13 @@ properties(
 	]
 )
 
+hubCred = [
+    $class: 'UsernamePasswordMultiBinding',
+    usernameVariable: 'REGISTRY_USERNAME',
+    passwordVariable: 'REGISTRY_PASSWORD',
+    credentialsId: 'orcaeng-hub.docker.com',
+]
+
 DEFAULT_AWS_IMAGE = "anigeo/awscli@sha256:f4685e66230dcb77c81dc590140aee61e727936cf47e8f4f19a427fc851844a1"
 
 def saveS3(def Map args=[:]) {
@@ -63,6 +70,23 @@ parallel([
 				}
 			} finally {
 				sh("make clean")
+			}
+		}
+	},
+	'WINDOWS': { ->
+		node('windows-1803') {
+			checkout scm
+			try {
+				withCredentials([hubCred]) {
+					bat("docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD")
+					stage('Build Binaries') {
+						sshagent(['docker-jenkins.github.ssh']) {
+							bat("make windows-binaries")
+						}
+					}
+				}
+			} finally {
+				bat("make clean")
 			}
 		}
 	},
