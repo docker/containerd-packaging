@@ -1,16 +1,41 @@
 GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
+ARCH:=$(shell uname -m)
 REF?=master
 RUNC_REF?=v1.0.0-rc5
 OFFLINE_INSTALL_REF?=20eddbfe5d4d894cfee6974829c7d3981acba1be
 GOVERSION?=1.10.3
 GO_DL_URL?=$(shell GOVERSION=$(GOVERSION) ./scripts/gen-go-dl-url)
 
+# need specific repos for s390x
+ifeq ($(ARCH),s390x)
+	DISTRO_CENTOS=clefos:7 # no s390x for fedora
+else 
+	DISTRO_FEDORA=fedora:$*
+	DISTRO_CENTOS=centos:7
+endif
+
 BUILDER_IMAGE=containerd-builder-$@-$(GOARCH):$(shell git rev-parse --short HEAD)
-BUILD=docker build \
+BUILD_FEDORA=docker build \
 	 --build-arg GO_DL_URL="$(GO_DL_URL)" \
 	 --build-arg REF="$(REF)" \
+	 --build-arg DISTRO="$(DISTRO_FEDORA)" \
+	 --build-arg SUITE="$*" \
 	 --build-arg OFFLINE_INSTALL_REF="$(OFFLINE_INSTALL_REF)" \
-	 -f dockerfiles/$@.dockerfile \
+	 -f dockerfiles/fedora.dockerfile \
+	  -t $(BUILDER_IMAGE) .
+BUILD_CENTOS=docker build \
+	 --build-arg GO_DL_URL="$(GO_DL_URL)" \
+	 --build-arg REF="$(REF)" \
+	 --build-arg DISTRO='$(DISTRO_CENTOS)' \
+	 --build-arg OFFLINE_INSTALL_REF="$(OFFLINE_INSTALL_REF)" \
+	 -f dockerfiles/centos.dockerfile \
+	 -t $(BUILDER_IMAGE) .
+BUILD_DEB=docker build \
+	 --build-arg GO_DL_URL="$(GO_DL_URL)" \
+	 --build-arg REF="$(REF)" \
+	 --build-arg DISTRO="$(DISTRO)" \
+	 --build-arg OFFLINE_INSTALL_REF="$(OFFLINE_INSTALL_REF)" \
+	 -f dockerfiles/deb.dockerfile \
 	 -t $(BUILDER_IMAGE) .
 
 VOLUME_MOUNTS=-v "$(CURDIR)/build/DEB:/out" \
@@ -66,15 +91,26 @@ artifacts/runc.tar:
 	$(CTR) image export /$@ docker.io/docker/runc:$(RUNC_REF)
 	$(CHOWN_TO_USER) $$(dirname $@)
 
-.PHONY: rpm
-rpm: artifacts/runc.tar
-	$(BUILD)
+# For deb packages only need to build one package
+.PHONY: deb
+deb: artifacts/runc.tar
+	$(BUILD_DEB)
 	$(RUN)
 	$(CHOWN_TO_USER) build/
 
-.PHONY: deb
-deb: artifacts/runc.tar
-	$(BUILD)
+.PHONY: rpm
+rpm:  centos7 fedora-28 fedora-29
+
+# TODO: Need a check for s390x
+.PHONY: centos7
+centos7: artifacts/runc.tar
+	$(BUILD_CENTOS)
+	$(RUN)
+	$(CHOWN_TO_USER) build/
+
+.PHONY: fedora-%
+fedora-%: artifacts/runc.tar
+	$(BUILD_FEDORA)
 	$(RUN)
 	$(CHOWN_TO_USER) build/
 

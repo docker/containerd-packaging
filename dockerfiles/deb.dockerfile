@@ -17,7 +17,9 @@ ARG OFFLINE_INSTALL_REF
 RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
 RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
 
-FROM ubuntu:bionic
+ARG DISTRO
+FROM ${DISTRO}
+#FROM ubuntu:bionic
 RUN apt-get update && apt-get install -y curl devscripts equivs git
 ENV GOPATH /go
 ENV GO_SRC_PATH /go/src/github.com/containerd/containerd
