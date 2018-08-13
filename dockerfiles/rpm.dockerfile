@@ -28,7 +28,7 @@ COPY --from=golang /usr/local/go /usr/local/go/
 COPY --from=containerd /containerd ${GO_SRC_PATH}
 COPY --from=offline-install /offline-install /go/src/github.com/crosbymichael/offline-install
 COPY common/ /root/rpmbuild/SOURCES/
-COPY runc.tar /root/rpmbuild/SOURCES/runc.tar
+COPY artifacts/runc.tar /root/rpmbuild/SOURCES/runc.tar
 COPY rpm/containerd.spec /root/rpmbuild/SPECS/containerd.spec
 COPY scripts/build-rpm /build-rpm
 COPY scripts/.rpm-helpers /.rpm-helpers
