@@ -25,13 +25,18 @@ RUN=docker run --rm $(VOLUME_MOUNTS) -t $(BUILDER_IMAGE)
 CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
 CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
 
-# Default to `ctr` if it's around, else use `docker-containerd-ctr`
-CTR=$(shell if which ctr > /dev/null 2>/dev/null; then which ctr; else which docker-containerd-ctr; fi)
-ifeq ("$(CTR)", "$(shell which docker-containerd-ctr)")
+# If the docker-containerd.sock is available use that, else use the default containerd.sock
+ifeq (,$(wildcard /var/run/docker/containerd/docker-containerd.sock))
 CONTAINERD_SOCK:=/var/run/docker/containerd/docker-containerd.sock
 else
 CONTAINERD_SOCK:=/var/run/containerd/containerd.sock
 endif
+CTR=docker run \
+	--rm -i \
+	-v $(CONTAINERD_SOCK):/ours/containerd.sock \
+	-v $(CURDIR)/artifacts:/artifacts \
+	docker:18.06.0-ce \
+	docker-containerd-ctr -a /ours/containerd.sock
 
 CONTAINERD_REPO?=containerd/containerd
 CONTAINERD_BRANCH?=release/1.1
@@ -50,22 +55,25 @@ all: rpm deb
 .PHONY: clean
 clean:
 	-$(CHOWN_TO_USER) build/
+	-$(CHOWN_TO_USER) artifacts/
 	-$(RM) -r build/
-	-$(RM) runc.tar
+	-$(RM) -r artifacts
 	-$(RM) -r $(CONTAINERD_DIR)
 
-runc.tar:
-	sudo $(CTR) -a $(CONTAINERD_SOCK) content fetch docker.io/docker/runc:$(RUNC_REF)
-	sudo $(CTR) -a $(CONTAINERD_SOCK) image export $@ docker.io/docker/runc:$(RUNC_REF)
+artifacts/runc.tar:
+	mkdir -p $$(dirname $@)
+	$(CTR) content fetch docker.io/docker/runc:$(RUNC_REF)
+	$(CTR) image export /$@ docker.io/docker/runc:$(RUNC_REF)
+	$(CHOWN_TO_USER) $$(dirname $@)
 
 .PHONY: rpm
-rpm: runc.tar
+rpm: artifacts/runc.tar
 	$(BUILD)
 	$(RUN)
 	$(CHOWN_TO_USER) build/
 
 .PHONY: deb
-deb: runc.tar
+deb: artifacts/runc.tar
 	$(BUILD)
 	$(RUN)
 	$(CHOWN_TO_USER) build/

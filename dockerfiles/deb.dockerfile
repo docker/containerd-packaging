@@ -31,7 +31,7 @@ COPY --from=offline-install /offline-install /go/src/github.com/crosbymichael/of
 RUN mkdir -p /root/containerd
 COPY debian/ /root/containerd/debian
 COPY common/ /root/common
-COPY runc.tar /root/runc.tar
+COPY artifacts/runc.tar /root/runc.tar
 WORKDIR /root/containerd
 
 # Install all of our build dependencies, if any
