@@ -1,25 +1,25 @@
 # Install golang since the package managed one probably is too old and ppa's don't cover all distros
 FROM alpine:latest as golang
-RUN apk add curl
+RUN apk -u --no-cache add curl
 ARG GO_DL_URL
 RUN curl -fsSL "${GO_DL_URL}" | tar xzC /usr/local
 
 FROM alpine:latest as containerd
-RUN apk add git
+RUN apk -u --no-cache add git
 ARG REF
 RUN git clone https://github.com/containerd/containerd.git /containerd
 RUN git -C /containerd checkout ${REF}
 
 FROM alpine:latest as offline-install
-RUN apk add git
+RUN apk -u --no-cache add git
 ARG OFFLINE_INSTALL_REF
 RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
 RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
 
 FROM centos:7
 # Install git (git2u) through the IUS repository since it's more up to date
-RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release
-RUN yum install -y rpm-build git2u
+# RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release
+RUN yum install -y rpm-build git
 ARG REF
 ENV GOPATH /go
 ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
@@ -33,4 +33,6 @@ COPY rpm/containerd.spec /root/rpmbuild/SPECS/containerd.spec
 COPY scripts/build-rpm /build-rpm
 COPY scripts/.rpm-helpers /.rpm-helpers
 WORKDIR /root/rpmbuild
+# Overwrite repo that was failing on aarch64
+RUN sed -i 's/altarch/centos/g' /etc/yum.repos.d/CentOS-Sources.repo
 ENTRYPOINT ["/build-rpm"]

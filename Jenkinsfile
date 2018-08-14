@@ -32,62 +32,94 @@ def saveS3(def Map args=[:]) {
 	}
 }
 
-parallel([
-	"DEB" : { ->
-		wrappedNode(label: 'x86_64&&ubuntu', cleanWorkspace: true) {
-			checkout scm
-			try {
-				stage('Build DEB') {
-					sh("make deb")
-				}
-				stage('Archive DEB') {
-					if (params.ARCHIVE) {
-						print('Pushing deb file to S3 bucket.')
-						saveS3(name: "build/DEB/*.deb", awscli_image: DEFAULT_AWS_IMAGE)
-					} else {
-						print('Skipping archiving of deb.')
+def genDEBBuild(String arch) {
+	return [ "deb-${arch}": { -> 
+			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
+				checkout scm
+				try {
+					stage("Build DEB ${arch}") {
+						sh("docker info")
+						sh("make deb")
 					}
-				}
-			} finally {
-				sh("make clean")
-			}
-		}
-	},
-	"RPM" : { ->
-		wrappedNode(label: 'x86_64&&ubuntu', cleanWorkspace: true) {
-			checkout scm
-			try {
-				stage('Build RPM') {
-					sh("make rpm")
-				}
-				stage('Archive RPM') {
-					if (params.ARCHIVE) {
-						print('Pushing rpm file to S3 bucket.')
-						saveS3(name: "build/RPMS/x86_64/*.rpm", awscli_image: DEFAULT_AWS_IMAGE)
-					} else {
-						print('Skipping archiving of rpm.')
-					}
-				}
-			} finally {
-				sh("make clean")
-			}
-		}
-	},
-	'WINDOWS': { ->
-		node('windows-1803') {
-			checkout scm
-			try {
-				withCredentials([hubCred]) {
-					bat("docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD")
-					stage('Build Binaries') {
-						sshagent(['docker-jenkins.github.ssh']) {
-							bat("make windows-binaries")
+					stage("Archive DEB ${arch}") {
+						if (params.ARCHIVE) {
+							print('Pushing deb file to S3 bucket.')
+							saveS3(name: "build/DEB/*.deb", awscli_image: DEFAULT_AWS_IMAGE)
+						} else {
+							print('Skipping archiving of deb.')
 						}
 					}
+				} finally {
+					sh("make clean")
 				}
-			} finally {
-				bat("make clean")
 			}
 		}
-	},
-])
+	]
+}
+
+def genRPMBuild(String arch) {
+	return [ "rpm-${arch}": { -> 
+			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
+				checkout scm
+				try {
+					stage("Build RPM for ${arch}") {
+						sh("docker info")
+						sh("make rpm")
+					}
+					stage("Archive RPM for ${arch}") {
+						if (params.ARCHIVE) {
+							print('Pushing rpm file to S3 bucket.')
+							saveS3(name: "build/RPMS/${arch}/*.rpm", awscli_image: DEFAULT_AWS_IMAGE)
+						} else {
+							print('Skipping archiving of rpm.')
+						}
+					}
+				} finally {
+					sh("make clean")
+				}
+			}
+		}
+	]
+}
+
+def windowsBuild() {
+	return ["WINDOWS":{ -> 
+			node('windows-1803') {
+				checkout scm
+				try {
+					withCredentials([hubCred]) {
+						bat("docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD")
+						stage('Build Binaries') {
+							sshagent(['docker-jenkins.github.ssh']) {
+								bat("make windows-binaries")
+							}
+						}
+					}
+				} finally {
+					bat("make clean")
+				}
+			}
+		}
+	]
+}
+
+arches = [
+	"x86_64",
+	"s390x",
+	"ppc64le",
+	"aarch64",
+	"armhf"
+]
+
+buildSteps = [:]
+for (arch in arches) {
+	if (arch == "s390x") {
+		buildSteps << genDEBBuild(arch)
+	} else { 
+		buildSteps << genRPMBuild(arch)
+		buildSteps << genDEBBuild(arch)
+	}
+}
+
+buildSteps << windowsBuild()
+parallel(buildSteps)
