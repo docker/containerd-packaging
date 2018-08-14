@@ -32,14 +32,14 @@ def saveS3(def Map args=[:]) {
 	}
 }
 
-def genDEBBuild(String arch) {
-	return [ "deb-${arch}": { -> 
+def genDEBBuild(String arch, String cmd) {
+	return [ "${cmd}-${arch}": { -> 
 			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
 				checkout scm
 				try {
 					stage("Build DEB ${arch}") {
 						sh("docker info")
-						sh("make deb")
+						sh("make DISTRIO=ubuntu:bionic ${cmd}")
 					}
 					stage("Archive DEB ${arch}") {
 						if (params.ARCHIVE) {
@@ -57,8 +57,8 @@ def genDEBBuild(String arch) {
 	]
 }
 
-def genRPMBuild(String arch) {
-	return [ "rpm-${arch}": { -> 
+def genRPMBuild(String arch, String cmd) {
+	return [ "${cmd}-${arch}": { -> 
 			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
 				checkout scm
 				try {
@@ -111,14 +111,30 @@ arches = [
 	"armhf"
 ]
 
+rpms = [ 
+	"fedora-28",
+	"centos7"
+]
+
+packageLookup = [ 
+	"fedora-28": arches - ["s390x"],
+	"fedora-29": arches - ["s390x"],
+	"centos7": arches,
+	"deb" : arches
+]
+
+
 buildSteps = [:]
-for (arch in arches) {
-	if (arch == "s390x") {
-		buildSteps << genDEBBuild(arch)
-	} else { 
-		buildSteps << genRPMBuild(arch)
-		buildSteps << genDEBBuild(arch)
+for (rpm in rpms) {
+	arches = packageLookup[rpm]
+	for (arch in arches) {
+		buildSteps << genRPMBuild(arch, rpm)
 	}
+}
+
+arches = packageLookup["deb"]
+for (arch in arches) {
+	buildSteps << genDEBBuild(arch, "deb")
 }
 
 buildSteps << windowsBuild()

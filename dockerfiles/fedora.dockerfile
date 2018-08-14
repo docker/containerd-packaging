@@ -21,7 +21,7 @@ RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
 
 FROM distro_image
 RUN dnf -y upgrade
-RUN dnf install -y rpm-build git builddeb
+RUN dnf install -y rpm-build git dnf-plugins-core
 ARG SUITE
 ENV SUITE ${SUITE}
 ENV GOPATH /go
