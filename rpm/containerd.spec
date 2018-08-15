@@ -89,7 +89,7 @@ install -D -m 0755 bin/containerd %{buildroot}%{_bindir}/containerd
 install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
 install -D -m 0755 bin/containerd-offline-installer %{buildroot}%{_libexecdir}/containerd-offline-installer
 install -D -m 0755 bin/ctr %{buildroot}%{_bindir}/ctr
-install -D -m 0644 %{_topdir}/SOURCES/runc.tar %{buildroot}%{_sharedstatedir}/containerd/runc.tar
+install -D -m 0644 %{_topdir}/SOURCES/runc.tar %{buildroot}%{_sharedstatedir}/containerd-offline-installer/runc.tar
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
 
@@ -120,7 +120,7 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %{?with_ctr:%{_bindir}/ctr}
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
-%{_sharedstatedir}/containerd/runc.tar
+%{_sharedstatedir}/containerd-offline-installer/runc.tar
 /%{_mandir}/man1/*
 /%{_mandir}/man5/*
 %config(noreplace) %{_sysconfdir}/containerd/config.toml
