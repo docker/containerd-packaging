@@ -4,7 +4,7 @@ REF?=master
 RUNC_REF?=v1.0.0-rc5
 OFFLINE_INSTALL_REF?=8c1658b29376a51eb1ae0f311706331fcea69b18
 GOVERSION?=1.10.3
-GO_DL_URL?=$(shell GOVERSION=$(GOVERSION) ./scripts/gen-go-dl-url)
+GOLANG_IMAGE?=golang:1.10.3
 
 # need specific repos for s390x
 ifeq ($(ARCH),s390x)
@@ -16,7 +16,7 @@ endif
 
 BUILDER_IMAGE=containerd-builder-$@-$(GOARCH):$(shell git rev-parse --short HEAD)
 BUILD=docker build \
-	 --build-arg GO_DL_URL="$(GO_DL_URL)" \
+	 --build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 	 --build-arg REF="$(REF)" \
 	 --build-arg OFFLINE_INSTALL_REF="$(OFFLINE_INSTALL_REF)" \
 
@@ -48,9 +48,9 @@ CTR=docker run \
 CONTAINERD_REPO?=containerd/containerd
 CONTAINERD_BRANCH?=release/1.1
 CONTAINERD_DIR?=$(shell basename $(CONTAINERD_REPO))
-CONTAINERD_MOUNT?=C:\go\src\github.com\containerd\containerd
+CONTAINERD_MOUNT?=C:\gopath\src\github.com\containerd\containerd
 WINDOWS_BINARIES=containerd ctr
-WINDOWS_BUILDER=dockereng/windows-go-builder:go1.10.3-win1803
+WINDOWS_BUILDER=windows-fips-builder
 
 # Build tags seccomp and apparmor are needed by CRI plugin.
 BUILDTAGS ?= seccomp apparmor
@@ -101,12 +101,15 @@ fedora-%: artifacts/runc.tar
 	$(RUN)
 	$(CHOWN_TO_USER) build/
 
+$(WINDOWS_BUILDER):
+	docker build -f dockerfiles/windows.dockerfile -t $(WINDOWS_BUILDER) .
+
 $(CONTAINERD_DIR):
 	git clone git@github.com:$(CONTAINERD_REPO)
 	git -C $(CONTAINERD_DIR) checkout $(CONTAINERD_BRANCH)
 
 .PHONY: windows-binaries
-windows-binaries: $(CONTAINERD_DIR)
+windows-binaries: $(CONTAINERD_DIR) $(WINDOWS_BUILDER)
 	for binary in $(WINDOWS_BINARIES); do \
 		(set -x; docker run --rm -v "$(CURDIR)/$(CONTAINERD_DIR):$(CONTAINERD_MOUNT)" -w "$(CONTAINERD_MOUNT)" $(WINDOWS_BUILDER) $(GO_BUILD_FLAGS) $(GO_LDFLAGS) $(GO_TAGS) ./cmd/$$binary) || exit 1; \
 	done
