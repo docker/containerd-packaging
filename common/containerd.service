@@ -6,7 +6,7 @@ After=network.target
 [Service]
 ExecStartPre=/sbin/modprobe overlay
 ExecStart=/usr/bin/containerd
-ExecStartPost=/usr/libexec/containerd-offline-installer /var/lib/containerd/runc.tar docker.io/docker/runc
+ExecStartPost=/usr/libexec/containerd-offline-installer /var/lib/containerd-offline-installer/runc.tar docker.io/docker/runc
 KillMode=process
 Delegate=yes
 

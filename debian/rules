@@ -26,5 +26,5 @@ override_dh_auto_install: $(CONTAINERD_BINARIES) bin/containerd-offline-installe
 	done
 	install -D -m 0644 /root/common/containerd.service $(INSTALL_DIR)/lib/systemd/system/containerd.service
 	install -D -m 0644 /root/common/containerd.toml $(INSTALL_DIR)/etc/containerd/config.toml
-	install -D -m 0644 /root/runc.tar $(INSTALL_DIR)/var/lib/containerd/runc.tar
+	install -D -m 0644 /root/runc.tar $(INSTALL_DIR)/var/lib/containerd-offline-installer/runc.tar
 	install -D -m 0755 bin/containerd-offline-installer $(INSTALL_DIR)/usr/libexec/containerd-offline-installer

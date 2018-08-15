@@ -1,7 +1,7 @@
 GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
 REF?=master
 RUNC_REF?=v1.0.0-rc5
-OFFLINE_INSTALL_REF?=20eddbfe5d4d894cfee6974829c7d3981acba1be
+OFFLINE_INSTALL_REF?=8c1658b29376a51eb1ae0f311706331fcea69b18
 GOVERSION?=1.10.3
 GO_DL_URL?=$(shell GOVERSION=$(GOVERSION) ./scripts/gen-go-dl-url)
 
