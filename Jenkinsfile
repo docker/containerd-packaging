@@ -38,8 +38,7 @@ def genDEBBuild(String arch, String cmd) {
 				checkout scm
 				try {
 					stage("Build DEB ${arch}") {
-						sh("docker info")
-						sh("make DISTRIO=ubuntu:bionic ${cmd}")
+						sh("make ${cmd}")
 					}
 					stage("Archive DEB ${arch}") {
 						if (params.ARCHIVE) {
@@ -63,8 +62,7 @@ def genRPMBuild(String arch, String cmd) {
 				checkout scm
 				try {
 					stage("Build RPM for ${arch}") {
-						sh("docker info")
-						sh("make rpm")
+						sh("make ${cmd}")
 					}
 					stage("Archive RPM for ${arch}") {
 						if (params.ARCHIVE) {
@@ -112,14 +110,15 @@ arches = [
 ]
 
 rpms = [ 
+	"fedora-27",
 	"fedora-28",
-	"centos7"
+	"centos-7"
 ]
 
 packageLookup = [ 
+	"fedora-27": arches - ["s390x"],
 	"fedora-28": arches - ["s390x"],
-	"fedora-29": arches - ["s390x"],
-	"centos7": arches,
+	"centos-7": arches,
 	"deb" : arches
 ]
 

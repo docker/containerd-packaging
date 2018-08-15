@@ -8,35 +8,17 @@ GO_DL_URL?=$(shell GOVERSION=$(GOVERSION) ./scripts/gen-go-dl-url)
 
 # need specific repos for s390x
 ifeq ($(ARCH),s390x)
-	DISTRO_CENTOS=clefos:7 # no s390x for fedora
+	# no s390x for fedora
+	DOCKER_FILE_PREFIX=centos.s390x
 else 
-	DISTRO_FEDORA=fedora:$*
-	DISTRO_CENTOS=centos:7
+	DOCKER_FILE_PREFIX=centos
 endif
 
 BUILDER_IMAGE=containerd-builder-$@-$(GOARCH):$(shell git rev-parse --short HEAD)
-BUILD_FEDORA=docker build \
+BUILD=docker build \
 	 --build-arg GO_DL_URL="$(GO_DL_URL)" \
 	 --build-arg REF="$(REF)" \
-	 --build-arg DISTRO="$(DISTRO_FEDORA)" \
-	 --build-arg SUITE="$*" \
 	 --build-arg OFFLINE_INSTALL_REF="$(OFFLINE_INSTALL_REF)" \
-	 -f dockerfiles/fedora.dockerfile \
-	  -t $(BUILDER_IMAGE) .
-BUILD_CENTOS=docker build \
-	 --build-arg GO_DL_URL="$(GO_DL_URL)" \
-	 --build-arg REF="$(REF)" \
-	 --build-arg DISTRO='$(DISTRO_CENTOS)' \
-	 --build-arg OFFLINE_INSTALL_REF="$(OFFLINE_INSTALL_REF)" \
-	 -f dockerfiles/centos.dockerfile \
-	 -t $(BUILDER_IMAGE) .
-BUILD_DEB=docker build \
-	 --build-arg GO_DL_URL="$(GO_DL_URL)" \
-	 --build-arg REF="$(REF)" \
-	 --build-arg DISTRO="$(DISTRO)" \
-	 --build-arg OFFLINE_INSTALL_REF="$(OFFLINE_INSTALL_REF)" \
-	 -f dockerfiles/deb.dockerfile \
-	 -t $(BUILDER_IMAGE) .
 
 VOLUME_MOUNTS=-v "$(CURDIR)/build/DEB:/out" \
 	-v "$(CURDIR)/build/RPMS:/root/rpmbuild/RPMS" \
@@ -94,23 +76,28 @@ artifacts/runc.tar:
 # For deb packages only need to build one package
 .PHONY: deb
 deb: artifacts/runc.tar
-	$(BUILD_DEB)
+	$(BUILD) \
+	 -f dockerfiles/$@.dockerfile \
+	 -t $(BUILDER_IMAGE) .
 	$(RUN)
 	$(CHOWN_TO_USER) build/
 
 .PHONY: rpm
-rpm:  centos7 fedora-28 fedora-29
+rpm:  centos-7 fedora-28 
 
-# TODO: Need a check for s390x
-.PHONY: centos7
-centos7: artifacts/runc.tar
-	$(BUILD_CENTOS)
+.PHONY: centos-7
+centos-7: artifacts/runc.tar
+	$(BUILD) \
+	-f dockerfiles/$(DOCKER_FILE_PREFIX).dockerfile \
+	 -t $(BUILDER_IMAGE) .
 	$(RUN)
 	$(CHOWN_TO_USER) build/
 
 .PHONY: fedora-%
 fedora-%: artifacts/runc.tar
-	$(BUILD_FEDORA)
+	$(BUILD) \
+	-f dockerfiles/$@.dockerfile \
+	-t $(BUILDER_IMAGE) .
 	$(RUN)
 	$(CHOWN_TO_USER) build/
 

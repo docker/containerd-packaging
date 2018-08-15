@@ -39,8 +39,9 @@ export RPM_VERSION
 export VERSION
 
 DIST=$( get_distribution)
-if [[ $DIST  == centos ]]; then
+if [ $DIST  == centos ] || [ $DIST == clefos ]; then
     (set -x; yum-builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
 else
+    echo Distribution is $DIST
     (set -x; dnf builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
 fi
