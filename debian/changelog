@@ -1,5 +1,5 @@
-containerd.io (1.1.0-1) UNRELEASED; urgency=medium
+containerd.io (1.2.0~beta.0-1) release; urgency=medium
 
-  * Initial release (Closes: TODO)
+  * Initial release
 
- -- Eli Uriegas <eli.uriegas@docker.com>  Mon, 23 Apr 2018 21:08:40 +0000
+ -- Eli Uriegas <eli.uriegas@docker.com>  Thu, 16 Aug 2018 16:54:35 +0000
