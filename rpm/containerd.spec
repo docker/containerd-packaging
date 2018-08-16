@@ -127,5 +127,5 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
-* Tue May 01 2018 Jose Bigio <jose.bigio@docker.com> - 1.1.0
-- Initial Package
+* Thu Aug 16 2018 Eli Uriegas <eli.uriegas@docker.com> - 1.2.0-1.0.beta.0-1
+- Intial release
