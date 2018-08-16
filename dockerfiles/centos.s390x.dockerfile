@@ -1,8 +1,6 @@
 # Install golang since the package managed one probably is too old and ppa's don't cover all distros
-FROM alpine:latest as golang
-RUN apk -u --no-cache add curl
-ARG GO_DL_URL
-RUN curl -fsSL "${GO_DL_URL}" | tar xzC /usr/local
+ARG GOLANG_IMAGE
+FROM ${GOLANG_IMAGE} as golang
 
 FROM alpine:latest as containerd
 RUN apk -u --no-cache add git

@@ -32,13 +32,13 @@ def saveS3(def Map args=[:]) {
 	}
 }
 
-def genDEBBuild(String arch, String cmd) {
+def genDEBBuild(String arch, String cmd, String golangImage) {
 	return [ "${cmd}-${arch}": { -> 
 			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
 				checkout scm
 				try {
 					stage("Build DEB ${arch}") {
-						sh("make ${cmd}")
+						sh("make GOLANG_IMAGE=${golangImage} ${cmd}")
 					}
 					stage("Archive DEB ${arch}") {
 						if (params.ARCHIVE) {
@@ -56,13 +56,13 @@ def genDEBBuild(String arch, String cmd) {
 	]
 }
 
-def genRPMBuild(String arch, String cmd) {
+def genRPMBuild(String arch, String cmd, String golangImage) {
 	return [ "${cmd}-${arch}": { -> 
 			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
 				checkout scm
 				try {
 					stage("Build RPM for ${arch}") {
-						sh("make ${cmd}")
+						sh("make GOLANG_IMAGE=${golangImage} ${cmd}")
 					}
 					stage("Archive RPM for ${arch}") {
 						if (params.ARCHIVE) {
@@ -106,7 +106,7 @@ arches = [
 	"s390x",
 	"ppc64le",
 	"aarch64",
-	"armhf"
+	"armhf",
 ]
 
 rpms = [ 
@@ -122,18 +122,31 @@ packageLookup = [
 	"deb" : arches
 ]
 
+golangRPMImages = [
+	"centos-7": "dockereng/go-crypto-swap:centos-go1.10.3-92409f5",
+	"fedora-27": "golang:1.10.3",
+	"fedora-28": "golang:1.10.3",
+]
 
 buildSteps = [:]
 for (rpm in rpms) {
 	arches = packageLookup[rpm]
 	for (arch in arches) {
-		buildSteps << genRPMBuild(arch, rpm)
+		golangImage = "golang:1.10.3"
+		if (arch == 'x86_64') {
+			golangImage = golangRPMImages[rpm]
+		}
+		buildSteps << genRPMBuild(arch, rpm, golangImage)
 	}
 }
 
 arches = packageLookup["deb"]
 for (arch in arches) {
-	buildSteps << genDEBBuild(arch, "deb")
+	golangImage = "golang:1.10.3"
+	if (arch == "x86_64") {
+		golangImage = "dockereng/go-crypto-swap:bionic-go1.10.3-92409f5"
+	}
+	buildSteps << genDEBBuild(arch, "deb", golangImage)
 }
 
 buildSteps << windowsBuild()
