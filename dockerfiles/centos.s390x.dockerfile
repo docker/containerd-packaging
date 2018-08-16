@@ -16,13 +16,9 @@ ARG OFFLINE_INSTALL_REF
 RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
 RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
 
-FROM centos:7
-# Install git (git2u) through the IUS repository since it's more up to date
-# RUN yum install -y https://centos7.iuscommunity.org/ius-release.rpm epel-release
-RUN yum install -y rpm-build git
-ARG REF
+FROM clefos:7
+RUN yum install -y rpm-build git yum-utils gcc
 ENV GOPATH /go
-ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 ENV GO_SRC_PATH /go/src/github.com/containerd/containerd
 COPY --from=golang /usr/local/go /usr/local/go/
 COPY --from=containerd /containerd ${GO_SRC_PATH}
@@ -33,6 +29,7 @@ COPY rpm/containerd.spec /root/rpmbuild/SPECS/containerd.spec
 COPY scripts/build-rpm /build-rpm
 COPY scripts/.rpm-helpers /.rpm-helpers
 WORKDIR /root/rpmbuild
-# Overwrite repo that was failing on aarch64
-RUN sed -i 's/altarch/centos/g' /etc/yum.repos.d/CentOS-Sources.repo
+# Need for build-rpm on s390x
+RUN ln /usr/bin/gcc /usr/bin/s390x-linux-gnu-gcc
+ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 ENTRYPOINT ["/build-rpm"]

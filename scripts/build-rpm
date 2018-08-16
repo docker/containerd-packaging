@@ -4,6 +4,18 @@ source /.rpm-helpers
 
 set -e
 
+# copied from get.docker.com
+get_distribution() {
+    lsb_dist=""
+    # Every system that we officially support has /etc/os-release
+    if [ -r /etc/os-release ]; then
+        lsb_dist="$(. /etc/os-release && echo "$ID")"
+    fi
+    # Returning an empty string here should be alright since the
+    # case statements don't act unless you provide an actual value
+    echo "$lsb_dist"
+}
+
 git --version
 VERSION="$(git --git-dir "${GO_SRC_PATH}/.git" describe --tags | sed 's/^v//')"
 RPM_VER_BITS=$(gen-rpm-ver-bits "${VERSION}")
@@ -26,4 +38,10 @@ export RPM_RELEASE_VERSION
 export RPM_VERSION
 export VERSION
 
-(set -x; yum-builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
+DIST=$( get_distribution)
+if [ $DIST  == centos ] || [ $DIST == clefos ]; then
+    (set -x; yum-builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
+else
+    echo Distribution is $DIST
+    (set -x; dnf builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
+fi
