@@ -11,10 +11,10 @@ properties(
 )
 
 hubCred = [
-    $class: 'UsernamePasswordMultiBinding',
-    usernameVariable: 'REGISTRY_USERNAME',
-    passwordVariable: 'REGISTRY_PASSWORD',
-    credentialsId: 'orcaeng-hub.docker.com',
+	$class: 'UsernamePasswordMultiBinding',
+	usernameVariable: 'REGISTRY_USERNAME',
+	passwordVariable: 'REGISTRY_PASSWORD',
+	credentialsId: 'orcaeng-hub.docker.com',
 ]
 
 DEFAULT_AWS_IMAGE = "anigeo/awscli@sha256:f4685e66230dcb77c81dc590140aee61e727936cf47e8f4f19a427fc851844a1"
@@ -33,7 +33,7 @@ def saveS3(def Map args=[:]) {
 }
 
 def genDEBBuild(String arch, String cmd, String golangImage) {
-	return [ "${cmd}-${arch}": { -> 
+	return [ "${cmd}-${arch}": { ->
 			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
 				checkout scm
 				try {
@@ -57,7 +57,7 @@ def genDEBBuild(String arch, String cmd, String golangImage) {
 }
 
 def genRPMBuild(String arch, String cmd, String golangImage) {
-	return [ "${cmd}-${arch}": { -> 
+	return [ "${cmd}-${arch}": { ->
 			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
 				checkout scm
 				try {
@@ -81,7 +81,7 @@ def genRPMBuild(String arch, String cmd, String golangImage) {
 }
 
 def windowsBuild() {
-	return ["WINDOWS":{ -> 
+	return ["WINDOWS":{ ->
 			node('windows-1803') {
 				checkout scm
 				try {
@@ -109,23 +109,26 @@ arches = [
 	"armhf",
 ]
 
-rpms = [ 
+rpms = [
 	"fedora-27",
 	"fedora-28",
-	"centos-7"
+	"centos-7",
+	"sles"
 ]
 
-packageLookup = [ 
+packageLookup = [
 	"fedora-27": arches - ["s390x"],
 	"fedora-28": arches - ["s390x"],
 	"centos-7": arches,
-	"deb" : arches
+	"sles": arches - ["aarch64", "armhf"],
+	"deb" : arches,
 ]
 
 golangRPMImages = [
-	"centos-7": "dockereng/go-crypto-swap:centos-go1.10.3-92409f5",
 	"fedora-27": "golang:1.10.3",
 	"fedora-28": "golang:1.10.3",
+	"centos-7": "dockereng/go-crypto-swap:stretch-go1.10.3-92409f5",
+	"sles": "dockereng/go-crypto-swap:stretch-go1.10.3-92409f5",
 ]
 
 buildSteps = [:]
@@ -144,7 +147,7 @@ arches = packageLookup["deb"]
 for (arch in arches) {
 	golangImage = "golang:1.10.3"
 	if (arch == "x86_64") {
-		golangImage = "dockereng/go-crypto-swap:bionic-go1.10.3-92409f5"
+		golangImage = "dockereng/go-crypto-swap:stretch-go1.10.3-92409f5"
 	}
 	buildSteps << genDEBBuild(arch, "deb", golangImage)
 }

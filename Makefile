@@ -101,6 +101,15 @@ fedora-%: artifacts/runc.tar
 	$(RUN)
 	$(CHOWN_TO_USER) build/
 
+.PHONY: sles
+sles: artifacts/runc.tar
+	$(BUILD) \
+	-f dockerfiles/$@.dockerfile \
+	-t $(BUILDER_IMAGE) .
+	$(RUN)
+	$(CHOWN_TO_USER) build/
+
+
 $(WINDOWS_BUILDER):
 	docker build -f dockerfiles/windows.dockerfile -t $(WINDOWS_BUILDER) .
 
