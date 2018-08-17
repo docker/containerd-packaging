@@ -112,14 +112,16 @@ arches = [
 rpms = [
 	"fedora-27",
 	"fedora-28",
-	"centos-7"
+	"centos-7",
+	"sles"
 ]
 
 packageLookup = [
 	"fedora-27": arches - ["s390x"],
 	"fedora-28": arches - ["s390x"],
 	"centos-7": arches,
-	"deb" : arches
+	"sles": arches - ["aarch64", "armhf"],
+	"deb" : arches,
 ]
 
 golangRPMImages = [

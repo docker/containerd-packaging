@@ -32,7 +32,7 @@ Provides: containerd
 Obsoletes: containerd
 Conflicts: containerd
 Version: %{getenv:RPM_VERSION}
-Release: %{getenv:RPM_RELEASE_VERSION}%{dist}
+Release: %{getenv:RPM_RELEASE_VERSION}%{?dist}
 Summary: An industry-standard container runtime
 License: ASL 2.0
 URL: https://containerd.io
@@ -43,9 +43,15 @@ Source3: containerd-offline-installer
 BuildRequires: make
 BuildRequires: gcc
 BuildRequires: systemd
-BuildRequires: btrfs-progs-devel
 BuildRequires: libseccomp-devel
+
+%if 0%{?suse_version}
+BuildRequires: libbtrfs-devel
+%else
+BuildRequires: btrfs-progs-devel
 BuildRequires: go-md2man
+%endif
+
 %{?systemd_requires}
 
 %description
