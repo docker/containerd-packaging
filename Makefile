@@ -1,6 +1,6 @@
 GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
 ARCH:=$(shell uname -m)
-REF?=master
+REF?=$(shell git ls-remote https://github.com/containerd/containerd.git | grep master | awk '{print $$1}')
 RUNC_REF?=v1.0.0-rc5
 OFFLINE_INSTALL_REF?=8c1658b29376a51eb1ae0f311706331fcea69b18
 GOVERSION?=1.10.3
@@ -21,8 +21,8 @@ BUILD=docker build \
 	 --build-arg OFFLINE_INSTALL_REF="$(OFFLINE_INSTALL_REF)" \
 
 VOLUME_MOUNTS=-v "$(CURDIR)/build/DEB:/out" \
-	-v "$(CURDIR)/build/RPMS:/root/rpmbuild/RPMS" \
-	-v "$(CURDIR)/build/SRPMS:/root/rpmbuild/SRPMS"
+	-v "$(CURDIR)/build/$@/RPMS:/root/rpmbuild/RPMS" \
+	-v "$(CURDIR)/build/$@/SRPMS:/root/rpmbuild/SRPMS"
 ifdef CONTAINERD_DIR
 	# Allow for overriding the main containerd directory, packaging will look weird but you'll have something
 	VOLUME_MOUNTS+=-v "$(shell readlink -e $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
@@ -108,7 +108,6 @@ sles: artifacts/runc.tar
 	-t $(BUILDER_IMAGE) .
 	$(RUN)
 	$(CHOWN_TO_USER) build/
-
 
 $(WINDOWS_BUILDER):
 	docker build -f dockerfiles/windows.dockerfile -t $(WINDOWS_BUILDER) .
