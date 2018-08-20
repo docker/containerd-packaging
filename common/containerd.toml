@@ -1,3 +1,5 @@
+disabled_plugins = ["cri"]
+
 #root = "/var/lib/containerd"
 #state = "/run/containerd"
 #subreaper = true
