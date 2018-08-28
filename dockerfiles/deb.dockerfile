@@ -2,14 +2,14 @@
 ARG GOLANG_IMAGE
 FROM ${GOLANG_IMAGE} as golang
 
-FROM alpine:3.7 as containerd
+FROM alpine:3.8 as containerd
 RUN apk -u --no-cache add git
 ARG REF
 ENV IMPORT_PATH github.com/containerd/containerd
 RUN git clone https://${IMPORT_PATH}.git /containerd
 RUN git -C /containerd checkout ${REF}
 
-FROM alpine:3.7 as offline-install
+FROM alpine:3.8 as offline-install
 RUN apk add git
 ARG OFFLINE_INSTALL_REF
 RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
