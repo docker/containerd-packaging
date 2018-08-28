@@ -1,6 +1,6 @@
 GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
 ARCH:=$(shell uname -m)
-REF?=$(shell git ls-remote https://github.com/containerd/containerd.git | grep master | awk '{print $$1}')
+REF:=ce243288e27971e324363de8f322d221635a8521 # v1.2.0-beta.2
 RUNC_REF?=v1.0.0-rc5
 OFFLINE_INSTALL_REF?=8c1658b29376a51eb1ae0f311706331fcea69b18
 GOVERSION?=1.10.3
