@@ -5,6 +5,7 @@ properties(
 		parameters(
 			[
 				booleanParam(name: 'ARCHIVE', defaultValue: false, description: 'Archive the build artifacts by pushing to an S3 bucket.'),
+				string(name: 'CONTAINERD_REF', defaultValue: 'master', description: 'Git ref of containerd repo to build.'),
 			]
 		)
 	]
@@ -38,7 +39,7 @@ def genDEBBuild(String arch, String cmd, String golangImage) {
 				checkout scm
 				try {
 					stage("Build DEB ${arch}") {
-						sh("make GOLANG_IMAGE=${golangImage} ${cmd}")
+						sh("make GOLANG_IMAGE=${golangImage} REF=${params.CONTAINERD_REF} ${cmd}")
 					}
 					stage("Archive DEB ${arch}") {
 						if (params.ARCHIVE) {
@@ -62,7 +63,7 @@ def genRPMBuild(String arch, String cmd, String golangImage) {
 				checkout scm
 				try {
 					stage("Build RPM for ${arch}") {
-						sh("make GOLANG_IMAGE=${golangImage} ${cmd}")
+						sh("make GOLANG_IMAGE=${golangImage} REF=${params.CONTAINERD_REF} ${cmd}")
 					}
 					stage("Archive RPM for ${arch}") {
 						if (params.ARCHIVE) {
