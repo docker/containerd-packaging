@@ -11,7 +11,7 @@ ARG OFFLINE_INSTALL_REF
 RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
 RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
 
-FROM dockereng/go-crypto-swap:bionic-go1.10.3-92409f5
+FROM dockereng/go-crypto-swap:bionic-go1.10.4-92409f5
 RUN apt-get update && apt-get install -y curl devscripts equivs git
 ENV GOPATH /go
 ENV GO_SRC_PATH /go/src/github.com/containerd/containerd

@@ -10,7 +10,7 @@ ARG OFFLINE_INSTALL_REF
 RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
 RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
 
-FROM dockereng/go-crypto-swap:centos-go1.10.3-92409f5
+FROM dockereng/go-crypto-swap:centos-go1.10.4-92409f5
 RUN yum install -y rpm-build git
 ENV GOPATH /go
 ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
