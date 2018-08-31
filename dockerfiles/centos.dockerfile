@@ -1,3 +1,4 @@
+ARG BUILD_IMAGE=centos:7
 # Install golang since the package managed one probably is too old and ppa's don't cover all distros
 ARG GOLANG_IMAGE
 FROM ${GOLANG_IMAGE} as golang
@@ -14,7 +15,7 @@ ARG OFFLINE_INSTALL_REF
 RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
 RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
 
-FROM centos:7
+FROM ${BUILD_IMAGE}
 RUN yum install -y rpm-build git
 ENV GOPATH /go
 ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin

@@ -33,13 +33,13 @@ def saveS3(def Map args=[:]) {
 	}
 }
 
-def genDEBBuild(String arch, String cmd, String golangImage) {
+def genDEBBuild(String arch, String cmd, String golangImage, String buildImage) {
 	return [ "${cmd}-${arch}": { ->
 			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
 				checkout scm
 				try {
 					stage("Build DEB ${arch}") {
-						sh("make GOLANG_IMAGE=${golangImage} REF=${params.CONTAINERD_REF} ${cmd}")
+						sh("make GOLANG_IMAGE=${golangImage} BUILD_IMAGE=${buildImage} REF=${params.CONTAINERD_REF} ${cmd}")
 					}
 					stage("Archive DEB ${arch}") {
 						if (params.ARCHIVE) {
@@ -57,13 +57,13 @@ def genDEBBuild(String arch, String cmd, String golangImage) {
 	]
 }
 
-def genRPMBuild(String arch, String cmd, String golangImage) {
+def genRPMBuild(String arch, String cmd, String golangImage, String buildImage) {
 	return [ "${cmd}-${arch}": { ->
 			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
 				checkout scm
 				try {
 					stage("Build RPM for ${arch}") {
-						sh("make GOLANG_IMAGE=${golangImage} REF=${params.CONTAINERD_REF} ${cmd}")
+						sh("make GOLANG_IMAGE=${golangImage} BUILD_IMAGE=${buildImage} REF=${params.CONTAINERD_REF} ${cmd}")
 					}
 					stage("Archive RPM for ${arch}") {
 						if (params.ARCHIVE) {
@@ -128,8 +128,8 @@ packageLookup = [
 golangRPMImages = [
 	"fedora-27": "golang:1.10.3",
 	"fedora-28": "golang:1.10.3",
-	"centos-7": "dockereng/go-crypto-swap:stretch-go1.10.3-92409f5",
-	"sles": "dockereng/go-crypto-swap:stretch-go1.10.3-92409f5",
+	"centos-7": "dockereng/go-crypto-swap:centos-go1.10.4-92409f5",
+	"sles": "dockereng/go-crypto-swap:sles-go1.10.4-92409f5",
 ]
 
 buildSteps = [:]
@@ -137,20 +137,29 @@ for (rpm in rpms) {
 	arches = packageLookup[rpm]
 	for (arch in arches) {
 		golangImage = "golang:1.10.3"
+		buildImage = rpm.replaceAll('-', ':')
+		if (rpm == 'sles') {
+			buildImage = "dockereng/sles:12.2"
+		}
 		if (arch == 'x86_64') {
 			golangImage = golangRPMImages[rpm]
+			if (golangImage.contains('go-crypto-swap')) {
+				buildImage = golangImage
+			}
 		}
-		buildSteps << genRPMBuild(arch, rpm, golangImage)
+		buildSteps << genRPMBuild(arch, rpm, golangImage, buildImage)
 	}
 }
 
 arches = packageLookup["deb"]
 for (arch in arches) {
 	golangImage = "golang:1.10.3"
+	buildImage = "ubuntu:bionic"
 	if (arch == "x86_64") {
-		golangImage = "dockereng/go-crypto-swap:stretch-go1.10.3-92409f5"
+		golangImage = "dockereng/go-crypto-swap:bionic-go1.10.4-92409f5"
+		buildImage = golangImage
 	}
-	buildSteps << genDEBBuild(arch, "deb", golangImage)
+	buildSteps << genDEBBuild(arch, "deb", golangImage, buildImage)
 }
 
 buildSteps << windowsBuild()
