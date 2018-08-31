@@ -82,6 +82,14 @@ deb: artifacts/runc.tar
 	$(RUN)
 	$(CHOWN_TO_USER) build/
 
+.PHONY: deb.fips
+deb.fips: artifacts/runc.tar
+	$(BUILD) \
+	 -f dockerfiles/$@.dockerfile \
+	 -t $(BUILDER_IMAGE) .
+	$(RUN)
+	$(CHOWN_TO_USER) build/
+
 .PHONY: rpm
 rpm:  centos-7 fedora-28 
 
@@ -89,6 +97,14 @@ rpm:  centos-7 fedora-28
 centos-7: artifacts/runc.tar
 	$(BUILD) \
 	-f dockerfiles/$(DOCKER_FILE_PREFIX).dockerfile \
+	 -t $(BUILDER_IMAGE) .
+	$(RUN)
+	$(CHOWN_TO_USER) build/
+
+.PHONY: centos-7.fips
+centos-7.fips: artifacts/runc.tar
+	$(BUILD) \
+	-f dockerfiles/centos.fips.dockerfile \
 	 -t $(BUILDER_IMAGE) .
 	$(RUN)
 	$(CHOWN_TO_USER) build/
@@ -103,6 +119,14 @@ fedora-%: artifacts/runc.tar
 
 .PHONY: sles
 sles: artifacts/runc.tar
+	$(BUILD) \
+	-f dockerfiles/$@.dockerfile \
+	-t $(BUILDER_IMAGE) .
+	$(RUN)
+	$(CHOWN_TO_USER) build/
+
+.PHONY: sles.fips
+sles.fips: artifacts/runc.tar
 	$(BUILD) \
 	-f dockerfiles/$@.dockerfile \
 	-t $(BUILDER_IMAGE) .
