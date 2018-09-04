@@ -5,6 +5,7 @@ RUNC_REF?=v1.0.0-rc5
 OFFLINE_INSTALL_REF?=8c1658b29376a51eb1ae0f311706331fcea69b18
 GOVERSION?=1.10.3
 GOLANG_IMAGE?=golang:1.10.3
+BUILD_IMAGE?=
 
 # need specific repos for s390x
 ifeq ($(ARCH),s390x)
@@ -16,6 +17,7 @@ endif
 
 BUILDER_IMAGE=containerd-builder-$@-$(GOARCH):$(shell git rev-parse --short HEAD)
 BUILD=docker build \
+	 --build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
 	 --build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 	 --build-arg REF="$(REF)" \
 	 --build-arg OFFLINE_INSTALL_REF="$(OFFLINE_INSTALL_REF)" \
