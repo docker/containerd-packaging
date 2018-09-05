@@ -5,7 +5,14 @@ gen-test-ver() {
     local suffix=$2
     local base_release_ver=$3
     test_num=${version#*-${suffix}.}
-    echo "${base_release_ver}.${test_num}.${suffix}.${test_num}"
+    without_rpm_ver="${base_release_ver}.${test_num}.${suffix}.${test_num}"
+    # This only really matters for blessed builds (i.e. builds that are only rpm specific or have a version specific in the spec)
+    # should output the latest rpm build number so that it gets placed accordingly in the repo
+    if grep -q "${version%-${suffix}.*}-${without_rpm_ver}" SPECS/containerd.spec; then
+        grep -o "${version%-${suffix}.*}-${without_rpm_ver}.[0-9]*" SPECS/containerd.spec | head -n 1 | cut -d"-" -f 2
+    else
+        echo "${without_rpm_ver}.1"
+    fi
 }
 
 gen-rpm-ver-bits() {

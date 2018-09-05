@@ -133,10 +133,10 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
-* Wed Sep 05 2018 Eli Uriegas <eli.uriegas@docker.com> - 1.2.0-1.2.beta.2-2
+* Wed Sep 05 2018 Eli Uriegas <eli.uriegas@docker.com> - 1.2.0-1.2.beta.2.2
 - Hardcoded paths for libexec and var lib considering the macros are different on SUSE based distributions
 
-* Tue Aug 28 2018 Andrew Hsu <andrewhsu@docker.com> - 1.2.0-1.2.beta.2-1
+* Tue Aug 28 2018 Andrew Hsu <andrewhsu@docker.com> - 1.2.0-1.2.beta.2.1
 - containerd 1.2.0 beta.2
 
 * Thu Aug 16 2018 Eli Uriegas <eli.uriegas@docker.com> - 1.2.0-1.0.beta.0-1
