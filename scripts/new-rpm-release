@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+set -e
+
+SPEC_FILE="rpm/containerd.spec"
+export SPEC_FILE
 source scripts/.rpm-helpers
 
 VERSION="$1"
@@ -9,15 +13,17 @@ if [ -z "$VERSION" ]; then
 fi
 RPM_VER_BITS=$(gen-rpm-ver-bits "${VERSION}")
 RPM_VERSION=$(echo "${RPM_VER_BITS}" | cut -f1 -d' ')
-RPM_RELEASE_VERSION=$(echo "${RPM_VER_BITS}" | cut -f2 -d' ')
+RPM_RELEASE_VERSION=$(echo "${RPM_VER_BITS}" | cut -f2 -d' ' | sed 's/\.[0-9]*$//')
 RPM_ITERATION=1
 
-while grep "$RPM_VERSION-$RPM_RELEASE_VERSION-$RPM_ITERATION" rpm/containerd.spec >/dev/null 2>&1;do
+echo "$RPM_RELEASE_VERSION"
+
+while grep "$RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION" rpm/containerd.spec >/dev/null 2>&1;do
     ((++RPM_ITERATION))
 done
 
 cat > rpm/new.changelog << EOF
-* $(date +"%a %b %d %Y") $(git config user.name) <$(git config user.email)> - $RPM_VERSION-$RPM_RELEASE_VERSION-$RPM_ITERATION
+* $(date +"%a %b %d %Y") $(git config user.name) <$(git config user.email)> - $RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION
 - TODO: Insert release changes here
 
 EOF
