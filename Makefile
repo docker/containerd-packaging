@@ -2,7 +2,6 @@ GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
 ARCH:=$(shell uname -m)
 REF?=$(shell git ls-remote https://github.com/containerd/containerd.git | grep master | awk '{print $$1}')
 RUNC_REF?=v1.0.0-rc5
-OFFLINE_INSTALL_REF?=8c1658b29376a51eb1ae0f311706331fcea69b18
 GOVERSION?=1.10.3
 GOLANG_IMAGE?=golang:1.10.3
 BUILD_IMAGE?=
@@ -11,7 +10,7 @@ BUILD_IMAGE?=
 ifeq ($(ARCH),s390x)
 	# no s390x for fedora
 	DOCKER_FILE_PREFIX=centos.s390x
-else 
+else
 	DOCKER_FILE_PREFIX=centos
 endif
 
@@ -20,7 +19,6 @@ BUILD=docker build \
 	 --build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
 	 --build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 	 --build-arg REF="$(REF)" \
-	 --build-arg OFFLINE_INSTALL_REF="$(OFFLINE_INSTALL_REF)" \
 
 VOLUME_MOUNTS=-v "$(CURDIR)/build/DEB:/out" \
 	-v "$(CURDIR)/build/$@/RPMS:/root/rpmbuild/RPMS" \
@@ -33,19 +31,6 @@ RUN=docker run --rm $(VOLUME_MOUNTS) -t $(BUILDER_IMAGE)
 
 CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
 CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
-
-# If the docker-containerd.sock is available use that, else use the default containerd.sock
-ifeq (,$(wildcard /var/run/docker/containerd/docker-containerd.sock))
-CONTAINERD_SOCK:=/var/run/docker/containerd/docker-containerd.sock
-else
-CONTAINERD_SOCK:=/var/run/containerd/containerd.sock
-endif
-CTR=docker run \
-	--rm -i \
-	-v $(CONTAINERD_SOCK):/ours/containerd.sock \
-	-v $(CURDIR)/artifacts:/artifacts \
-	docker:18.06.0-ce \
-	docker-containerd-ctr -a /ours/containerd.sock
 
 CONTAINERD_REPO?=containerd/containerd
 CONTAINERD_BRANCH?=release/1.1
@@ -69,15 +54,9 @@ clean:
 	-$(RM) -r artifacts
 	-$(RM) -r $(CONTAINERD_DIR)
 
-artifacts/runc.tar:
-	mkdir -p $$(dirname $@)
-	$(CTR) content fetch docker.io/docker/runc:$(RUNC_REF)
-	$(CTR) image export /$@ docker.io/docker/runc:$(RUNC_REF)
-	$(CHOWN_TO_USER) $$(dirname $@)
-
 # For deb packages only need to build one package
 .PHONY: deb
-deb: artifacts/runc.tar
+deb:
 	$(BUILD) \
 	 -f dockerfiles/$@.dockerfile \
 	 -t $(BUILDER_IMAGE) .
@@ -85,10 +64,10 @@ deb: artifacts/runc.tar
 	$(CHOWN_TO_USER) build/
 
 .PHONY: rpm
-rpm:  centos-7 fedora-28 
+rpm:  centos-7 fedora-28
 
 .PHONY: centos-7
-centos-7: artifacts/runc.tar
+centos-7:
 	$(BUILD) \
 	-f dockerfiles/$(DOCKER_FILE_PREFIX).dockerfile \
 	 -t $(BUILDER_IMAGE) .
@@ -96,7 +75,7 @@ centos-7: artifacts/runc.tar
 	$(CHOWN_TO_USER) build/
 
 .PHONY: fedora-%
-fedora-%: artifacts/runc.tar
+fedora-%:
 	$(BUILD) \
 	-f dockerfiles/$@.dockerfile \
 	-t $(BUILDER_IMAGE) .
@@ -104,7 +83,7 @@ fedora-%: artifacts/runc.tar
 	$(CHOWN_TO_USER) build/
 
 .PHONY: sles
-sles: artifacts/runc.tar
+sles:
 	$(BUILD) \
 	-f dockerfiles/$@.dockerfile \
 	-t $(BUILDER_IMAGE) .

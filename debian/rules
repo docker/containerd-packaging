@@ -12,13 +12,9 @@ bin/%: ## Create containerd binaries
 	@echo "+ make -C $(GO_SRC_PATH) --no-print-directory VERSION=$${VERSION} REVISION=$${REF} $@"
 	@make -C $(GO_SRC_PATH) --no-print-directory VERSION=$${VERSION} REVISION=$${REF} $@
 
-bin/containerd-offline-installer:
-	@echo "+ go build -o bin/containerd-offline-installer github.com/crosbymichael/offline-install"
-	@go build -o bin/containerd-offline-installer github.com/crosbymichael/offline-install
-
 override_dh_auto_build: $(CONTAINERD_BINARIES)
 
-override_dh_auto_install: $(CONTAINERD_BINARIES) bin/containerd-offline-installer
+override_dh_auto_install: $(CONTAINERD_BINARIES)
 	# set -x so we can see what's being installed where
 	for binary in $(CONTAINERD_BINARIES); do \
 		dest=$$(basename $$binary); \
@@ -26,5 +22,3 @@ override_dh_auto_install: $(CONTAINERD_BINARIES) bin/containerd-offline-installe
 	done
 	install -D -m 0644 /root/common/containerd.service $(INSTALL_DIR)/lib/systemd/system/containerd.service
 	install -D -m 0644 /root/common/containerd.toml $(INSTALL_DIR)/etc/containerd/config.toml
-	install -D -m 0644 /root/runc.tar $(INSTALL_DIR)/var/lib/containerd-offline-installer/runc.tar
-	install -D -m 0755 bin/containerd-offline-installer $(INSTALL_DIR)/usr/libexec/containerd-offline-installer
