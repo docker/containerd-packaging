@@ -9,6 +9,12 @@ ARG REF
 RUN git clone https://github.com/containerd/containerd.git /containerd
 RUN git -C /containerd checkout ${REF}
 
+FROM alpine:3.8 as runc
+RUN apk -u --no-cache add git
+ARG RUNC_REF
+RUN git clone https://github.com/opencontainers/runc.git /runc
+RUN git -C /runc checkout ${RUNC_REF}
+
 FROM ${BUILD_IMAGE}
 RUN zypper install -y rpm-build git
 RUN zypper install -y \
@@ -24,8 +30,8 @@ COPY --from=golang /usr/local/go /usr/local/go/
 # SLES doesn't have a go-md2man package because they're special
 RUN go get github.com/cpuguy83/go-md2man
 COPY --from=containerd /containerd ${GO_SRC_PATH}
+COPY --from=runc /runc /go/src/github.com/opencontainers/runc
 COPY common/ /root/rpmbuild/SOURCES/
-COPY artifacts/runc.tar /root/rpmbuild/SOURCES/runc.tar
 COPY rpm/containerd.spec /root/rpmbuild/SPECS/containerd.spec
 COPY scripts/build-rpm /build-rpm
 COPY scripts/.rpm-helpers /.rpm-helpers

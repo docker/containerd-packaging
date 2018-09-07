@@ -4,7 +4,6 @@ REF?=$(shell git ls-remote https://github.com/containerd/containerd.git | grep m
 RUNC_REF?=v1.0.0-rc5
 GOVERSION?=1.10.3
 GOLANG_IMAGE?=golang:1.10.3
-BUILD_IMAGE?=
 
 # need specific repos for s390x
 ifeq ($(ARCH),s390x)
@@ -14,11 +13,15 @@ else
 	DOCKER_FILE_PREFIX=centos
 endif
 
+ifdef BUILD_IMAGE
+	BUILD_IMAGE_FLAG=--build-arg BUILD_IMAGE="$(BUILD_IMAGE)"
+endif
 BUILDER_IMAGE=containerd-builder-$@-$(GOARCH):$(shell git rev-parse --short HEAD)
 BUILD=docker build \
-	 --build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
-	 --build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
-	 --build-arg REF="$(REF)" \
+	$(BUILD_IMAGE_FLAG) \
+	--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
+	--build-arg REF="$(REF)" \
+	--build-arg RUNC_REF="$(RUNC_REF)"
 
 VOLUME_MOUNTS=-v "$(CURDIR)/build/DEB:/out" \
 	-v "$(CURDIR)/build/$@/RPMS:/root/rpmbuild/RPMS" \

@@ -39,6 +39,7 @@ URL: https://containerd.io
 Source0: containerd
 Source1: containerd.service
 Source2: containerd.toml
+Source3: runc
 BuildRequires: make
 BuildRequires: gcc
 BuildRequires: systemd
@@ -67,6 +68,8 @@ rm -rf %{_topdir}/BUILD/
 cp -rf /go/src/%{import_path} %{_topdir}/SOURCES/containerd
 # symlink the go source path to our build directory
 ln -s /go/src/%{import_path} %{_topdir}/BUILD
+# Copy over our source code from our gopath to our source directory
+cp -rf /go/src/github.com/opencontainers/runc %{_topdir}/SOURCES/runc
 cd %{_topdir}/BUILD/
 
 
@@ -83,6 +86,10 @@ pushd /go/src/%{import_path}
 /go/src/%{import_path}/bin/ctr --version
 popd
 
+pushd /go/src/github.com/opencontainers/runc
+make runc
+popd
+
 
 %install
 cd %{_topdir}/BUILD
@@ -91,6 +98,7 @@ install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
 install -D -m 0755 bin/ctr %{buildroot}%{_bindir}/ctr
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
+install -D -m 0755 /go/src/github.com/opencontainers/runc/runc %{buildroot}%{_sbindir}/runc
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
@@ -116,6 +124,7 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %{_bindir}/containerd
 %{_bindir}/containerd-shim
 %{?with_ctr:%{_bindir}/ctr}
+%{_sbindir}/runc
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
 /%{_mandir}/man1/*
