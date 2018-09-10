@@ -10,11 +10,11 @@ ENV IMPORT_PATH github.com/containerd/containerd
 RUN git clone https://${IMPORT_PATH}.git /containerd
 RUN git -C /containerd checkout ${REF}
 
-FROM alpine:3.8 as offline-install
-RUN apk add git
-ARG OFFLINE_INSTALL_REF
-RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
-RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
+FROM alpine:3.8 as runc
+RUN apk -u --no-cache add git
+ARG RUNC_REF
+RUN git clone https://github.com/opencontainers/runc.git /runc
+RUN git -C /runc checkout ${RUNC_REF}
 
 FROM ${BUILD_IMAGE}
 RUN apt-get update && apt-get install -y curl devscripts equivs git
@@ -24,13 +24,12 @@ ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 ARG REF
 COPY --from=golang /usr/local/go /usr/local/go/
 COPY --from=containerd /containerd ${GO_SRC_PATH}
-COPY --from=offline-install /offline-install /go/src/github.com/crosbymichael/offline-install
+COPY --from=runc /runc /go/src/github.com/opencontainers/runc
 
 # Set up debian packaging files
 RUN mkdir -p /root/containerd
 COPY debian/ /root/containerd/debian
 COPY common/ /root/common
-COPY artifacts/runc.tar /root/runc.tar
 WORKDIR /root/containerd
 
 # Install all of our build dependencies, if any

@@ -39,7 +39,7 @@ URL: https://containerd.io
 Source0: containerd
 Source1: containerd.service
 Source2: containerd.toml
-Source3: containerd-offline-installer
+Source3: runc
 BuildRequires: make
 BuildRequires: gcc
 BuildRequires: systemd
@@ -66,9 +66,10 @@ low-level storage and network attachments, etc.
 rm -rf %{_topdir}/BUILD/
 # Copy over our source code from our gopath to our source directory
 cp -rf /go/src/%{import_path} %{_topdir}/SOURCES/containerd
-cp -rf /go/src/github.com/crosbymichael/offline-install %{_topdir}/SOURCES/containerd-offline-installer
 # symlink the go source path to our build directory
 ln -s /go/src/%{import_path} %{_topdir}/BUILD
+# Copy over our source code from our gopath to our source directory
+cp -rf /go/src/github.com/opencontainers/runc %{_topdir}/SOURCES/runc
 cd %{_topdir}/BUILD/
 
 
@@ -85,19 +86,19 @@ pushd /go/src/%{import_path}
 /go/src/%{import_path}/bin/ctr --version
 popd
 
-pushd /go/src/github.com/crosbymichael/offline-install
-go build -o %{_topdir}/BUILD/bin/containerd-offline-installer main.go
+pushd /go/src/github.com/opencontainers/runc
+make runc
 popd
+
 
 %install
 cd %{_topdir}/BUILD
 install -D -m 0755 bin/containerd %{buildroot}%{_bindir}/containerd
 install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
-install -D -m 0755 bin/containerd-offline-installer %{buildroot}/usr/libexec/containerd-offline-installer
 install -D -m 0755 bin/ctr %{buildroot}%{_bindir}/ctr
-install -D -m 0644 %{_topdir}/SOURCES/runc.tar %{buildroot}/var/lib/containerd-offline-installer/runc.tar
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
+install -D -m 0755 /go/src/github.com/opencontainers/runc/runc %{buildroot}%{_sbindir}/runc
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
@@ -122,11 +123,10 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %doc README.md
 %{_bindir}/containerd
 %{_bindir}/containerd-shim
-/usr/libexec/containerd-offline-installer
 %{?with_ctr:%{_bindir}/ctr}
+%{_sbindir}/runc
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
-/var/lib/containerd-offline-installer/runc.tar
 /%{_mandir}/man1/*
 /%{_mandir}/man5/*
 %config(noreplace) %{_sysconfdir}/containerd/config.toml

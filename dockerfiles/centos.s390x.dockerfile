@@ -8,11 +8,11 @@ ARG REF
 RUN git clone https://github.com/containerd/containerd.git /containerd
 RUN git -C /containerd checkout ${REF}
 
-FROM alpine:3.8 as offline-install
+FROM alpine:3.8 as runc
 RUN apk -u --no-cache add git
-ARG OFFLINE_INSTALL_REF
-RUN git clone https://github.com/crosbymichael/offline-install.git /offline-install
-RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
+ARG RUNC_REF
+RUN git clone https://github.com/opencontainers/runc.git /runc
+RUN git -C /runc checkout ${RUNC_REF}
 
 FROM clefos:7
 RUN yum install -y rpm-build git yum-utils gcc
@@ -20,9 +20,8 @@ ENV GOPATH /go
 ENV GO_SRC_PATH /go/src/github.com/containerd/containerd
 COPY --from=golang /usr/local/go /usr/local/go/
 COPY --from=containerd /containerd ${GO_SRC_PATH}
-COPY --from=offline-install /offline-install /go/src/github.com/crosbymichael/offline-install
+COPY --from=runc /runc /go/src/github.com/opencontainers/runc
 COPY common/ /root/rpmbuild/SOURCES/
-COPY artifacts/runc.tar /root/rpmbuild/SOURCES/runc.tar
 COPY rpm/containerd.spec /root/rpmbuild/SPECS/containerd.spec
 COPY scripts/build-rpm /build-rpm
 COPY scripts/.rpm-helpers /.rpm-helpers
