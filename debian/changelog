@@ -1,3 +1,9 @@
+containerd.io (1.2.0~rc.0-1) release; urgency=medium
+
+  * containerd 1.2.0-rc.0 release
+
+ -- Eli Uriegas <eli.uriegas@docker.com>  Tue, 25 Sep 2018 20:36:38 +0000
+
 containerd.io (1.2.0~beta.2-2) release; urgency=medium
 
   * Removed offline installer for runc, package as a binary instead

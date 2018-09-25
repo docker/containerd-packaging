@@ -133,6 +133,9 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Tue Sep 25 2018 Eli Uriegas <eli.uriegas@docker.com> - 1.2.0-2.0.rc.0.1
+- containerd 1.2.0-rc.0 release
+
 * Wed Sep 05 2018 Eli Uriegas <eli.uriegas@docker.com> - 1.2.0-1.2.beta.2.2
 - Hardcoded paths for libexec and var lib considering the macros are different on SUSE based distributions
 - Removed offline installer for runc, package as a binary instead
