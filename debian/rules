@@ -15,7 +15,7 @@ bin/%: ## Create containerd binaries
 	mv -v $(GO_SRC_PATH)/$@ $@
 
 bin/runc:
-	make -C /go/src/github.com/opencontainers/runc runc && mv -v /go/src/github.com/opencontainers/runc/runc $@
+	make -C /go/src/github.com/opencontainers/runc BUILDTAGS='seccomp apparmor selinux' runc && mv -v /go/src/github.com/opencontainers/runc/runc $@
 
 override_dh_auto_build: $(CONTAINERD_BINARIES)
 

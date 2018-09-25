@@ -87,7 +87,7 @@ pushd /go/src/%{import_path}
 popd
 
 pushd /go/src/github.com/opencontainers/runc
-make runc
+make BUILDTAGS='seccomp apparmor selinux' runc
 popd
 
 
