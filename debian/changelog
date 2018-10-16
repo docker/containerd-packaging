@@ -1,6 +1,7 @@
 containerd.io (1.2.0~rc.1-1) release; urgency=medium
 
   * containerd 1.2.0-rc.1 release
+  * Set Tasks=infinity in the systemd service file
 
  -- Eli Uriegas <eli.uriegas@docker.com>  Fri, 05 Oct 2018 16:54:33 +0000
 
