@@ -1,3 +1,9 @@
+containerd.io (1.2.0~rc.2-1) release; urgency=medium
+
+  * containerd 1.2.0-rc.2 release
+
+ -- Eli Uriegas <eli.uriegas@docker.com>  Tue, 16 Oct 2018 20:56:54 +0000
+
 containerd.io (1.2.0~rc.1-1) release; urgency=medium
 
   * containerd 1.2.0-rc.1 release
