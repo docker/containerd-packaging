@@ -133,6 +133,9 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Tue Oct 16 2018 Eli Uriegas <eli.uriegas@docker.com> - 1.2.0-2.2.rc.2.1
+- containerd 1.2.0-rc.2 release
+
 * Fri Oct 05 2018 Eli Uriegas <eli.uriegas@docker.com> - 1.2.0-2.1.rc.1.1
 - containerd 1.2.0-rc.1 release
 - Set Tasks=infinity in the systemd service file
