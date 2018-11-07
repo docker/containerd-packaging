@@ -80,7 +80,8 @@ centos-7:
 .PHONY: fedora-%
 fedora-%:
 	$(BUILD) \
-	-f dockerfiles/$@.dockerfile \
+	--build-arg FEDORA_VERSION=$* \
+	-f dockerfiles/fedora.dockerfile \
 	-t $(BUILDER_IMAGE) .
 	$(RUN)
 	$(CHOWN_TO_USER) build/

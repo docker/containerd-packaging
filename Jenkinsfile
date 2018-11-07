@@ -118,8 +118,8 @@ rpms = [
 ]
 
 packageLookup = [
-	"fedora-27": arches - ["s390x"],
-	"fedora-28": arches - ["s390x"],
+	"fedora-28": arches - ["s390x", "armhf"],
+	"fedora-29": arches - ["s390x", "armhf"],
 	"centos-7": arches,
 	"sles": arches - ["aarch64", "armhf"],
 	"deb" : arches,
