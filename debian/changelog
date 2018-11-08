@@ -1,3 +1,9 @@
+containerd.io (1.2.0-2) release; urgency=medium
+
+  * bump runc v1.0.0-rc5 to 58592df
+
+ -- Andrew Hsu <andrewhsu@docker.com>  Thu, 08 Nov 2018 19:42:24 +0000
+
 containerd.io (1.2.0-1) release; urgency=medium
 
   * containerd 1.2.0 release

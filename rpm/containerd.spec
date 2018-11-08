@@ -133,6 +133,9 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Thu Nov 08 2018 Andrew Hsu <andrewhsu@docker.com> - 1.2.0-3.2
+- bump runc v1.0.0-rc5 to 58592df
+
 * Mon Nov 05 2018 Eli Uriegas <eli.uriegas@docker.com> - 1.2.0-3.1
 - containerd 1.2.0 release
 
