@@ -16,7 +16,7 @@ Package: containerd.io
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends}
-Provides: containerd
-Conflicts: containerd
-Replaces: containerd
+Provides: containerd, runc
+Conflicts: containerd, runc
+Replaces: containerd, runc
 Description: An open and reliable container runtime
