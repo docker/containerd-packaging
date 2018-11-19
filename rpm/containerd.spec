@@ -29,8 +29,16 @@ AutoReq: no
 
 Name: containerd.io
 Provides: containerd
+Provides: runc
+
+# Obsolete packages
 Obsoletes: containerd
+Obsoletes: runc
+
+# Conflicting packages
 Conflicts: containerd
+Conflicts: runc
+
 Version: %{getenv:RPM_VERSION}
 Release: %{getenv:RPM_RELEASE_VERSION}%{?dist}
 Summary: An industry-standard container runtime
