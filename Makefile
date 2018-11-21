@@ -36,7 +36,7 @@ CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
 CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
 
 CONTAINERD_REPO?=containerd/containerd
-CONTAINERD_BRANCH?=release/1.1
+CONTAINERD_BRANCH?=release/1.2
 CONTAINERD_DIR?=$(shell basename $(CONTAINERD_REPO))
 CONTAINERD_MOUNT?=C:\gopath\src\github.com\containerd\containerd
 WINDOWS_BINARIES=containerd ctr
