@@ -1,7 +1,7 @@
 GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
 ARCH:=$(shell uname -m)
 REF?=$(shell git ls-remote https://github.com/containerd/containerd.git | grep master | awk '{print $$1}')
-RUNC_REF?=v1.0.0-rc5
+RUNC_REF?=10d38b660a77168360df3522881e2dc2be5056bd
 GOVERSION?=1.10.3
 GOLANG_IMAGE?=golang:1.10.3
 
@@ -36,7 +36,7 @@ CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
 CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
 
 CONTAINERD_REPO?=containerd/containerd
-CONTAINERD_BRANCH?=release/1.1
+CONTAINERD_BRANCH?=release/1.2
 CONTAINERD_DIR?=$(shell basename $(CONTAINERD_REPO))
 CONTAINERD_MOUNT?=C:\gopath\src\github.com\containerd\containerd
 WINDOWS_BINARIES=containerd ctr
