@@ -30,7 +30,6 @@ ifdef CONTAINERD_DIR
 	# Allow for overriding the main containerd directory, packaging will look weird but you'll have something
 	VOLUME_MOUNTS+=-v "$(shell readlink -e $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
 endif
-RUN=docker run --rm $(VOLUME_MOUNTS) -t $(BUILDER_IMAGE)
 
 CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
 CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
@@ -63,7 +62,7 @@ deb:
 	$(BUILD) \
 	 -f dockerfiles/$@.dockerfile \
 	 -t $(BUILDER_IMAGE) .
-	$(RUN)
+	docker run --rm $(VOLUME_MOUNTS) -t $(BUILDER_IMAGE)
 	$(CHOWN_TO_USER) build/
 
 .PHONY: rpm
@@ -71,10 +70,11 @@ rpm:  centos-7 fedora-28
 
 .PHONY: centos-7
 centos-7:
+	# TODO remove RUNC_NOKMEM once kernel-memory bug has been fixed in RHEL/CentOS 3.10 kernels
 	$(BUILD) \
 	-f dockerfiles/$(DOCKER_FILE_PREFIX).dockerfile \
-	 -t $(BUILDER_IMAGE) .
-	$(RUN)
+	-t $(BUILDER_IMAGE) .
+	docker run --rm $(VOLUME_MOUNTS) --env RUNC_NOKMEM=nokmem -t $(BUILDER_IMAGE)
 	$(CHOWN_TO_USER) build/
 
 .PHONY: fedora-%
@@ -83,7 +83,7 @@ fedora-%:
 	--build-arg FEDORA_VERSION=$* \
 	-f dockerfiles/fedora.dockerfile \
 	-t $(BUILDER_IMAGE) .
-	$(RUN)
+	docker run --rm $(VOLUME_MOUNTS) -t $(BUILDER_IMAGE)
 	$(CHOWN_TO_USER) build/
 
 .PHONY: sles
@@ -91,7 +91,7 @@ sles:
 	$(BUILD) \
 	-f dockerfiles/$@.dockerfile \
 	-t $(BUILDER_IMAGE) .
-	$(RUN)
+	docker run --rm $(VOLUME_MOUNTS) -t $(BUILDER_IMAGE)
 	$(CHOWN_TO_USER) build/
 
 $(WINDOWS_BUILDER):

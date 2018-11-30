@@ -26,6 +26,7 @@ AutoReq: no
 %define SHA256SUM0 08f057ece7e518b14cce2e9737228a5a899a7b58b78248a03e02f4a6c079eeaf
 %global import_path github.com/containerd/containerd
 %global gopath %{getenv:GOPATH}
+%global runc_nokmem %{getenv:RUNC_NOKMEM}
 
 Name: containerd.io
 Provides: containerd
@@ -95,7 +96,7 @@ pushd /go/src/%{import_path}
 popd
 
 pushd /go/src/github.com/opencontainers/runc
-make BUILDTAGS='seccomp apparmor selinux' runc
+make BUILDTAGS='seccomp apparmor selinux %{runc_nokmem}' runc
 popd
 
 
