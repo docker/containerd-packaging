@@ -19,6 +19,7 @@ RUN yum install -y rpm-build git yum-utils gcc
 ENV GOPATH /go
 ENV GO_SRC_PATH /go/src/github.com/containerd/containerd
 COPY --from=golang /usr/local/go /usr/local/go/
+RUN go get github.com/cpuguy83/go-md2man
 COPY --from=containerd /containerd ${GO_SRC_PATH}
 COPY --from=runc /runc /go/src/github.com/opencontainers/runc
 COPY common/ /root/rpmbuild/SOURCES/
