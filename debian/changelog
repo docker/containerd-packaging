@@ -1,6 +1,7 @@
 containerd.io (1.2.1-1) release; urgency=medium
 
   * containerd 1.2.1 release
+  * update runc to 96ec2177ae841256168fcf76954f7177af9446eb
 
  -- Andrew Hsu <andrewhsu@docker.com>  Thu, 06 Dec 2018 00:50:40 +0000
 
