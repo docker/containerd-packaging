@@ -2,8 +2,8 @@ GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
 ARCH:=$(shell uname -m)
 REF?=$(shell git ls-remote https://github.com/containerd/containerd.git | grep master | awk '{print $$1}')
 RUNC_REF?=96ec2177ae841256168fcf76954f7177af9446eb
-GOVERSION?=1.10.5
-GOLANG_IMAGE?=golang:1.10.5
+GOVERSION?=1.10.6
+GOLANG_IMAGE?=golang:1.10.6
 
 # need specific repos for s390x
 ifeq ($(ARCH),s390x)

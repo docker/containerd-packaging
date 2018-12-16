@@ -1,5 +1,5 @@
 # escape=`
-FROM dockereng/go-crypto-swap:windows-go1.10.5-cd940a7
+FROM dockereng/go-crypto-swap:windows-go1.10.6-7c3f30e
 ENV AUTO_GOPATH=1
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 RUN Invoke-WebRequest 'https://raw.githubusercontent.com/jhowardmsft/docker-tdmgcc/master/gcc.zip' -OutFile C:\gcc.zip; `
