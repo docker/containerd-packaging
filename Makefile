@@ -102,8 +102,8 @@ $(CONTAINERD_DIR):
 	git -C $(CONTAINERD_DIR) checkout $(CONTAINERD_BRANCH)
 
 .PHONY: windows-binaries
-windows-binaries: $(CONTAINERD_DIR) $(WINDOWS_BUILDER)
+windows-binaries: $(CONTAINERD_DIR)
 	for binary in $(WINDOWS_BINARIES); do \
-		(set -x; docker run --rm -v "$(CURDIR)/$(CONTAINERD_DIR):$(CONTAINERD_MOUNT)" -w "$(CONTAINERD_MOUNT)" $(WINDOWS_BUILDER) $(GO_BUILD_FLAGS) $(GO_LDFLAGS) $(GO_TAGS) ./cmd/$$binary) || exit 1; \
+		(set -x; docker run --rm -v "$(CURDIR)/$(CONTAINERD_DIR):$(CONTAINERD_MOUNT)" -w "$(CONTAINERD_MOUNT)" dockereng/go-crypto-swap:windows-go1.10.6-7c3f30e go build $(GO_BUILD_FLAGS) $(GO_LDFLAGS) $(GO_TAGS) ./cmd/$$binary) || exit 1; \
 	done
 	ls $(CONTAINERD_DIR) | grep '.exe'
