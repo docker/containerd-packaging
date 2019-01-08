@@ -18,7 +18,7 @@ RPM_ITERATION=1
 
 echo "$RPM_RELEASE_VERSION"
 
-while grep "$RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION" rpm/containerd.spec >/dev/null 2>&1;do
+while grep "$RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION" rpm/runc.spec >/dev/null 2>&1;do
     ((++RPM_ITERATION))
 done
 
@@ -34,4 +34,4 @@ cleanup() {
 
 trap cleanup EXIT
 
-sed -i '/%changelog/ r rpm/new.changelog' rpm/containerd.spec
+sed -i '/%changelog/ r rpm/new.changelog' "${SPEC_FILE}"

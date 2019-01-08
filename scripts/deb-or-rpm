@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+IMAGE=$1
+
+run() {
+    docker run --rm -i "${IMAGE}" sh -c "$*" >/dev/null 2>/dev/null
+}
+
+if run rpm --version; then
+    echo "rpm"
+elif run dpkg --version; then
+    echo "deb"
+else
+    exit 1
+fi

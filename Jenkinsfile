@@ -1,166 +1,48 @@
-#!/groovy
+#!groovy
 
-properties(
-	[
-		parameters(
-			[
-				booleanParam(name: 'ARCHIVE', defaultValue: false, description: 'Archive the build artifacts by pushing to an S3 bucket.'),
-				string(name: 'CONTAINERD_REF', defaultValue: 'master', description: 'Git ref of containerd repo to build.'),
-			]
-		)
-	]
-)
+def arches = ["amd64", "armhf", "aarch64"]
 
-hubCred = [
-	$class: 'UsernamePasswordMultiBinding',
-	usernameVariable: 'REGISTRY_USERNAME',
-	passwordVariable: 'REGISTRY_PASSWORD',
-	credentialsId: 'orcaeng-hub.docker.com',
+def images = [
+	// Ubuntu is really the only distribution where we produce everything
+	[image: "ubuntu:bionic",              arches: arches],
+	[image: "debian:stretch",             arches: arches],
+	[image: "resin/rpi-raspbian:stretch", arches: arches - ["amd64", "aarch64"]],
+	[image: "centos:7",                   arches: arches - ["armhf"]],
+	[image: "fedora:latest",              arches: arches - ["armhf"]],
+	[image: "opensuse/leap:15",           arches: arches - ["armhf", "aarch64"]],
 ]
 
-DEFAULT_AWS_IMAGE = "anigeo/awscli@sha256:f4685e66230dcb77c81dc590140aee61e727936cf47e8f4f19a427fc851844a1"
-
-def saveS3(def Map args=[:]) {
-	def destS3Uri = "s3://docker-ci-artifacts/ci.qa.aws.dckr.io/${env.BUILD_TAG}/"
-	def awscli = "docker run --rm -e AWS_SECRET_ACCESS_KEY -e AWS_ACCESS_KEY_ID -v `pwd`:/z -w /z ${args.awscli_image}"
-	withCredentials([[
-		$class: 'AmazonWebServicesCredentialsBinding',
-		accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-		secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
-		credentialsId: 'ci@docker-qa.aws'
-	]]) {
-		sh("${awscli} s3 cp --only-show-errors ${args.name} '${destS3Uri}'")
+def generatePackageStep(opts, arch) {
+	return {
+		node("linux&&${arch}") {
+			stage("${opts.image}-${arch}") {
+				checkout scm
+				sh("docker pull ${opts.image}")
+				sh("make BUILD_IMAGE=${opts.image} clean build")
+			}
+			// TODO: Add upload step here
+		}
 	}
 }
 
-def genDEBBuild(String arch, String cmd, String golangImage, String buildImage) {
-	return [ "${cmd}-${arch}": { ->
-			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
-				checkout scm
-				try {
-					stage("Build DEB ${arch}") {
-						sh("make GOLANG_IMAGE=${golangImage} BUILD_IMAGE=${buildImage} REF=${params.CONTAINERD_REF} ${cmd}")
-					}
-					stage("Archive DEB ${arch}") {
-						if (params.ARCHIVE) {
-							print('Pushing deb file to S3 bucket.')
-							saveS3(name: "build/DEB/*.deb", awscli_image: DEFAULT_AWS_IMAGE)
-						} else {
-							print('Skipping archiving of deb.')
-						}
-					}
-				} finally {
-					sh("make clean")
-				}
-			}
-		}
-	]
-}
-
-def genRPMBuild(String arch, String cmd, String golangImage, String buildImage) {
-	return [ "${cmd}-${arch}": { ->
-			wrappedNode(label:"linux&&${arch}", cleanWorkspace: true) {
-				checkout scm
-				try {
-					stage("Build RPM for ${arch}") {
-						sh("make GOLANG_IMAGE=${golangImage} BUILD_IMAGE=${buildImage} REF=${params.CONTAINERD_REF} ${cmd}")
-					}
-					stage("Archive RPM for ${arch}") {
-						if (params.ARCHIVE) {
-							print('Pushing rpm file to S3 bucket.')
-							saveS3(name: "build/RPMS/${arch}/*.rpm", awscli_image: DEFAULT_AWS_IMAGE)
-						} else {
-							print('Skipping archiving of rpm.')
-						}
-					}
-				} finally {
-					sh("make clean")
-				}
-			}
-		}
-	]
-}
-
-def windowsBuild() {
-	return ["WINDOWS":{ ->
-			node('windows-1809') {
-				checkout scm
-				try {
-					withCredentials([hubCred]) {
-						bat("docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD")
-						stage('Build Binaries') {
-							sshagent(['docker-jenkins.github.ssh']) {
-								bat("make windows-binaries")
-							}
-						}
-					}
-				} finally {
-					bat("make clean")
-				}
-			}
-		}
-	]
-}
-
-arches = [
-	"x86_64",
-	//"s390x",
-	//"ppc64le",
-	"aarch64",
-	"armhf",
-]
-
-rpms = [
-	"fedora-27",
-	"fedora-28",
-	"centos-7",
-	"sles"
-]
-
-packageLookup = [
-	"fedora-28": arches - ["s390x", "armhf"],
-	"fedora-29": arches - ["s390x", "armhf"],
-	"centos-7": arches,
-	"sles": arches - ["aarch64", "armhf"],
-	"deb" : arches,
-]
-
-golangRPMImages = [
-	"fedora-27": "golang:1.11.8",
-	"fedora-28": "golang:1.11.8",
-	"centos-7": "dockereng/go-crypto-swap:centos-7-go1.11.8",
-	"sles": "dockereng/go-crypto-swap:sles-12.3-go1.11.8",
-]
-
-buildSteps = [:]
-for (rpm in rpms) {
-	arches = packageLookup[rpm]
-	for (arch in arches) {
-		golangImage = "golang:1.11.8"
-		buildImage = rpm.replaceAll('-', ':')
-		if (rpm == 'sles') {
-			buildImage = "dockereng/sles:12.3"
-		}
-		if (arch == 'x86_64') {
-			golangImage = golangRPMImages[rpm]
-			if (golangImage.contains('go-crypto-swap')) {
-				buildImage = golangImage
-			}
-		}
-		buildSteps << genRPMBuild(arch, rpm, golangImage, buildImage)
+def generatePackageSteps(opts) {
+	return opts.arches.collectEntries {
+		["${opts.image}-${it}": generatePackageStep(opts, it)]
 	}
 }
 
-arches = packageLookup["deb"]
-for (arch in arches) {
-	golangImage = "golang:1.11.8"
-	buildImage = "ubuntu:bionic"
-	if (arch == "x86_64") {
-		golangImage = "dockereng/go-crypto-swap:ubuntu-18.04-go1.11.8"
-		buildImage = golangImage
-	}
-	buildSteps << genDEBBuild(arch, "deb", golangImage, buildImage)
-}
+def packageBuildSteps = [:]
+packageBuildSteps << images.collectEntries { generatePackageSteps(it) }
 
-buildSteps << windowsBuild()
-parallel(buildSteps)
+pipeline {
+	agent none
+	stages {
+		stage('Build packages') {
+			steps {
+				script {
+					parallel(packageBuildSteps)
+				}
+			}
+		}
+	}
+}
