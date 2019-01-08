@@ -128,8 +128,8 @@ packageLookup = [
 golangRPMImages = [
 	"fedora-27": "golang:1.10.6",
 	"fedora-28": "golang:1.10.6",
-	"centos-7": "dockereng/go-crypto-swap:centos-go1.10.6-7c3f30e",
-	"sles": "dockereng/go-crypto-swap:sles-go1.10.6-7c3f30e",
+	"centos-7": "dockereng/go-crypto-swap:centos-7-go1.10.6",
+	"sles": "dockereng/go-crypto-swap:sles-12.3-go1.10.6",
 ]
 
 buildSteps = [:]
@@ -139,7 +139,7 @@ for (rpm in rpms) {
 		golangImage = "golang:1.10.6"
 		buildImage = rpm.replaceAll('-', ':')
 		if (rpm == 'sles') {
-			buildImage = "dockereng/sles:12.2"
+			buildImage = "dockereng/sles:12.3"
 		}
 		if (arch == 'x86_64') {
 			golangImage = golangRPMImages[rpm]
