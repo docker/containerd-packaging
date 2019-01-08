@@ -1,4 +1,4 @@
-ARG BUILD_IMAGE=dockereng/sles:12.2
+ARG BUILD_IMAGE=dockereng/sles:12.3
 # Install golang since the package managed one probably is too old and ppa's don't cover all distros
 ARG GOLANG_IMAGE
 FROM ${GOLANG_IMAGE} as golang
