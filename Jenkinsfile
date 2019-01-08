@@ -105,7 +105,7 @@ def windowsBuild() {
 arches = [
 	"x86_64",
 	//"s390x",
-	"ppc64le",
+	//"ppc64le",
 	"aarch64",
 	"armhf",
 ]
