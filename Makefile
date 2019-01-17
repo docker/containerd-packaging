@@ -30,6 +30,9 @@ ifdef CONTAINERD_DIR
 	# Allow for overriding the main containerd directory, packaging will look weird but you'll have something
 	VOLUME_MOUNTS+=-v "$(shell readlink -e $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
 endif
+ifdef RUNC_DIR
+	VOLUME_MOUNTS+=-v "$(shell readlink -e $(RUNC_DIR)):/go/src/github.com/opencontainers/runc"
+endif
 
 CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
 CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
