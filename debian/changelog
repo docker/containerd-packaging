@@ -1,3 +1,9 @@
+containerd.io (1.2.2-2) release; urgency=medium
+
+  * update runc to f7491ef134a6c41f3a99b0b539835d2472d17012
+
+ -- Eli Uriegas <eli.uriegas@docker.com>  Fri, 18 Jan 2019 00:12:35 +0000
+
 containerd.io (1.2.2-1) release; urgency=medium
 
   * containerd 1.2.2 release
