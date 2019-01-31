@@ -141,6 +141,10 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Thu Jan 31 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.2-3.3
+- [runc -> 09c8266] nsenter: clone /proc/self/exe to avoid exposing
+  host binary to container (CVE-2019-5736)
+
 * Fri Jan 18 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.2-3.2
 - update runc to f7491ef134a6c41f3a99b0b539835d2472d17012
 
