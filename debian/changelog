@@ -1,3 +1,10 @@
+containerd.io (1.2.2-3) release; urgency=high
+
+  * [runc -> 09c8266] nsenter: clone /proc/self/exe to avoid exposing
+    host binary to container (CVE-2019-5736)
+
+ -- Eli Uriegas <eli.uriegas@docker.com>  Thu, 31 Jan 2019 22:30:30 +0000
+
 containerd.io (1.2.2-2) release; urgency=medium
 
   * update runc to f7491ef134a6c41f3a99b0b539835d2472d17012
