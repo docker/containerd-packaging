@@ -126,17 +126,17 @@ packageLookup = [
 ]
 
 golangRPMImages = [
-	"fedora-27": "golang:1.10.6",
-	"fedora-28": "golang:1.10.6",
-	"centos-7": "dockereng/go-crypto-swap:centos-7-go1.10.6",
-	"sles": "dockereng/go-crypto-swap:sles-12.3-go1.10.6",
+	"fedora-27": "golang:1.10.8",
+	"fedora-28": "golang:1.10.8",
+	"centos-7": "dockereng/go-crypto-swap:centos-7-go1.10.8",
+	"sles": "dockereng/go-crypto-swap:sles-12.3-go1.10.8",
 ]
 
 buildSteps = [:]
 for (rpm in rpms) {
 	arches = packageLookup[rpm]
 	for (arch in arches) {
-		golangImage = "golang:1.10.6"
+		golangImage = "golang:1.10.8"
 		buildImage = rpm.replaceAll('-', ':')
 		if (rpm == 'sles') {
 			buildImage = "dockereng/sles:12.3"
@@ -153,10 +153,10 @@ for (rpm in rpms) {
 
 arches = packageLookup["deb"]
 for (arch in arches) {
-	golangImage = "golang:1.10.6"
+	golangImage = "golang:1.10.8"
 	buildImage = "ubuntu:bionic"
 	if (arch == "x86_64") {
-		golangImage = "dockereng/go-crypto-swap:bionic-go1.10.6-7c3f30e"
+		golangImage = "dockereng/go-crypto-swap:ubuntu-18.04-go1.10.8"
 		buildImage = golangImage
 	}
 	buildSteps << genDEBBuild(arch, "deb", golangImage, buildImage)
