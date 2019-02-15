@@ -1,3 +1,10 @@
+containerd.io (1.2.4-1) release; urgency=medium
+
+  * containerd 1.2.4 release
+  * update runc to 6635b4f0c6af3810594d2770f662f34ddc15b40d
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Fri, 15 Feb 2019 00:56:08 +0000
+
 containerd.io (1.2.2-3) release; urgency=high
 
   * [runc -> 09c8266] nsenter: clone /proc/self/exe to avoid exposing
