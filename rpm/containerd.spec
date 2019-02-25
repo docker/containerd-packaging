@@ -141,6 +141,10 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Fri Feb 15 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.4-3.1
+- containerd 1.2.4 release
+- update runc to 6635b4f0c6af3810594d2770f662f34ddc15b40d
+
 * Thu Jan 31 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.2-3.3
 - [runc -> 09c8266] nsenter: clone /proc/self/exe to avoid exposing
   host binary to container (CVE-2019-5736)
