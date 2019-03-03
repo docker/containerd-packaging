@@ -41,7 +41,7 @@ export VERSION
 DIST=$( get_distribution)
 if [ "$DIST"  == centos ] || [ "$DIST" == clefos ]; then
     (set -x; yum-builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
-elif [ "$DIST" == fedora ]; then
+elif [ "$DIST" == fedora ] || [ "$DIST" == rhel ]; then
     (set -x; dnf builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
 else
     # For distributions who don't have a builddep step, not naming names...

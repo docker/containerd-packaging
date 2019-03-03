@@ -69,7 +69,7 @@ deb:
 	$(CHOWN_TO_USER) build/
 
 .PHONY: rpm
-rpm:  centos-7 fedora-28
+rpm:  centos-7 fedora-28 rhel-8
 
 .PHONY: centos-7
 centos-7:
@@ -78,6 +78,15 @@ centos-7:
 	-f dockerfiles/$(DOCKER_FILE_PREFIX).dockerfile \
 	-t $(BUILDER_IMAGE) .
 	docker run --rm $(VOLUME_MOUNTS) --env RUNC_NOKMEM=nokmem -t $(BUILDER_IMAGE)
+	$(CHOWN_TO_USER) build/
+
+.PHONY: rhel-8
+rhel-8:
+	# TODO: Add btrfs back if it's packaged in RHEL 8 GA
+	$(BUILD) \
+	-f dockerfiles/rhel.dockerfile \
+	-t $(BUILDER_IMAGE) .
+	docker run --rm $(VOLUME_MOUNTS) -t $(BUILDER_IMAGE)
 	$(CHOWN_TO_USER) build/
 
 .PHONY: fedora-%
