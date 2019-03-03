@@ -15,7 +15,8 @@ RUN git clone https://github.com/crosbymichael/offline-install.git /offline-inst
 RUN git -C /offline-install checkout ${OFFLINE_INSTALL_REF}
 
 FROM centos:7
-RUN yum install -y rpm-build git
+RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+RUN yum install -y rpm-build git 
 ENV GOPATH /go
 ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 ENV GO_SRC_PATH /go/src/github.com/containerd/containerd

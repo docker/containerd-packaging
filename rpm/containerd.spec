@@ -49,7 +49,7 @@ BuildRequires: libseccomp-devel
 BuildRequires: libbtrfs-devel
 %else
 BuildRequires: btrfs-progs-devel
-BuildRequires: go-md2man
+BuildRequires: golang-github-cpuguy83-go-md2man
 %endif
 
 %{?systemd_requires}
