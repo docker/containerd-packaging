@@ -54,10 +54,13 @@ BuildRequires: gcc
 BuildRequires: systemd
 BuildRequires: libseccomp-devel
 
+# Should only return true if `el8` (rhel8) is NOT defined
+%if 0%{!?el8:1}
 %if 0%{?suse_version}
 BuildRequires: libbtrfs-devel
 %else
 BuildRequires: btrfs-progs-devel
+%endif
 %endif
 
 %{?systemd_requires}
