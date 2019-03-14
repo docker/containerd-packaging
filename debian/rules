@@ -6,11 +6,11 @@ CONTAINERD_BINARIES=bin/containerd bin/containerd-shim bin/ctr
 %:
 	dh $@ --with systemd
 
-# GO_SRC_PATH are defined in the dockerfile
+# GO_SRC_PATH and PACKAGE are defined in the dockerfile
 # VERSION and REF are defined in scripts/build-deb
 bin/%: ## Create containerd binaries
-	@echo "+ make -C $(GO_SRC_PATH) --no-print-directory VERSION=$${VERSION} REVISION=$${REF} $@"
-	@make -C $(GO_SRC_PATH) --no-print-directory VERSION=$${VERSION} REVISION=$${REF} $@
+	@echo "+ make -C $(GO_SRC_PATH) --no-print-directory VERSION=$${VERSION} REVISION=$${REF} PACKAGE=$${PACKAGE} $@"
+	@make -C $(GO_SRC_PATH) --no-print-directory VERSION=$${VERSION} REVISION=$${REF} PACKAGE=$${PACKAGE} $@
 	mkdir -p $(@D)
 	mv -v $(GO_SRC_PATH)/$@ $@
 

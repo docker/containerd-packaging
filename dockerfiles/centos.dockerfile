@@ -31,4 +31,7 @@ COPY scripts/.rpm-helpers /.rpm-helpers
 WORKDIR /root/rpmbuild
 # Overwrite repo that was failing on aarch64
 RUN sed -i 's/altarch/centos/g' /etc/yum.repos.d/CentOS-Sources.repo
+
+ARG PACKAGE
+ENV PACKAGE=${PACKAGE:-containerd.io}
 ENTRYPOINT ["/build-rpm"]

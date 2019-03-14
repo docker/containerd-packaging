@@ -30,4 +30,7 @@ WORKDIR /root/rpmbuild
 # Need for build-rpm on s390x
 RUN ln /usr/bin/gcc /usr/bin/s390x-linux-gnu-gcc
 ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
+
+ARG PACKAGE
+ENV PACKAGE=${PACKAGE:-containerd.io}
 ENTRYPOINT ["/build-rpm"]

@@ -30,4 +30,7 @@ COPY rpm/containerd.spec /root/rpmbuild/SPECS/containerd.spec
 COPY scripts/build-rpm /build-rpm
 COPY scripts/.rpm-helpers /.rpm-helpers
 WORKDIR /root/rpmbuild
+
+ARG PACKAGE
+ENV PACKAGE=${PACKAGE:-containerd.io}
 ENTRYPOINT ["/build-rpm"]
