@@ -89,6 +89,12 @@ rhel-8:
 	docker run --rm $(VOLUME_MOUNTS) -t $(BUILDER_IMAGE)
 	$(CHOWN_TO_USER) build/
 
+.PHONY: amazonlinux-2
+amazonlinux-2:
+	# lol that this works
+	$(MAKE) BUILD_IMAGE=amazonlinux:2 rhel-8
+	mv build/rhel-8 build/$@
+
 .PHONY: fedora-%
 fedora-%:
 	$(BUILD) \
