@@ -38,11 +38,10 @@ export RPM_RELEASE_VERSION
 export RPM_VERSION
 export VERSION
 
-DIST=$( get_distribution)
-if [ "$DIST"  == centos ] || [ "$DIST" == clefos ]; then
-    (set -x; yum-builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
-elif [ "$DIST" == fedora ] || [ "$DIST" == rhel ]; then
+if dnf --version >/dev/null 2>/dev/null; then
     (set -x; dnf builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
+elif yum --version >/dev/null 2>/dev/null; then
+    (set -x; yum-builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
 else
     # For distributions who don't have a builddep step, not naming names...
     (set -x; rpmbuild -ba SPECS/containerd.spec)
