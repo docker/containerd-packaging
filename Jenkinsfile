@@ -12,6 +12,7 @@ def images = [
     [image: "fedora:30",    arches: arches - ["armhf"]],
     [image: "fedora:29",    arches: arches - ["armhf"]],
     [image: "opensuse/leap:15", arches: arches - ["armhf", "aarch64"]],
+    [image: "resin/rpi-raspbian:stretch",   arches: arches - ["amd64", "aarch64"]],
     [image: "WINDOWS",			arches: ["1809"]],
 ]
 
