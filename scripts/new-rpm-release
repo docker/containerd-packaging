@@ -34,4 +34,4 @@ cleanup() {
 
 trap cleanup EXIT
 
-sed -i '/%changelog/ r rpm/new.changelog' rpm/containerd.spec
+sed -i'' -e '/%changelog/ r rpm/new.changelog' rpm/containerd.spec
