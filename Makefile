@@ -69,7 +69,9 @@ deb:
 	$(CHOWN_TO_USER) build/
 
 .PHONY: rpm
-rpm:  centos-7 fedora-28 rhel-8
+# NOTE: This is the default list, and only here for convenience. The actual list
+# of packages to build is configured in the Jenkinsfile
+rpm:  centos-7 fedora-30 rhel-8
 
 .PHONY: centos-7
 centos-7:
