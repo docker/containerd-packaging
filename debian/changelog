@@ -1,3 +1,11 @@
+containerd.io (1.2.6-1) release; urgency=medium
+
+  * containerd 1.2.6 release
+  * update runc to 029124da7af7360afa781a0234d1b083550f797c
+  * build with Go 1.11.8
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Wed, 9 Apr 2019 19:19:23 +0000
+
 containerd.io (1.2.5-1) release; urgency=medium
 
   * containerd 1.2.5 release
