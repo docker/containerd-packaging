@@ -39,4 +39,6 @@ RUN mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-reco
 COPY scripts/build-deb /build-deb
 COPY scripts/.helpers /.helpers
 
+ARG PACKAGE
+ENV PACKAGE=${PACKAGE:-containerd.io}
 ENTRYPOINT ["/build-deb"]

@@ -89,7 +89,7 @@ cd %{_topdir}/BUILD
 make man
 
 pushd /go/src/%{import_path}
-%define make_containerd(o:) make VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} %{?**};
+%define make_containerd(o:) make VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} %{?**};
 %make_containerd bin/containerd
 /go/src/%{import_path}/bin/containerd --version
 %make_containerd bin/containerd-shim

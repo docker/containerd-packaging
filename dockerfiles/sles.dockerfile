@@ -39,4 +39,7 @@ WORKDIR /root/rpmbuild
 # suse puts the default build dir as /usr/src/rpmbuild
 # to keep everything simple we just change the default
 RUN echo "%_topdir    /root/rpmbuild" > /root/.rpmmacros
+
+ARG PACKAGE
+ENV PACKAGE=${PACKAGE:-containerd.io}
 ENTRYPOINT ["/build-rpm"]

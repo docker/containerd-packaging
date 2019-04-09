@@ -2,6 +2,7 @@ GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
 ARCH:=$(shell uname -m)
 REF?=$(shell git ls-remote https://github.com/containerd/containerd.git | grep master | awk '{print $$1}')
 RUNC_REF?=029124da7af7360afa781a0234d1b083550f797c
+PACKAGE?=containerd.io
 GOVERSION?=1.11.8
 GOLANG_IMAGE?=golang:1.11.8
 
@@ -21,6 +22,7 @@ BUILD=docker build \
 	$(BUILD_IMAGE_FLAG) \
 	--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 	--build-arg REF="$(REF)" \
+	--build-arg PACKAGE="$(PACKAGE)" \
 	--build-arg RUNC_REF="$(RUNC_REF)"
 
 VOLUME_MOUNTS=-v "$(CURDIR)/build/DEB:/out" \
@@ -47,7 +49,7 @@ WIN_CRYPTO=dockereng/go-crypto-swap:windows-go1.11.8
 # Build tags seccomp and apparmor are needed by CRI plugin.
 BUILDTAGS ?= seccomp apparmor
 GO_TAGS=$(if $(BUILDTAGS),-tags "$(BUILDTAGS)",)
-GO_LDFLAGS=-ldflags '-s -w -X $(PKG)/version.Version=$(VERSION) -X $(PKG)/version.Revision=$(REVISION) -X $(PKG)/version.Package=$(PKG) $(EXTRA_LDFLAGS)'
+GO_LDFLAGS=-ldflags '-s -w -X $(PKG)/version.Version=$(VERSION) -X $(PKG)/version.Revision=$(REVISION) -X $(PKG)/version.Package=$(PACKAGE) $(EXTRA_LDFLAGS)'
 
 all: rpm deb
 
