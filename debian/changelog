@@ -1,3 +1,9 @@
+containerd.io (1.2.6-2) release; urgency=medium
+
+  * update runc to v1.0.0-rc8
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com> Fri, 26 Apr 2019 00:59:05 +0000
+
 containerd.io (1.2.6-1) release; urgency=medium
 
   * containerd 1.2.6 release
