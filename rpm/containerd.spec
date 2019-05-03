@@ -144,6 +144,9 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Fri Apr 26 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.6-3.2
+- update runc to v1.0.0-rc8
+
 * Tue Apr 09 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.6-3.1
 - containerd 1.2.6 release
 - update runc to 029124da7af7360afa781a0234d1b083550f797c
