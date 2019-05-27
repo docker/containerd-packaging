@@ -151,6 +151,9 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Wed Aug 07 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.6-3.4
+- build with Go 1.11.12
+
 * Tue Jun 11 2019 Kir Kolyshkin <kolyshkin@gmail.com> - 1.2.6-3.3
 - add requirement for container-selinux
 - move runc binary to %_bindir

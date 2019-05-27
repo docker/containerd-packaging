@@ -1,3 +1,9 @@
+containerd.io (1.2.6-4) release; urgency=medium
+
+  * build with Go 1.11.12
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com> Wed, 7 Aug 2019 22:24:17 +0000
+
 containerd.io (1.2.6-3) release; urgency=medium
 
   * move runc from /usr/sbin to /usr/bin
