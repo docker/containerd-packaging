@@ -49,7 +49,13 @@ Source0: containerd
 Source1: containerd.service
 Source2: containerd.toml
 Source3: runc
-Requires: container-selinux >= 2.74
+# container-selinux isn't a thing in suse flavors
+%if %{undefined suse_version}
+# amazonlinux2 doesn't have container-selinux either
+%if "%{?dist}" != ".amzn2"
+Requires: container-selinux >= 2:2.74
+%endif
+%endif
 BuildRequires: make
 BuildRequires: gcc
 BuildRequires: systemd
