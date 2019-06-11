@@ -109,7 +109,7 @@ install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
 install -D -m 0755 bin/ctr %{buildroot}%{_bindir}/ctr
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
-install -D -m 0755 /go/src/github.com/opencontainers/runc/runc %{buildroot}%{_sbindir}/runc
+install -D -m 0755 /go/src/github.com/opencontainers/runc/runc %{buildroot}%{_bindir}/runc
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
@@ -135,7 +135,7 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %{_bindir}/containerd
 %{_bindir}/containerd-shim
 %{?with_ctr:%{_bindir}/ctr}
-%{_sbindir}/runc
+%{_bindir}/runc
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
 /%{_mandir}/man1/*
@@ -144,6 +144,9 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Tue Jul 11 2019 Kir Kolyshkin <kolyshkin@gmail.com> - 1.2.6-3.3
+- move runc binary to %_bindir
+
 * Fri Apr 26 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.6-3.2
 - update runc to v1.0.0-rc8
 
