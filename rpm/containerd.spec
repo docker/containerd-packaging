@@ -135,7 +135,7 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %{_bindir}/containerd
 %{_bindir}/containerd-shim
 %{?with_ctr:%{_bindir}/ctr}
-%{_sbindir}/runc
+%{_bindir}/runc
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
 /%{_mandir}/man1/*
