@@ -1,3 +1,9 @@
+containerd.io (1.2.6-3) release; urgency=medium
+
+  * move runc from /usr/sbin to /usr/bin
+
+ -- Eli Uriegas <eli.uriegas@docker.com>  Wed, 12 Jun 2019 19:42:39 +0000
+
 containerd.io (1.2.6-2) release; urgency=medium
 
   * update runc to v1.0.0-rc8
