@@ -49,6 +49,7 @@ Source0: containerd
 Source1: containerd.service
 Source2: containerd.toml
 Source3: runc
+Requires: container-selinux >= 2.74
 BuildRequires: make
 BuildRequires: gcc
 BuildRequires: systemd
@@ -145,6 +146,7 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 %changelog
 * Tue Jul 11 2019 Kir Kolyshkin <kolyshkin@gmail.com> - 1.2.6-3.3
+- add requirement for container-selinux
 - move runc binary to %_bindir
 
 * Fri Apr 26 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.6-3.2
