@@ -46,23 +46,15 @@ elif yum-builddep --version >/dev/null 2>/dev/null; then
     dep_install='yum-builddep'
 fi
 
-pkg_manager='yum -y'
-if dnf --version >/dev/null 2>/dev/null; then
-    pkg_manager='dnf -y'
-elif zypper --version >/dev/null 2>/dev/null; then
-    pkg_manager='zypper -n'
-fi
-
 if [ -n "${dep_install}" ]; then
     # Install dependencies on distributions that support this, zypper doesn't have this option
     (set -x; ${dep_install} -y "${SPEC_FILE}")
-else
-    # This is mainly only for SuSE since they don't have a clear way to install dependencies
-    dependencies=$(rpmspec -P ${SPEC_FILE} | sed -e '/^BuildRequires:/!d' -e 's/^BuildRequires: //' | xargs)
-    (set -x; $pkg_manager install ${dependencies})
 fi
 
-DEST_DIR=/out/$(. /etc/os-release; echo "${ID}/${VERSION_ID}")/$(uname -m)/
+DIST_ID=$(. /etc/os-release; echo "${ID}")
+DIST_VERSION=$(. /etc/os-release; echo "${VERSION_ID}")
+ARCH=$(uname -m)
+DEST_DIR=/out/${DIST_ID}/${DIST_VERSION}/${ARCH}/
 (
     set -x
     rpmbuild -ba "${SPEC_FILE}"
