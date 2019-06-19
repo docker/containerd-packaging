@@ -70,3 +70,8 @@ DEST_DIR=/out/$(. /etc/os-release; echo "${ID}/${VERSION_ID}")/$(uname -m)/
     mv -v RPMS/*/*.rpm "${DEST_DIR}"
     mv -v SRPMS/*.rpm "${DEST_DIR}"
 )
+
+# Only create an archive if env variable is specified
+if [[ -n "${CREATE_ARCHIVE}" ]]; then
+    tar -C /out -cvzf "/archive/${DIST_ID}-${DIST_VERSION}-${ARCH}.tar.gz" "${DIST_ID}/${DIST_VERSION}/${ARCH}"
+fi

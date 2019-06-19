@@ -18,7 +18,8 @@ def generatePackageStep(opts, arch) {
 			stage("${opts.image}-${arch}") {
 				checkout scm
 				sh("docker pull ${opts.image}")
-				sh("make BUILD_IMAGE=${opts.image} clean build")
+				sh("make BUILD_IMAGE=${opts.image} CREATE_ARCHIVE=1 clean build")
+				archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
 			}
 			// TODO: Add upload step here
 		}
