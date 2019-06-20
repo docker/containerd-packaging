@@ -1,5 +1,6 @@
 GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
 REF?=master
+RUNC_REF?=96ec2177ae841256168fcf76954f7177af9446eb
 GOVERSION?=1.10.6
 GOLANG_IMAGE=docker.io/library/golang:$(GOVERSION)
 
@@ -10,6 +11,7 @@ BUILD_ARGS=--build-arg REF="$(REF)" \
 	--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 	--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
 	--build-arg BASE="$(BUILD_BASE)" \
+	--build-arg RUNC_REF="$(RUNC_REF)"
 
 
 ifeq ($(BUILD_BASE),)
@@ -30,6 +32,10 @@ VOLUME_MOUNTS=-v "$(CURDIR)/build/:/out"
 
 ifdef CONTAINERD_DIR
 	VOLUME_MOUNTS+=-v "$(shell readlink -e $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
+endif
+
+ifdef RUNC_DIR
+	VOLUME_MOUNTS+=-v "$(shell readlink -e $(RUNC_DIR)):/go/src/github.com/opencontainers/runc"
 endif
 
 ENV_VARS=
