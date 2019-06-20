@@ -11,6 +11,7 @@ BUILD_ARGS=--build-arg REF="$(REF)" \
 	--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
 	--build-arg BASE="$(BUILD_BASE)" \
 
+
 ifeq ($(BUILD_BASE),)
 $(error Invalid build image $(BUILD_IMAGE) no build base found)
 endif
@@ -30,9 +31,6 @@ VOLUME_MOUNTS=-v "$(CURDIR)/build/:/out"
 ifdef CONTAINERD_DIR
 	VOLUME_MOUNTS+=-v "$(shell readlink -e $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
 endif
-ifdef RUNC_DIR
-	VOLUME_MOUNTS+=-v "$(shell readlink -e $(RUNC_DIR)):/go/src/github.com/opencontainers/runc"
-endif
 
 ENV_VARS=
 ifdef CREATE_ARCHIVE
@@ -50,6 +48,8 @@ all: build
 clean:
 	-$(CHOWN_TO_USER) build/
 	-$(RM) -r build/
+	-$(RM) -r artifacts
+	-$(RM) -r $(CONTAINERD_DIR)
 
 .PHONY: build
 build:
