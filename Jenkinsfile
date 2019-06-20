@@ -3,12 +3,12 @@
 def arches = ["amd64", "armhf", "aarch64"]
 
 def images = [
-	// Ubuntu is really the only distribution where we produce everything
-	// [image: "ubuntu:bionic",              arches: arches],
-	// [image: "debian:stretch",             arches: arches],
-	// [image: "centos:7",                   arches: arches - ["armhf"]],
-	// [image: "fedora:latest",              arches: arches - ["armhf"]],
-	// [image: "opensuse/leap:15",           arches: arches - ["armhf", "aarch64"]],
+	//Ubuntu is really the only distribution where we produce everything
+	[image: "ubuntu:bionic",              arches: arches],
+	[image: "debian:stretch",             arches: arches],
+	[image: "centos:7",                   arches: arches - ["armhf"]],
+	[image: "fedora:latest",              arches: arches - ["armhf"]],
+	[image: "opensuse/leap:15",           arches: arches - ["armhf", "aarch64"]],
 	[image: "WINDOWS",										arches: ["1809"]],
 ]
 
