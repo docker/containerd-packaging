@@ -1,8 +1,5 @@
 include common/common.mk
 
-ARCH:=$(shell uname -m)
-PACKAGE?=containerd.io
-
 BUILD=docker build \
 	$(BUILD_IMAGE_FLAG) \
 	$(BUILD_ARGS) \
