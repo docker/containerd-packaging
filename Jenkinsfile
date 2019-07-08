@@ -29,13 +29,13 @@ def generatePackageStep(opts, arch) {
 				  checkout scm
 					try {
 						withCredentials([hubCred]) {
-							bat("docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD")
+							sh("docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD")
 							sshagent(['docker-jenkins.github.ssh']) {
 								sh("make -f Makefile.win windows-binaries")
 							}
 						}
 					} finally {
-							bat("make -f Makefile.win clean")
+							sh("make -f Makefile.win clean")
 					}
 			  }
 			}
@@ -50,7 +50,6 @@ def generatePackageStep(opts, arch) {
 				sh("make BUILD_IMAGE=${opts.image} CREATE_ARCHIVE=1 clean build")
 				archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
 			}
-			// TODO: Add upload step here
 		}
 	}
 }

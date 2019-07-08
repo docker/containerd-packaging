@@ -1,22 +1,13 @@
-GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
-ARCH:=$(shell uname -m)
-REF?=$(shell git ls-remote https://github.com/containerd/containerd.git | grep master | awk '{print $$1}')
-RUNC_REF?=425e105d5a03fabd737a126ad93d62a9eeede87f
-PACKAGE?=containerd.io
-GOVERSION?=1.11.8
-GOLANG_IMAGE?=golang:1.11.8
+include common/common.mk
 
-BUILDER_IMAGE=containerd-builder-$@-$(GOARCH):$(shell git rev-parse --short HEAD)
+ARCH:=$(shell uname -m)
+PACKAGE?=containerd.io
+
 BUILD=docker build \
 	$(BUILD_IMAGE_FLAG) \
-	--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
-	--build-arg REF="$(REF)" \
-	--build-arg PACKAGE="$(PACKAGE)" \
+	$(BUILD_ARGS) \
 	--build-arg RUNC_REF="$(RUNC_REF)"
 
-CONTAINERD_REPO?=containerd/containerd
-CONTAINERD_BRANCH?=release/1.2
-CONTAINERD_DIR?=$(shell basename $(CONTAINERD_REPO))
 CONTAINERD_MOUNT?=C:\gopath\src\github.com\containerd\containerd
 WINDOWS_BINARIES=containerd ctr
 WIN_CRYPTO=dockereng/go-crypto-swap:windows-go1.11.8
@@ -25,10 +16,6 @@ WIN_CRYPTO=dockereng/go-crypto-swap:windows-go1.11.8
 BUILDTAGS ?= seccomp apparmor
 GO_TAGS=$(if $(BUILDTAGS),-tags "$(BUILDTAGS)",)
 GO_LDFLAGS=-ldflags '-s -w -X $(PKG)/version.Version=$(VERSION) -X $(PKG)/version.Revision=$(REVISION) -X $(PKG)/version.Package=$(PACKAGE) $(EXTRA_LDFLAGS)'
-
-$(CONTAINERD_DIR):
-	git clone git@github.com:$(CONTAINERD_REPO)
-	git -C $(CONTAINERD_DIR) checkout $(CONTAINERD_BRANCH)
 
 .PHONY: windows-binaries
 windows-binaries: $(CONTAINERD_DIR)

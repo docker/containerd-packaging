@@ -1,18 +1,8 @@
-GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
-REF?=master
-RUNC_REF?=96ec2177ae841256168fcf76954f7177af9446eb
-GOVERSION?=1.10.6
-GOLANG_IMAGE=docker.io/library/golang:$(GOVERSION)
+include common/common.mk
 
 BUILD_IMAGE=centos:7
 BUILD_TYPE=$(shell ./scripts/deb-or-rpm $(BUILD_IMAGE))
 BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
-BUILD_ARGS=--build-arg REF="$(REF)" \
-	--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
-	--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
-	--build-arg BASE="$(BUILD_BASE)" \
-	--build-arg RUNC_REF="$(RUNC_REF)"
-
 
 ifeq ($(BUILD_BASE),)
 $(error Invalid build image $(BUILD_IMAGE) no build base found)
@@ -22,7 +12,6 @@ ifeq ($(BUILD_TYPE),)
 $(error Invalid build image $(BUILD_IMAGE) no build type found)
 endif
 
-BUILDER_IMAGE=dockereng/containerd-builder-$(BUILD_TYPE)-$(GOARCH):$(shell git rev-parse HEAD)
 BUILD?=DOCKER_BUILDKIT=1 docker build \
 	$(BUILD_ARGS) \
 	-f dockerfiles/$(BUILD_TYPE).dockerfile \
