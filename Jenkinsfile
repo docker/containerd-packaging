@@ -8,8 +8,9 @@ def images = [
     [image: "debian:stretch",   arches: arches],
     [image: "centos:7",         arches: arches - ["armhf"]],
     [image: "fedora:latest",    arches: arches - ["armhf"]],
+    [image: "fedora:30",    arches: arches - ["armhf"]],
+    [image: "fedora:29",    arches: arches - ["armhf"]],
     [image: "opensuse/leap:15", arches: arches - ["armhf", "aarch64"]],
-    [image: "sles",             arches: arches - ["armhf", "aarch64"]],
     [image: "WINDOWS",			arches: ["1809"]],
 ]
 
