@@ -2,7 +2,7 @@ Source: containerd.io
 Section: devel
 Priority: optional
 Maintainer: Containerd team <help@containerd.io>
-Build-Depends: btrfs-tools,
+Build-Depends: libbtrfs-dev | btrfs-tools ,
                debhelper,
                dh-systemd,
                pkg-config,

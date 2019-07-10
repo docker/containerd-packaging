@@ -2,6 +2,8 @@
 
 source /.rpm-helpers
 
+SPEC_FILE=SPECS/containerd.spec
+
 set -e
 
 # copied from get.docker.com
@@ -16,7 +18,6 @@ get_distribution() {
     echo "$lsb_dist"
 }
 
-git --version
 VERSION="$(git --git-dir "${GO_SRC_PATH}/.git" describe --tags | sed 's/^v//')"
 RPM_VER_BITS=$(gen-rpm-ver-bits "${VERSION}")
 RPM_VERSION=$(echo "${RPM_VER_BITS}" | cut -f1 -d' ')
@@ -38,11 +39,31 @@ export RPM_RELEASE_VERSION
 export RPM_VERSION
 export VERSION
 
-if dnf --version >/dev/null 2>/dev/null; then
-    (set -x; dnf builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
-elif yum --version >/dev/null 2>/dev/null; then
-    (set -x; yum-builddep -y SPECS/containerd.spec; rpmbuild -ba SPECS/containerd.spec)
-else
-    # For distributions who don't have a builddep step, not naming names...
-    (set -x; rpmbuild -ba SPECS/containerd.spec)
+dep_install=""
+if dnf builddep --version >/dev/null 2>/dev/null; then
+    dep_install='dnf builddep'
+elif yum-builddep --version >/dev/null 2>/dev/null; then
+    dep_install='yum-builddep'
+fi
+
+if [ -n "${dep_install}" ]; then
+    # Install dependencies on distributions that support this, zypper doesn't have this option
+    (set -x; ${dep_install} -y "${SPEC_FILE}")
+fi
+
+DIST_ID=$(. /etc/os-release; echo "${ID}")
+DIST_VERSION=$(. /etc/os-release; echo "${VERSION_ID}")
+ARCH=$(uname -m)
+DEST_DIR=/out/${DIST_ID}/${DIST_VERSION}/${ARCH}/
+(
+    set -x
+    rpmbuild -ba "${SPEC_FILE}"
+    mkdir -p "${DEST_DIR}"
+    mv -v RPMS/*/*.rpm "${DEST_DIR}"
+    mv -v SRPMS/*.rpm "${DEST_DIR}"
+)
+
+# Only create an archive if env variable is specified
+if [[ -n "${CREATE_ARCHIVE}" ]]; then
+    tar -C /out -cvzf "/archive/${DIST_ID}-${DIST_VERSION}-${ARCH}.tar.gz" "${DIST_ID}/${DIST_VERSION}/${ARCH}"
 fi

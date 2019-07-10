@@ -1,0 +1,26 @@
+include common/common.mk
+
+BUILD=docker build \
+	$(BUILD_IMAGE_FLAG) \
+	$(BUILD_ARGS) \
+	--build-arg RUNC_REF="$(RUNC_REF)"
+
+CONTAINERD_MOUNT?=C:\gopath\src\github.com\containerd\containerd
+WINDOWS_BINARIES=containerd ctr
+WIN_CRYPTO=dockereng/go-crypto-swap:windows-go1.11.8
+
+	# Build tags seccomp and apparmor are needed by CRI plugin.
+BUILDTAGS ?= seccomp apparmor
+GO_TAGS=$(if $(BUILDTAGS),-tags "$(BUILDTAGS)",)
+GO_LDFLAGS=-ldflags '-s -w -X $(PKG)/version.Version=$(VERSION) -X $(PKG)/version.Revision=$(REVISION) -X $(PKG)/version.Package=$(PACKAGE) $(EXTRA_LDFLAGS)'
+
+.PHONY: windows-binaries
+windows-binaries: $(CONTAINERD_DIR)
+	for binary in $(WINDOWS_BINARIES); do \
+		(set -x; docker run --rm -v "$(CURDIR)/$(CONTAINERD_DIR):$(CONTAINERD_MOUNT)" -w "$(CONTAINERD_MOUNT)" $(WIN_CRYPTO) go build $(GO_BUILD_FLAGS) $(GO_LDFLAGS) $(GO_TAGS) ./cmd/$$binary) || exit 1; \
+	done
+	ls $(CONTAINERD_DIR) | grep '.exe'
+
+.PHONY: clean
+clean:
+	-$(RM) -r $(CONTAINERD_DIR)

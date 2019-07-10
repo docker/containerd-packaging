@@ -13,9 +13,9 @@ if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD >/dev/null 2>&1; then
     VERSION="${git_date}~${git_sha}"
     # prepend a `0` so it'll never be greater than non-dev versions
     cat > debian/nightly.changelog <<-EOF
-$(control_field Package) (0.${VERSION}-1) nightly; urgency=medium
+$(control_field Package) (0.${VERSION}-1) development; urgency=medium
 
-  * Nightly release for ${git_sha}
+  * Release for ${git_sha}
 
  -- $(control_field Maintainer)  $(date --rfc-2822)
 
@@ -28,7 +28,14 @@ REF=$(git -C "${GO_SRC_PATH}" rev-parse HEAD)
 export REF
 export VERSION
 (set -x; dpkg-buildpackage -uc -us)
-OUT_DIR="/out/$(dpkg --print-architecture)"
+DIST_ID=$(. /etc/os-release; echo "$ID")
+DIST_VERSION=$(lsb_release -sc)
+ARCH=$(dpkg --print-architecture)
+OUT_DIR="/out/${DIST_ID}/${DIST_VERSION}/${ARCH}/"
 mkdir -p "${OUT_DIR}"
 mv -v ../*.deb "${OUT_DIR}"
-mv -v ../*.changes "${OUT_DIR}"
+
+# Only create an archive if env variable is specified
+if [[ -n "${CREATE_ARCHIVE}" ]]; then
+tar -C /out -cvzf "/archive/${DIST_ID}-${DIST_VERSION}-${ARCH}.tar.gz" "${DIST_ID}/${DIST_VERSION}/${ARCH}"
+fi
