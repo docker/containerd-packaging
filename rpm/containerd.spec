@@ -151,7 +151,7 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
-* Tue Jul 11 2019 Kir Kolyshkin <kolyshkin@gmail.com> - 1.2.6-3.3
+* Tue Jun 11 2019 Kir Kolyshkin <kolyshkin@gmail.com> - 1.2.6-3.3
 - add requirement for container-selinux
 - move runc binary to %_bindir
 
