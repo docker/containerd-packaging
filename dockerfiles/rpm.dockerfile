@@ -31,6 +31,9 @@ ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
 RUN zypper install -y git rpm rpm-build libbtrfs-devel libseccomp-devel
 RUN echo "%_topdir    /root/rpmbuild" > /root/.rpmmacros
 
+FROM ${BUILD_IMAGE} as amzn-base
+RUN yum install -y yum-utils rpm-build git
+
 FROM ${BASE}-base
 COPY --from=golang /usr/local/go /usr/local/go/
 ENV GOPATH /go
