@@ -5,6 +5,7 @@ def arches = ["amd64", "armhf", "aarch64"]
 def images = [
     //Ubuntu is really the only distribution where we produce everything
     [image: "ubuntu:bionic",    arches: arches],
+    [image: "amazonlinux:2",    arches: arches - ["amd64", "armhf"]],
     [image: "debian:stretch",   arches: arches],
     [image: "centos:7",         arches: arches - ["armhf"]],
     [image: "fedora:latest",    arches: arches - ["armhf"]],
