@@ -3,8 +3,8 @@ ARCH:=$(shell uname -m)
 REF?=$(shell git ls-remote https://github.com/containerd/containerd.git | grep master | awk '{print $$1}')
 RUNC_REF?=425e105d5a03fabd737a126ad93d62a9eeede87f
 PACKAGE?=containerd.io
-GOVERSION?=1.11.8
-GOLANG_IMAGE?=golang:1.11.8
+GOVERSION?=1.11.12
+GOLANG_IMAGE?=golang:1.11.12
 
 # need specific repos for s390x
 ifeq ($(ARCH),s390x)
@@ -44,7 +44,7 @@ CONTAINERD_BRANCH?=release/1.2
 CONTAINERD_DIR?=$(shell basename $(CONTAINERD_REPO))
 CONTAINERD_MOUNT?=C:\gopath\src\github.com\containerd\containerd
 WINDOWS_BINARIES=containerd ctr
-WIN_CRYPTO=dockereng/go-crypto-swap:windows-go1.11.8
+WIN_CRYPTO=dockereng/go-crypto-swap:windows-go1.11.12
 
 # Build tags seccomp and apparmor are needed by CRI plugin.
 BUILDTAGS ?= seccomp apparmor
