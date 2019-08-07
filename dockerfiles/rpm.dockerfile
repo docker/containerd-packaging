@@ -4,13 +4,13 @@ ARG BASE=centos
 ARG GOLANG_IMAGE
 FROM ${GOLANG_IMAGE} as golang
 
-FROM alpine:3.8 as containerd
+FROM alpine:3.10 as containerd
 RUN apk -u --no-cache add git
 ARG REF=master
 RUN git clone https://github.com/containerd/containerd.git /containerd
 RUN git -C /containerd checkout ${REF}
 
-FROM alpine:3.8 as runc
+FROM alpine:3.10 as runc
 RUN apk -u --no-cache add git
 ARG RUNC_REF=master
 RUN git clone https://github.com/opencontainers/runc.git /runc
