@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+NO_OUTPUT='>/dev/null 2>/dev/null'
+
 source /.rpm-helpers
 
 SPEC_FILE=SPECS/containerd.spec
@@ -39,20 +41,22 @@ export RPM_RELEASE_VERSION
 export RPM_VERSION
 export VERSION
 
-dep_install=""
-if dnf builddep --version >/dev/null 2>/dev/null; then
-    dep_install='dnf builddep'
-elif yum-builddep --version >/dev/null 2>/dev/null; then
-    dep_install='yum-builddep'
+EXTRA_REPOS=${EXTRA_REPOS:-}
+
+pkg_manager="yum -y ${EXTRA_REPOS}"
+if zypper --version ${NO_OUTPUT}; then
+    pkg_manager="zypper -n ${EXTRA_REPOS}"
+elif dnf --version ${NO_OUTPUT}; then
+    pkg_manager="dnf -y ${EXTRA_REPOS}"
 fi
 
-if [ -n "${dep_install}" ]; then
-    # Install dependencies on distributions that support this, zypper doesn't have this option
-    (set -x; ${dep_install} -y "${SPEC_FILE}")
-fi
+(
+    set -x
+    ${pkg_manager} install $(rpmspec -P ${SPEC_FILE} | grep BuildRequires | cut -d' ' -f2 | xargs)
+)
 
 DIST_ID=$(. /etc/os-release; echo "${ID}")
-DIST_VERSION=$(. /etc/os-release; echo "${VERSION_ID}")
+DIST_VERSION=$(. /etc/os-release; echo "${VERSION_ID}" | cut -d'.' -f1)
 ARCH=$(uname -m)
 DEST_DIR=/out/${DIST_ID}/${DIST_VERSION}/${ARCH}/
 (
