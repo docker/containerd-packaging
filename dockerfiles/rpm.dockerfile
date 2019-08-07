@@ -16,16 +16,20 @@ ARG RUNC_REF=master
 RUN git clone https://github.com/opencontainers/runc.git /runc
 RUN git -C /runc checkout ${RUNC_REF}
 
-FROM ${BUILD_IMAGE} as rhel-base
+FROM ${BUILD_IMAGE} as redhat-base
 RUN yum install -y yum-utils rpm-build git
 
-FROM rhel-base as centos-base
+FROM redhat-base as rhel-base
+ENV BUILDTAGS no_btrfs
+
+FROM redhat-base as centos-base
 # Overwrite repo that was failing on aarch64
 RUN sed -i 's/altarch/centos/g' /etc/yum.repos.d/CentOS-Sources.repo
 
-FROM rhel-base as amzn-base
+FROM redhat-base as amzn-base
 
-FROM rhel-base as ol-base
+FROM redhat-base as ol-base
+ENV EXTRA_REPOS "--enablerepo=ol7_optional_latest"
 
 FROM ${BUILD_IMAGE} as fedora-base
 RUN dnf install -y rpm-build git dnf-plugins-core
@@ -33,8 +37,8 @@ RUN dnf install -y rpm-build git dnf-plugins-core
 FROM ${BUILD_IMAGE} as suse-base
 # On older versions of Docker the path may not be explicitly set
 # opensuse also does not set a default path in their docker images
+RUN zypper -n install rpm-build git
 ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
-RUN zypper install -y git rpm rpm-build libbtrfs-devel libseccomp-devel
 RUN echo "%_topdir    /root/rpmbuild" > /root/.rpmmacros
 
 
