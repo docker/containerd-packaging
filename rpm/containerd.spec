@@ -30,7 +30,10 @@ AutoReq: no
 
 Name: containerd.io
 Provides: containerd
+# For some reason on rhel 8 if we "provide" runc then it makes this package unsearchable
+%if 0%{!?el8:1}
 Provides: runc
+%endif
 
 # Obsolete packages
 Obsoletes: containerd
@@ -151,6 +154,9 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Tue Aug 13 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.6-3.4
+- Do not "Provides: runc" for RHEL 8
+
 * Tue Jun 11 2019 Kir Kolyshkin <kolyshkin@gmail.com> - 1.2.6-3.3
 - add requirement for container-selinux
 - move runc binary to %_bindir
