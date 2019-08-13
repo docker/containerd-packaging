@@ -16,9 +16,7 @@ RPM_VERSION=$(echo "${RPM_VER_BITS}" | cut -f1 -d' ')
 RPM_RELEASE_VERSION=$(echo "${RPM_VER_BITS}" | cut -f2 -d' ' | sed 's/\.[0-9]*$//')
 RPM_ITERATION=1
 
-echo "$RPM_RELEASE_VERSION"
-
-while grep "$RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION" rpm/runc.spec >/dev/null 2>&1;do
+while grep "$RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION" "${SPEC_FILE}" >/dev/null 2>&1;do
     ((++RPM_ITERATION))
 done
 
