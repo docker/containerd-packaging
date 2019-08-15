@@ -1,3 +1,9 @@
+containerd.io (1.2.6-4) release; urgency=high
+
+  * build with Go 1.11.13 (CVE-2019-9512, CVE-2019-9514)
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com> Thu, 15 Aug 2019 21:02:17 +0000
+
 containerd.io (1.2.6-3) release; urgency=medium
 
   * move runc from /usr/sbin to /usr/bin

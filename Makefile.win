@@ -7,9 +7,9 @@ BUILD=docker build \
 
 CONTAINERD_MOUNT?=C:\gopath\src\github.com\containerd\containerd
 WINDOWS_BINARIES=containerd ctr
-WIN_CRYPTO=dockereng/go-crypto-swap:windows-go1.11.8
+WIN_CRYPTO=dockereng/go-crypto-swap:windows-go$(GOVERSION)
 
-	# Build tags seccomp and apparmor are needed by CRI plugin.
+# Build tags seccomp and apparmor are needed by CRI plugin.
 BUILDTAGS ?= seccomp apparmor
 GO_TAGS=$(if $(BUILDTAGS),-tags "$(BUILDTAGS)",)
 GO_LDFLAGS=-ldflags '-s -w -X $(PKG)/version.Version=$(VERSION) -X $(PKG)/version.Revision=$(REVISION) -X $(PKG)/version.Package=$(PACKAGE) $(EXTRA_LDFLAGS)'
