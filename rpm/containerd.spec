@@ -154,6 +154,10 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Tue Sep 03 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.9-3.1
+- containerd 1.2.9 release
+- build with Go 1.12.9
+
 * Thu Aug 15 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.6-3.5
 - build with Go 1.11.13 (CVE-2019-9512, CVE-2019-9514)
 
