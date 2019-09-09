@@ -44,7 +44,6 @@ clean:
 	-$(CHOWN_TO_USER) build/
 	-$(RM) -r build/
 	-$(RM) -r artifacts
-	-$(RM) -r $(CONTAINERD_DIR)
 
 .PHONY: build
 build:
