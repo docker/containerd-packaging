@@ -20,11 +20,11 @@ BUILD?=DOCKER_BUILDKIT=1 docker build \
 VOLUME_MOUNTS=-v "$(CURDIR)/build/:/out"
 
 ifdef CONTAINERD_DIR
-	VOLUME_MOUNTS+=-v "$(shell readlink -e $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
+	VOLUME_MOUNTS+=-v "$(shell realpath $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
 endif
 
 ifdef RUNC_DIR
-	VOLUME_MOUNTS+=-v "$(shell readlink -e $(RUNC_DIR)):/go/src/github.com/opencontainers/runc"
+	VOLUME_MOUNTS+=-v "$(shell realpath $(RUNC_DIR)):/go/src/github.com/opencontainers/runc"
 endif
 
 ENV_VARS=
