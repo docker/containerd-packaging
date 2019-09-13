@@ -15,8 +15,9 @@ XS-Go-Import-Path: github.com/containerd/containerd
 Package: containerd.io
 Architecture: any
 Depends: ${misc:Depends},
-         ${shlibs:Depends}
-Provides: containerd, runc
-Conflicts: containerd, runc
-Replaces: containerd, runc
+         ${shlibs:Depends},
+         runc.io
+Provides: containerd
+Conflicts: containerd
+Replaces: containerd
 Description: An open and reliable container runtime

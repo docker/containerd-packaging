@@ -25,6 +25,8 @@ containerd.io (1.2.9-1) release; urgency=high
   * containerd 1.2.9 release
   * Addresses CVE-2019-9512 (Ping Flood), CVE-2019-9514 (Reset Flood), and
     CVE-2019-9515 (Settings Flood).
+  * Removed runc binary
+  * Added new dependency on runc.io
 
  -- Eli Uriegas <eli.uriegas@docker.com>  Fri, 06 Sep 2019 20:04:44 +0000
 

@@ -19,11 +19,6 @@ RUN mkdir -p ${GO_SRC_PATH}
 RUN git clone https://${IMPORT_PATH} ${GO_SRC_PATH}
 RUN git -C ${GO_SRC_PATH} checkout ${REF}
 
-ARG RUNC_REF=master
-RUN mkdir -p /go/src/github.com/opencontainers/runc
-RUN git clone https://github.com/opencontainers/runc.git /go/src/github.com/opencontainers/runc
-RUN git -C /go/src/github.com/opencontainers/runc checkout ${RUNC_REF}
-
 # Set up debian packaging files
 RUN mkdir -p /root/containerd
 COPY debian/ /root/containerd/debian
