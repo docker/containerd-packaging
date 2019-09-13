@@ -10,12 +10,6 @@ ARG REF=master
 RUN git clone https://github.com/containerd/containerd.git /containerd
 RUN git -C /containerd checkout ${REF}
 
-FROM alpine:3.8 as runc
-RUN apk -u --no-cache add git
-ARG RUNC_REF=master
-RUN git clone https://github.com/opencontainers/runc.git /runc
-RUN git -C /runc checkout ${RUNC_REF}
-
 FROM ${BUILD_IMAGE} as redhat-base
 RUN yum install -y yum-utils rpm-build git
 
@@ -57,7 +51,6 @@ RUN mkdir -p /go
 ARG REF
 ENV GO_SRC_PATH /go/src/github.com/containerd/containerd
 COPY --from=containerd /containerd /go/src/github.com/containerd/containerd
-COPY --from=runc /runc /go/src/github.com/opencontainers/runc
 
 WORKDIR /root/rpmbuild
 ENTRYPOINT ["/build-rpm"]

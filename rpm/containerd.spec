@@ -26,22 +26,15 @@ AutoReq: no
 %define SHA256SUM0 08f057ece7e518b14cce2e9737228a5a899a7b58b78248a03e02f4a6c079eeaf
 %global import_path github.com/containerd/containerd
 %global gopath %{getenv:GOPATH}
-%global runc_nokmem %{getenv:RUNC_NOKMEM}
 
 Name: containerd.io
 Provides: containerd
-# For some reason on rhel 8 if we "provide" runc then it makes this package unsearchable
-%if 0%{!?el8:1}
-Provides: runc
-%endif
 
 # Obsolete packages
 Obsoletes: containerd
-Obsoletes: runc
 
 # Conflicting packages
 Conflicts: containerd
-Conflicts: runc
 
 Version: %{getenv:RPM_VERSION}
 Release: %{getenv:RPM_RELEASE_VERSION}%{?dist}
@@ -51,7 +44,8 @@ URL: https://containerd.io
 Source0: containerd
 Source1: containerd.service
 Source2: containerd.toml
-Source3: runc
+
+Requires: runc.io
 # container-selinux isn't a thing in suse flavors
 %if %{undefined suse_version}
 # amazonlinux2 doesn't have container-selinux either
@@ -89,8 +83,6 @@ rm -rf %{_topdir}/BUILD/
 cp -rf /go/src/%{import_path} %{_topdir}/SOURCES/containerd
 # symlink the go source path to our build directory
 ln -s /go/src/%{import_path} %{_topdir}/BUILD
-# Copy over our source code from our gopath to our source directory
-cp -rf /go/src/github.com/opencontainers/runc %{_topdir}/SOURCES/runc
 cd %{_topdir}/BUILD/
 
 
@@ -107,10 +99,6 @@ pushd /go/src/%{import_path}
 /go/src/%{import_path}/bin/ctr --version
 popd
 
-pushd /go/src/github.com/opencontainers/runc
-make BUILDTAGS='seccomp apparmor selinux %{runc_nokmem}' runc
-popd
-
 
 %install
 cd %{_topdir}/BUILD
@@ -119,7 +107,6 @@ install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
 install -D -m 0755 bin/ctr %{buildroot}%{_bindir}/ctr
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
-install -D -m 0755 /go/src/github.com/opencontainers/runc/runc %{buildroot}%{_bindir}/runc
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
@@ -145,7 +132,6 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %{_bindir}/containerd
 %{_bindir}/containerd-shim
 %{?with_ctr:%{_bindir}/ctr}
-%{_bindir}/runc
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
 /%{_mandir}/man1/*
@@ -165,6 +151,8 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 * Fri Sep 06 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.9-3.1
 - containerd 1.2.9 release
 - Addresses CVE-2019-9512 (Ping Flood), CVE-2019-9514 (Reset Flood), and CVE-2019-9515 (Settings Flood).
+- Removed runc binary
+- Added dependency on runc.io
 
 * Mon Aug 27 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.8-3.1
 - containerd 1.2.8 release
