@@ -23,10 +23,6 @@ ifdef CONTAINERD_DIR
 	VOLUME_MOUNTS+=-v "$(shell realpath $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
 endif
 
-ifdef RUNC_DIR
-	VOLUME_MOUNTS+=-v "$(shell realpath $(RUNC_DIR)):/go/src/github.com/opencontainers/runc"
-endif
-
 ENV_VARS=
 ifdef CREATE_ARCHIVE
 	ENV_VARS+=-e CREATE_ARCHIVE=1

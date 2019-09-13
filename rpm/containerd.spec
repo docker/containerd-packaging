@@ -142,6 +142,8 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %changelog
 * Mon Oct 07 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.10-3.2
 - build with Go 1.12.10
+- Removed runc binary
+- Added dependency on runc.io
 
 * Thu Sep 26 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.10-3.1
 - containerd 1.2.10 release
@@ -151,8 +153,6 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 * Fri Sep 06 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.9-3.1
 - containerd 1.2.9 release
 - Addresses CVE-2019-9512 (Ping Flood), CVE-2019-9514 (Reset Flood), and CVE-2019-9515 (Settings Flood).
-- Removed runc binary
-- Added dependency on runc.io
 
 * Mon Aug 27 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.8-3.1
 - containerd 1.2.8 release
