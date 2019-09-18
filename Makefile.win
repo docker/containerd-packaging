@@ -1,26 +1,34 @@
 include common/common.mk
 
-BUILD=docker build \
-	$(BUILD_IMAGE_FLAG) \
-	$(BUILD_ARGS) \
-	--build-arg RUNC_REF="$(RUNC_REF)"
+CONTAINERD_DIR?=C:/gopath/src/github.com/containerd/containerd
+CONTAINERD_MOUNT?=C:/gopath/src/github.com/containerd/containerd
 
-CONTAINERD_MOUNT?=C:\gopath\src\github.com\containerd\containerd
-WINDOWS_BINARIES=containerd ctr
-WIN_CRYPTO=dockereng/go-crypto-swap:windows-go$(GOVERSION)
+# Windows builder, only difference is we installed make
+windows-image:
+	docker build \
+		--build-arg GOVERSION=$(GOVERSION) \
+		-t dockereng/containerd-windows-builder \
+		-f dockerfiles/win.dockerfile \
+		.
+	echo 1 > $@
 
-# Build tags seccomp and apparmor are needed by CRI plugin.
-BUILDTAGS ?= seccomp apparmor
-GO_TAGS=$(if $(BUILDTAGS),-tags "$(BUILDTAGS)",)
-GO_LDFLAGS=-ldflags '-s -w -X $(PKG)/version.Version=$(VERSION) -X $(PKG)/version.Revision=$(REVISION) -X $(PKG)/version.Package=$(PACKAGE) $(EXTRA_LDFLAGS)'
+build/windows/%.exe: windows-image
+	Powershell.exe New-Item -ItemType Directory -Force -Path build/windows/
+	docker run \
+		--rm \
+		-v "$(CONTAINERD_DIR):$(CONTAINERD_MOUNT)" \
+		-v "$(CURDIR)/build/windows:$(CONTAINERD_MOUNT)/bin" \
+		-w "$(CONTAINERD_MOUNT)" \
+		dockereng/containerd-windows-builder \
+		make bin/$*
 
-.PHONY: windows-binaries
-windows-binaries: $(CONTAINERD_DIR)
-	for binary in $(WINDOWS_BINARIES); do \
-		(set -x; docker run --rm -v "$(CURDIR)/$(CONTAINERD_DIR):$(CONTAINERD_MOUNT)" -w "$(CONTAINERD_MOUNT)" $(WIN_CRYPTO) go build $(GO_BUILD_FLAGS) $(GO_LDFLAGS) $(GO_TAGS) ./cmd/$$binary) || exit 1; \
-	done
-	ls $(CONTAINERD_DIR) | grep '.exe'
+build/windows/containerd.zip: build/windows/containerd.exe build/windows/ctr.exe
+	Powershell.exe Compress-Archive -Force -Path 'build/windows/*.exe' -DestinationPath '$@'
+
+.PHONY: archive
+archive: build/windows/containerd.zip
 
 .PHONY: clean
 clean:
-	-$(RM) -r $(CONTAINERD_DIR)
+	-$(RM) windows-image
+	-$(RM) build/windows
