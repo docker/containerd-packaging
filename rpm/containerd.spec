@@ -158,6 +158,7 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 - containerd 1.2.10 release
 - Addresses CVE-2019-16884 (AppArmor bypass)
 - Bump runc to 3e425f80a8c931f88e6d94a8c831b9d5aa481657 (1.0.0-rc8 + CVE-2019-16884)
+- build with Go 1.12.10
 
 * Fri Sep 06 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.9-3.1
 - containerd 1.2.9 release
