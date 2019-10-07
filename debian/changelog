@@ -1,9 +1,14 @@
+containerd.io (1.2.10-2) release; urgency=high
+
+  * build with Go 1.12.10
+
+ -- Eli Uriegas <eli.uriegas@docker.com>  Mon, 07 Oct 2019 23:57:42 +0000
+
 containerd.io (1.2.10-1) release; urgency=high
 
   * containerd 1.2.10 release
   * Bump runc to 3e425f80a8c931f88e6d94a8c831b9d5aa481657 (1.0.0-rc8 + CVE-2019-16884)
   * Addresses CVE-2019-16884 (AppArmor bypass)
-  * build with Go 1.12.10
 
  -- Eli Uriegas <eli.uriegas@docker.com>  Thu, 26 Sep 2019 20:58:57 +0000
 
