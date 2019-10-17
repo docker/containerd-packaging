@@ -1,3 +1,11 @@
+containerd.io (1.2.10-3) release; urgency=medium
+
+  * Added explicit --restart-after-upgrade to dh_systemd_start due to
+    containerd services failing to restart automatically after an
+    upgrade from 1.2.X -> 1.2.10
+
+ -- Eli Uriegas <eli.uriegas@docker.com>  Thu, 17 Oct 2019 02:46:43 +0000
+
 containerd.io (1.2.10-2) release; urgency=high
 
   * build with Go 1.12.10
