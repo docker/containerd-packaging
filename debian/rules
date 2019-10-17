@@ -19,6 +19,9 @@ bin/runc:
 
 override_dh_auto_build: $(CONTAINERD_BINARIES)
 
+override_dh_systemd_start:
+	dh_systemd_start --restart-after-upgrade
+
 override_dh_auto_install: $(CONTAINERD_BINARIES) bin/runc
 	# set -x so we can see what's being installed where
 	for binary in $(CONTAINERD_BINARIES); do \
