@@ -2,16 +2,20 @@
 
 def arches = ["amd64", "armhf", "aarch64"]
 
+// List of packages to build. Note that this list is overridden in the packaging
+// repository, where additional variants may be added for enterprise.
+//
+// This list is ordered by Distro (alphabetically), and release (chronologically).
+// When adding a distro here, also open a pull request in the release repository.
 def images = [
-    //Ubuntu is really the only distribution where we produce everything
-    [image: "ubuntu:bionic",    arches: arches],
     [image: "amazonlinux:2",    arches: arches - ["amd64", "armhf"]],
-    [image: "debian:stretch",   arches: arches],
     [image: "centos:7",         arches: arches - ["armhf"]],
-    [image: "fedora:latest",    arches: arches - ["armhf"]],
-    [image: "fedora:30",        arches: arches - ["armhf"]],
+    [image: "debian:stretch",   arches: arches],    // Debian 9 (EOL: June, 2022)
     [image: "fedora:29",        arches: arches - ["armhf"]],
+    [image: "fedora:30",        arches: arches - ["armhf"]],
+    [image: "fedora:latest",    arches: arches - ["armhf"]],
     [image: "opensuse/leap:15", arches: arches - ["armhf", "aarch64"]],
+    [image: "ubuntu:bionic",    arches: arches],    // Ubuntu 18.04 LTS (End of support: April, 2023. EOL: April, 2028)
 ]
 
 // Required for windows
