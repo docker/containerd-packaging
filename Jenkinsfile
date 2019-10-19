@@ -10,6 +10,7 @@ def arches = ["amd64", "armhf", "aarch64"]
 def images = [
     [image: "amazonlinux:2",                arches: arches - ["amd64", "armhf"]],
     [image: "centos:7",                     arches: arches - ["armhf"]],
+    [image: "centos:8",                     arches: arches - ["armhf"]],
     [image: "debian:stretch",               arches: arches],    // Debian 9 (EOL: June, 2022)
     [image: "debian:buster",                arches: arches],    // Debian 10 (EOL: 2024)
     [image: "fedora:29",                    arches: arches - ["armhf"]],
