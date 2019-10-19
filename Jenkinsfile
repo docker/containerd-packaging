@@ -22,6 +22,7 @@ def images = [
     [image: "ubuntu:xenial",                arches: arches],    // Ubuntu 16.04 LTS (End of support: April, 2021. EOL: April, 2024)
     [image: "ubuntu:bionic",                arches: arches],    // Ubuntu 18.04 LTS (End of support: April, 2023. EOL: April, 2028)
     [image: "ubuntu:disco",                 arches: arches],    // Ubuntu 19.03  (EOL: January, 2020)
+    [image: "ubuntu:eoan",                  arches: arches],    // Ubuntu 19.10  (EOL: July, 2020)
 ]
 
 // Required for windows
