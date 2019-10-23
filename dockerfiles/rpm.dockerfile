@@ -5,14 +5,15 @@ ARG GOLANG_IMAGE
 
 FROM ${GOLANG_IMAGE} AS golang
 
-FROM alpine:3.10 AS containerd
+FROM alpine:3.10 AS git
 RUN apk -u --no-cache add git
+
+FROM git AS containerd-src
 ARG REF=master
 RUN git clone https://github.com/containerd/containerd.git /containerd
 RUN git -C /containerd checkout "${REF}"
 
-FROM alpine:3.10 AS runc
-RUN apk -u --no-cache add git
+FROM git AS runc-src
 ARG RUNC_REF=master
 RUN git clone https://github.com/opencontainers/runc.git /runc
 RUN git -C /runc checkout "${RUNC_REF}"
@@ -59,8 +60,8 @@ COPY scripts/build-rpm /build-rpm
 COPY scripts/.rpm-helpers /.rpm-helpers
 WORKDIR /root/rpmbuild
 
-COPY --from=containerd /containerd/ /go/src/github.com/containerd/containerd/
-COPY --from=runc       /runc/       /go/src/github.com/opencontainers/runc/
+COPY --from=containerd-src /containerd/      /go/src/github.com/containerd/containerd/
+COPY --from=runc-src       /runc/            /go/src/github.com/opencontainers/runc/
 
 ARG REF
 ENTRYPOINT ["/build-rpm"]
