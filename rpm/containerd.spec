@@ -154,6 +154,9 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Tue Oct 22 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.10-3.3
+- bump runc to v1.0.0-rc9
+
 * Mon Oct 07 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.10-3.2
 - build with Go 1.12.10
 
