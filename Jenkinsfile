@@ -1,28 +1,26 @@
 #!groovy
 
-def arches = ["amd64", "armhf", "aarch64"]
-
 // List of packages to build. Note that this list is overridden in the packaging
 // repository, where additional variants may be added for enterprise.
 //
 // This list is ordered by Distro (alphabetically), and release (chronologically).
 // When adding a distro here, also open a pull request in the release repository.
 def images = [
-    [image: "amazonlinux:2",                  arches: arches - ["amd64", "armhf"]],
-    [image: "centos:7",                       arches: arches - ["armhf"]],
-    [image: "debian:stretch",                 arches: arches],    // Debian 9 (EOL: June, 2022)
-    [image: "debian:buster",                  arches: arches],    // Debian 10 (EOL: 2024)
-    [image: "fedora:29",                      arches: arches - ["armhf"]],
-    [image: "fedora:30",                      arches: arches - ["armhf"]],
-    [image: "fedora:31",                      arches: arches - ["armhf"]],
-    [image: "fedora:latest",                  arches: arches - ["armhf"]],
-    [image: "opensuse/leap:15",               arches: arches - ["armhf", "aarch64"]],
+    [image: "amazonlinux:2",                  arches: ["aarch64"]],
+    [image: "centos:7",                       arches: ["amd64", "aarch64", "armhf"]],
+    [image: "debian:stretch",                 arches: ["amd64", "aarch64", "armhf"]], // Debian 9  (EOL: June, 2022)
+    [image: "debian:buster",                  arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2024)
+    [image: "fedora:29",                      arches: ["amd64", "aarch64"]],
+    [image: "fedora:30",                      arches: ["amd64", "aarch64"]],
+    [image: "fedora:31",                      arches: ["amd64", "aarch64"]],
+    [image: "fedora:latest",                  arches: ["amd64"]],
+    [image: "opensuse/leap:15",               arches: ["amd64"]],
     [image: "balenalib/rpi-raspbian:stretch", arches: ["armhf"]],
     [image: "balenalib/rpi-raspbian:buster",  arches: ["armhf"]],
-    [image: "ubuntu:xenial",                  arches: arches],    // Ubuntu 16.04 LTS (End of support: April, 2021. EOL: April, 2024)
-    [image: "ubuntu:bionic",                  arches: arches],    // Ubuntu 18.04 LTS (End of support: April, 2023. EOL: April, 2028)
-    [image: "ubuntu:disco",                   arches: arches],    // Ubuntu 19.03  (EOL: January, 2020)
-    [image: "ubuntu:eoan",                    arches: arches],    // Ubuntu 19.10  (EOL: July, 2020)
+    [image: "ubuntu:xenial",                  arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 16.04 LTS (End of support: April, 2021. EOL: April, 2024)
+    [image: "ubuntu:bionic",                  arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 18.04 LTS (End of support: April, 2023. EOL: April, 2028)
+    [image: "ubuntu:disco",                   arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 19.03  (EOL: January, 2020)
+    [image: "ubuntu:eoan",                    arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 19.10  (EOL: July, 2020)
 ]
 
 // Required for windows
