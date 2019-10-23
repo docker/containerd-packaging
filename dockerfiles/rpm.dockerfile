@@ -69,5 +69,6 @@ COPY --from=golang         /usr/local/go/    /usr/local/go/
 COPY --from=containerd-src /containerd/      /go/src/github.com/containerd/containerd/
 COPY --from=runc-src       /runc/            /go/src/github.com/opencontainers/runc/
 
-ARG REF
+ARG PACKAGE
+ENV PACKAGE=${PACKAGE:-containerd.io}
 ENTRYPOINT ["/build-rpm"]
