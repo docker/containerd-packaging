@@ -21,8 +21,8 @@ RUN git -C /runc checkout "${RUNC_REF}"
 FROM golang AS go-md2man
 ARG GOPROXY=direct
 ARG GO111MODULE=on
-ARG MD2MAN_VERSION=v1.0.10
-RUN go get github.com/cpuguy83/go-md2man@${MD2MAN_VERSION}
+ARG MD2MAN_VERSION=v2.0.0
+RUN go get github.com/cpuguy83/go-md2man/v2/@${MD2MAN_VERSION}
 
 FROM ${BUILD_IMAGE} AS redhat-base
 RUN yum install -y yum-utils rpm-build git
