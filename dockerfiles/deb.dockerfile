@@ -4,6 +4,19 @@ ARG GOLANG_IMAGE
 
 FROM ${GOLANG_IMAGE} AS golang
 
+FROM alpine:3.10 AS git
+RUN apk -u --no-cache add git
+
+FROM git AS containerd-src
+ARG REF=master
+RUN git clone https://github.com/containerd/containerd.git /containerd
+RUN git -C /containerd checkout "${REF}"
+
+FROM git AS runc-src
+ARG RUNC_REF=master
+RUN git clone https://github.com/opencontainers/runc.git /runc
+RUN git -C /runc checkout "${RUNC_REF}"
+
 FROM ${BUILD_IMAGE}
 RUN cat /etc/os-release
 
@@ -15,18 +28,6 @@ ENV GOPATH=/go
 ENV PATH="${PATH}:/usr/local/go/bin:${GOPATH}/bin"
 ENV IMPORT_PATH=github.com/containerd/containerd
 ENV GO_SRC_PATH="/go/src/${IMPORT_PATH}"
-
-# Clone source down from github to provide a default build for containerd
-# Override the containerd build repo by mounting a local containerd repo to /go/src/github.com/containerd/containerd
-ARG REF=master
-RUN mkdir -p "${GO_SRC_PATH}"
-RUN git clone "https://${IMPORT_PATH}" "${GO_SRC_PATH}"
-RUN git -C "${GO_SRC_PATH}" checkout "${REF}"
-
-ARG RUNC_REF=master
-RUN mkdir -p /go/src/github.com/opencontainers/runc
-RUN git clone https://github.com/opencontainers/runc.git /go/src/github.com/opencontainers/runc
-RUN git -C /go/src/github.com/opencontainers/runc checkout "${RUNC_REF}"
 
 # Set up debian packaging files
 COPY common/ /root/common/
@@ -41,6 +42,9 @@ RUN mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-reco
 # Copy over our entrypoint
 COPY scripts/build-deb /build-deb
 COPY scripts/.helpers /.helpers
+
+COPY --from=containerd-src /containerd/      /go/src/github.com/containerd/containerd/
+COPY --from=runc-src       /runc/            /go/src/github.com/opencontainers/runc/
 
 ARG PACKAGE
 ENV PACKAGE=${PACKAGE:-containerd.io}
