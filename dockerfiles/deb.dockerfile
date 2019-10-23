@@ -18,7 +18,10 @@ RUN git clone https://github.com/opencontainers/runc.git /runc
 RUN git -C /runc checkout "${RUNC_REF}"
 
 FROM golang AS go-md2man
-RUN go get github.com/cpuguy83/go-md2man
+ARG GOPROXY=direct
+ARG GO111MODULE=on
+ARG MD2MAN_VERSION=v1.0.10
+RUN go get github.com/cpuguy83/go-md2man@${MD2MAN_VERSION}
 
 FROM ${BUILD_IMAGE}
 RUN cat /etc/os-release
