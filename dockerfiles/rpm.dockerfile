@@ -18,6 +18,9 @@ ARG RUNC_REF=master
 RUN git clone https://github.com/opencontainers/runc.git /runc
 RUN git -C /runc checkout "${RUNC_REF}"
 
+FROM golang AS go-md2man
+RUN go get github.com/cpuguy83/go-md2man
+
 FROM ${BUILD_IMAGE} AS redhat-base
 RUN yum install -y yum-utils rpm-build git
 
@@ -45,13 +48,11 @@ RUN echo "%_topdir    /root/rpmbuild" > /root/.rpmmacros
 
 
 FROM ${BASE}-base
-COPY --from=golang /usr/local/go/ /usr/local/go/
 RUN mkdir -p /go
 ENV GOPATH=/go
 ENV PATH="${PATH}:/usr/local/go/bin:${GOPATH}/bin"
 ENV IMPORT_PATH=github.com/containerd/containerd
 ENV GO_SRC_PATH="/go/src/${IMPORT_PATH}"
-RUN go get github.com/cpuguy83/go-md2man
 
 # Set up rpm packaging files
 COPY common/ /root/rpmbuild/SOURCES/
@@ -60,6 +61,8 @@ COPY scripts/build-rpm /build-rpm
 COPY scripts/.rpm-helpers /.rpm-helpers
 WORKDIR /root/rpmbuild
 
+COPY --from=go-md2man      /go/bin/go-md2man /go/bin/go-md2man
+COPY --from=golang         /usr/local/go/    /usr/local/go/
 COPY --from=containerd-src /containerd/      /go/src/github.com/containerd/containerd/
 COPY --from=runc-src       /runc/            /go/src/github.com/opencontainers/runc/
 
