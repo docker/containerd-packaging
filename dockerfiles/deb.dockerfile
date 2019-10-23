@@ -17,6 +17,9 @@ ARG RUNC_REF=master
 RUN git clone https://github.com/opencontainers/runc.git /runc
 RUN git -C /runc checkout "${RUNC_REF}"
 
+FROM golang AS go-md2man
+RUN go get github.com/cpuguy83/go-md2man
+
 FROM ${BUILD_IMAGE}
 RUN cat /etc/os-release
 
@@ -34,8 +37,6 @@ COPY common/ /root/common/
 COPY debian/ /root/containerd/debian/
 WORKDIR /root/containerd
 
-COPY --from=golang /usr/local/go/ /usr/local/go/
-
 # Install all of our build dependencies, if any
 RUN mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control
 
@@ -43,6 +44,8 @@ RUN mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-reco
 COPY scripts/build-deb /build-deb
 COPY scripts/.helpers /.helpers
 
+COPY --from=go-md2man      /go/bin/go-md2man /go/bin/go-md2man
+COPY --from=golang         /usr/local/go/    /usr/local/go/
 COPY --from=containerd-src /containerd/      /go/src/github.com/containerd/containerd/
 COPY --from=runc-src       /runc/            /go/src/github.com/opencontainers/runc/
 
