@@ -103,6 +103,8 @@ pushd /go/src/%{import_path}
 %make_containerd bin/containerd
 /go/src/%{import_path}/bin/containerd --version
 %make_containerd bin/containerd-shim
+%make_containerd bin/containerd-shim-runc-v1
+%make_containerd bin/containerd-shim-runc-v2
 %make_containerd bin/ctr
 /go/src/%{import_path}/bin/ctr --version
 popd
@@ -116,6 +118,8 @@ popd
 cd %{_topdir}/BUILD
 install -D -m 0755 bin/containerd %{buildroot}%{_bindir}/containerd
 install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
+install -D -m 0755 bin/containerd-shim-runc-v1 %{buildroot}%{_bindir}/containerd-shim-runc-v1
+install -D -m 0755 bin/containerd-shim-runc-v2 %{buildroot}%{_bindir}/containerd-shim-runc-v2
 install -D -m 0755 bin/ctr %{buildroot}%{_bindir}/ctr
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
@@ -144,6 +148,8 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %doc README.md
 %{_bindir}/containerd
 %{_bindir}/containerd-shim
+%{_bindir}/containerd-shim-runc-v1
+%{_bindir}/containerd-shim-runc-v2
 %{?with_ctr:%{_bindir}/ctr}
 %{_bindir}/runc
 %{_unitdir}/containerd.service
@@ -154,6 +160,13 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Thu Jan 09 2020 Evan Hazlett <evan@docker.com> - 1.3.2-3.1
+- Runtime: Fix containerd pid race condition containerd/containerd#3857
+- Runtime: Use cached process state to reduce exec cost containerd/containerd#3711
+- CRI: Added insecure_skip_verify option in the registry tls config to allow
+  skipping registry certificate verification containerd/containerd#3847
+- Build with Go 1.13.5
+
 * Mon Oct 07 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.10-3.2
 - build with Go 1.12.10
 

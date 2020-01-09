@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 INSTALL_DIR=debian/containerd.io
-CONTAINERD_BINARIES=bin/containerd bin/containerd-shim bin/ctr
+CONTAINERD_BINARIES=bin/containerd bin/containerd-shim bin/ctr bin/containerd-shim-runc-v1 bin/containerd-shim-runc-v2
 
 %:
 	dh $@ --with systemd
