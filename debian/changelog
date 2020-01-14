@@ -1,3 +1,16 @@
+containerd.io (1.2.11-1) release; urgency=medium
+
+  * Update the runc vendor to v1.0.0-rc9 which includes an additional
+    mitigation for CVE-2019-16884
+  * Add local-fs.target to service file to fix corrupt image after unexpected
+    host reboot
+  * Update Golang runtime to 1.12.13, which includes security fixes to the
+    crypto/dsa package made in Go 1.12.11 (CVE-2019-17596), and fixes to the
+    go command, runtime, syscall and net packages (Go 1.12.12)
+  * CRI: Fix shim delete error code to avoid unnecessary retries in the CRI plugin
+
+ -- Evan Hazlett <evan@docker.com>  Thu, 9 Jan 2020 20:40:43 +0000
+
 containerd.io (1.2.10-3) release; urgency=medium
 
   * Added explicit --restart-after-upgrade to dh_systemd_start due to
