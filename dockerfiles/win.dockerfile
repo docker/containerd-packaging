@@ -1,7 +1,7 @@
-ARG  GOVERSION
-FROM dockereng/go-crypto-swap:windows-go${GOVERSION}
+ARG  GOLANG_IMAGE
+FROM ${GOLANG_IMAGE}
 ENV  chocolateyUseWindowsCompression=false
-# Install make
+# Install make and gcc
 RUN  iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1')); \
      choco feature disable --name showDownloadProgress; \
-     choco install -y make
+     choco install -y make mingw

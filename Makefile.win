@@ -6,7 +6,7 @@ CONTAINERD_MOUNT?=C:/gopath/src/github.com/containerd/containerd
 # Windows builder, only difference is we installed make
 windows-image:
 	docker build \
-		--build-arg GOVERSION=$(GOVERSION) \
+		--build-arg GOLANG_IMAGE=$(GOLANG_IMAGE) \
 		-t dockereng/containerd-windows-builder \
 		-f dockerfiles/win.dockerfile \
 		.
