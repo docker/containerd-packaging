@@ -20,7 +20,7 @@ build/windows/%.exe: windows-image
 		-v "$(CURDIR)/build/windows:$(CONTAINERD_MOUNT)/bin" \
 		-w "$(CONTAINERD_MOUNT)" \
 		dockereng/containerd-windows-builder \
-		make bin/$*
+		make bin/$*.exe
 
 build/windows/containerd.zip: build/windows/containerd.exe build/windows/ctr.exe
 	Powershell.exe Compress-Archive -Force -Path 'build/windows/*.exe' -DestinationPath '$@'
