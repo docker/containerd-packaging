@@ -1,3 +1,10 @@
+containerd.io (1.2.11-2) release; urgency=medium
+
+  * Update Golang runtime to 1.12.15, which includes fixes in the net/http package
+    and the runtime on ARM64
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>
+
 containerd.io (1.2.11-1) release; urgency=medium
 
   * Update the runc vendor to v1.0.0-rc9 which includes an additional
