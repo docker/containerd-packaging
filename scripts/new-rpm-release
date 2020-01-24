@@ -28,8 +28,9 @@ EOF
 
 cleanup() {
     rm rpm/new.changelog
+    rm "${SPEC_FILE}.bak"
 }
 
 trap cleanup EXIT
 
-sed -i '/%changelog/ r rpm/new.changelog' "${SPEC_FILE}"
+sed -i'.bak' '/%changelog/ r rpm/new.changelog' "${SPEC_FILE}"
