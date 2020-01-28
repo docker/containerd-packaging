@@ -154,6 +154,10 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Fri Jan 24 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.11-3.2
+- Update Golang runtime to 1.12.15, which includes fixes in the net/http package
+  and the runtime on ARM64
+
 * Thu Jan 09 2020 Evan Hazlett <evan@docker.com> - 1.2.11-3.1
 - Update the runc vendor to v1.0.0-rc9 which includes an additional
   mitigation for CVE-2019-16884
@@ -163,7 +167,6 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
   crypto/dsa package made in Go 1.12.11 (CVE-2019-17596), and fixes to the
   go command, runtime, syscall and net packages (Go 1.12.12)
 - CRI: Fix shim delete error code to avoid unnecessary retries in the CRI plugin
-- build with Go 1.12.13
 
 * Mon Oct 07 2019 Eli Uriegas <eli.uriegas@docker.com> - 1.2.10-3.2
 - build with Go 1.12.10
