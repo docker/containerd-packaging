@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-GOVERSION=${GOVERSION:-1.12.15}
+GOVERSION=${GOVERSION:-1.12.16}
 HOST_ARCH=${HOST_ARCH:-$(uname -m)}
 DL_ARCH=${HOST_ARCH}
 
