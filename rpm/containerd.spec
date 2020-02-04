@@ -154,6 +154,22 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Tue Feb 04 2020 Derek McGowan <derek@docker.com> - 1.2.12-3.1
+- Update the runc vendor to v1.0.0-rc10 which includes a mitigation for
+  CVE-2019-19921.
+- Update the opencontainers/selinux which includes a mitigation for
+  CVE-2019-16884.
+- Update Golang runtime to 1.12.16, mitigating the CVE-2020-0601
+  certificate verification bypass on Windows, and CVE-2020-7919,
+  which only affects 32-bit architectures.
+- A fix to prevent SIGSEGV when starting containerd-shim
+- Fix to prevent high system load/CPU utilization with liveness and readiness
+  probes
+- Fix to prevent docker exec hanging if an earlier docker exec left a zombie
+  process
+- CRI: Update the gopkg.in/yaml.v2 vendor to v2.2.8 with a mitigation for
+  CVE-2019-11253
+
 * Fri Jan 24 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.11-3.2
 - Update Golang runtime to 1.12.15, which includes fixes in the net/http package
   and the runtime on ARM64
