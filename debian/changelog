@@ -1,3 +1,12 @@
+containerd.io (1.2.13-1) release; urgency=medium
+
+  * Update to containerd 1.2.13, which fixes a regression introduced in v1.2.12
+    that caused container/shim to hang on single core machines, and fixes an issue
+    with blkio.
+  * Update Golang runtime to 1.12.17.
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>
+
 containerd.io (1.2.12-1) release; urgency=medium
 
   * Update the runc vendor to v1.0.0-rc10 which includes a mitigation for
