@@ -23,14 +23,6 @@ def images = [
     [image: "ubuntu:eoan",                    arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 19.10  (EOL: July, 2020)
 ]
 
-// Required for windows
-hubCred = [
-    $class: 'UsernamePasswordMultiBinding',
-    usernameVariable: 'REGISTRY_USERNAME',
-    passwordVariable: 'REGISTRY_PASSWORD',
-    credentialsId: 'orcaeng-hub.docker.com',
-]
-
 def generatePackageStep(opts, arch) {
     return {
         node("linux&&${arch}") {
@@ -61,12 +53,10 @@ def packageBuildSteps = [
             stage("windows") {
                 try {
                     checkout scm
-                    withDockerRegistry(url: "https://index.docker.io/v1/", credentialsId: "dockerbuildbot-index.docker.io") {
-                        sh("git clone https://github.com/containerd/containerd containerd-src")
-                        def sanitized_workspace=env.WORKSPACE.replaceAll("\\\\", '/')
-                        // Replace windows path separators with unix style path
-                        sh("make CONTAINERD_DIR=${sanitized_workspace}/containerd-src -f Makefile.win archive")
-                    }
+                    sh("git clone https://github.com/containerd/containerd containerd-src")
+                    def sanitized_workspace=env.WORKSPACE.replaceAll("\\\\", '/')
+                    // Replace windows path separators with unix style path
+                    sh("make CONTAINERD_DIR=${sanitized_workspace}/containerd-src -f Makefile.win archive")
                 } finally {
                     deleteDir()
                 }
