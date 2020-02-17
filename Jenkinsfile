@@ -64,11 +64,21 @@ def packageBuildSteps = [
         }
     }
 ]
+
 packageBuildSteps << images.collectEntries { generatePackageSteps(it) }
 
 pipeline {
     agent none
     stages {
+        stage('Check file headers') {
+            agent any
+            steps{
+                script{
+                    checkout scm
+                    sh "make validate"
+                }
+            }
+        }
         stage('Build packages') {
             steps {
                 script {
