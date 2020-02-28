@@ -154,6 +154,10 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Fri Feb 28 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.14-3.1
+- Update to containerd 1.2.14.
+- Update Golang runtime to 1.13.8.
+
 * Mon Feb 17 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.13-3.1
 - Update to containerd 1.2.13, which fixes a regression introduced in v1.2.12
   that caused container/shim to hang on single core machines, and fixes an issue
