@@ -154,6 +154,12 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 
 
 %changelog
+* Mon Feb 17 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.13-3.1
+- Update to containerd 1.2.13, which fixes a regression introduced in v1.2.12
+  that caused container/shim to hang on single core machines, and fixes an issue
+  with blkio.
+- Update Golang runtime to 1.12.17.
+
 * Tue Feb 04 2020 Derek McGowan <derek@docker.com> - 1.2.12-3.1
 - Update the runc vendor to v1.0.0-rc10 which includes a mitigation for
   CVE-2019-19921.
