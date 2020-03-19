@@ -15,7 +15,7 @@
 #   limitations under the License.
 
 INSTALL_DIR=debian/containerd.io
-CONTAINERD_BINARIES=bin/containerd bin/containerd-shim bin/ctr
+CONTAINERD_BINARIES=bin/containerd bin/containerd-shim bin/containerd-shim-runc-v1 bin/containerd-shim-runc-v2 bin/ctr
 
 %:
 	dh $@ --with systemd

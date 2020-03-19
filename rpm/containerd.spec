@@ -103,6 +103,8 @@ pushd /go/src/%{import_path}
 %make_containerd bin/containerd
 /go/src/%{import_path}/bin/containerd --version
 %make_containerd bin/containerd-shim
+%make_containerd bin/containerd-shim-runc-v1
+%make_containerd bin/containerd-shim-runc-v2
 %make_containerd bin/ctr
 /go/src/%{import_path}/bin/ctr --version
 popd
@@ -116,6 +118,8 @@ popd
 cd %{_topdir}/BUILD
 install -D -m 0755 bin/containerd %{buildroot}%{_bindir}/containerd
 install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
+install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim-runc-v1
+install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim-runc-v2
 install -D -m 0755 bin/ctr %{buildroot}%{_bindir}/ctr
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
@@ -144,6 +148,8 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %doc README.md
 %{_bindir}/containerd
 %{_bindir}/containerd-shim
+%{_bindir}/containerd-shim-runc-v1
+%{_bindir}/containerd-shim-runc-v2
 %{?with_ctr:%{_bindir}/ctr}
 %{_bindir}/runc
 %{_unitdir}/containerd.service
