@@ -71,7 +71,7 @@ pipeline {
     agent none
     stages {
         stage('Check file headers') {
-            agent any
+            agent { label 'linux&&amd64' }
             steps{
                 script{
                     checkout scm
