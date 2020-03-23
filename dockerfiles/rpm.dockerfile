@@ -45,8 +45,6 @@ FROM redhat-base AS rhel-base
 ENV BUILDTAGS=no_btrfs
 
 FROM redhat-base AS centos-base
-# Overwrite repo that was failing on aarch64
-RUN sed -i 's/altarch/centos/g' /etc/yum.repos.d/CentOS-Sources.repo
 
 FROM redhat-base AS amzn-base
 
