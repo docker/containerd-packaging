@@ -5,7 +5,7 @@ containerd.io (1.2.13-1) release; urgency=medium
     with blkio.
   * Update Golang runtime to 1.12.17.
 
- -- Sebastiaan van Stijn <thajeztah@docker.com>
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Mon, 17 Feb 2020 10:46:04 +0000
 
 containerd.io (1.2.12-1) release; urgency=medium
 
@@ -31,7 +31,7 @@ containerd.io (1.2.11-2) release; urgency=medium
   * Update Golang runtime to 1.12.15, which includes fixes in the net/http package
     and the runtime on ARM64
 
- -- Sebastiaan van Stijn <thajeztah@docker.com>
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Fri, 24 Jan 2020 14:42:35 +0000
 
 containerd.io (1.2.11-1) release; urgency=medium
 
@@ -87,7 +87,7 @@ containerd.io (1.2.6-4) release; urgency=high
 
   * build with Go 1.11.13 (CVE-2019-9512, CVE-2019-9514)
 
- -- Sebastiaan van Stijn <thajeztah@docker.com> Thu, 15 Aug 2019 21:02:17 +0000
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Thu, 15 Aug 2019 21:02:17 +0000
 
 containerd.io (1.2.6-3) release; urgency=medium
 
@@ -99,7 +99,7 @@ containerd.io (1.2.6-2) release; urgency=medium
 
   * update runc to v1.0.0-rc8
 
- -- Sebastiaan van Stijn <thajeztah@docker.com> Fri, 26 Apr 2019 00:59:05 +0000
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Fri, 26 Apr 2019 00:59:05 +0000
 
 containerd.io (1.2.6-1) release; urgency=medium
 
@@ -107,7 +107,7 @@ containerd.io (1.2.6-1) release; urgency=medium
   * update runc to 029124da7af7360afa781a0234d1b083550f797c
   * build with Go 1.11.8
 
- -- Sebastiaan van Stijn <thajeztah@docker.com>  Wed, 9 Apr 2019 19:19:23 +0000
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Wed, 09 Apr 2019 19:19:23 +0000
 
 containerd.io (1.2.5-1) release; urgency=medium
 
