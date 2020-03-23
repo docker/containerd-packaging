@@ -99,33 +99,27 @@ cd %{_topdir}/BUILD/
 cd %{_topdir}/BUILD
 make man
 
-pushd /go/src/%{import_path}
 BUILDTAGS="seccomp selinux"
 %if 1%{!?el8:1}
 BUILDTAGS="${BUILDTAGS} no_btrfs"
 %endif
 
-%define make_containerd(o:) make VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} GO_BUILDTAGS="${BUILDTAGS}" %{?**};
-%make_containerd bin/containerd
-/go/src/%{import_path}/bin/containerd --version
-%make_containerd bin/containerd-shim
-%make_containerd bin/ctr
-/go/src/%{import_path}/bin/ctr --version
-popd
+make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} GO_BUILDTAGS="${BUILDTAGS}"
 
-pushd /go/src/github.com/opencontainers/runc
-make BUILDTAGS='seccomp apparmor selinux %{runc_nokmem}' runc
-popd
+# Remove containerd-stress, as we're not shipping it as part of the packages
+rm -f bin/containerd-stress
+bin/containerd --version
+bin/ctr --version
+
+make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin BUILDTAGS='seccomp apparmor selinux %{runc_nokmem}' runc install
 
 
 %install
 cd %{_topdir}/BUILD
-install -D -m 0755 bin/containerd %{buildroot}%{_bindir}/containerd
-install -D -m 0755 bin/containerd-shim %{buildroot}%{_bindir}/containerd-shim
-install -D -m 0755 bin/ctr %{buildroot}%{_bindir}/ctr
+mkdir -p %{buildroot}%{_bindir}
+install -D -m 0755 bin/* %{buildroot}%{_bindir}
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
-install -D -m 0755 /go/src/github.com/opencontainers/runc/runc %{buildroot}%{_bindir}/runc
 
 # install manpages
 install -d %{buildroot}%{_mandir}/man1
@@ -148,10 +142,7 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %files
 %license LICENSE
 %doc README.md
-%{_bindir}/containerd
-%{_bindir}/containerd-shim
-%{?with_ctr:%{_bindir}/ctr}
-%{_bindir}/runc
+%{_bindir}/*
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
 /%{_mandir}/man1/*

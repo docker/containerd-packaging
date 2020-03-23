@@ -15,34 +15,37 @@
 #   limitations under the License.
 
 INSTALL_DIR=debian/containerd.io
-CONTAINERD_BINARIES=bin/containerd bin/containerd-shim bin/ctr
 
 %:
 	dh $@ --with systemd
 
 # GO_SRC_PATH and PACKAGE are defined in the dockerfile
 # VERSION and REF are defined in scripts/build-deb
-bin/%: ## Create containerd binaries
-	@echo "+ make -C $(GO_SRC_PATH) --no-print-directory VERSION=$${VERSION} REVISION=$${REF} PACKAGE=$${PACKAGE} $@"
-	@make -C $(GO_SRC_PATH) --no-print-directory VERSION=$${VERSION} REVISION=$${REF} PACKAGE=$${PACKAGE} $@
-	mkdir -p $(@D)
-	mv -v $(GO_SRC_PATH)/$@ $@
+binaries: ## Create containerd binaries
+	@set -x; make -C $(GO_SRC_PATH) --no-print-directory \
+		DESTDIR="$$(pwd)" \
+		VERSION=$${VERSION} \
+		REVISION=$${REF} \
+		PACKAGE=$${PACKAGE} \
+		binaries install
+
+	# Remove containerd-stress, as we're not shipping it as part of the packages
+	rm -f bin/containerd-stress
 
 bin/runc:
-	make -C /go/src/github.com/opencontainers/runc BUILDTAGS='seccomp apparmor selinux' runc && mv -v /go/src/github.com/opencontainers/runc/runc $@
+	@set -x; make -C /go/src/github.com/opencontainers/runc  --no-print-directory \
+		BINDIR="$$(pwd)/bin" \
+		BUILDTAGS='seccomp apparmor selinux' \
+		runc install
 
-override_dh_auto_build: $(CONTAINERD_BINARIES)
+override_dh_auto_build: binaries bin/runc
 
 override_dh_systemd_start:
 	dh_systemd_start --restart-after-upgrade
 	sed -i 's/_dh_action=try-restart/_dh_action=restart/g' ./debian/containerd.io.postinst.debhelper
 
-override_dh_auto_install: $(CONTAINERD_BINARIES) bin/runc
-	# set -x so we can see what's being installed where
-	for binary in $(CONTAINERD_BINARIES); do \
-		dest=$$(basename $$binary); \
-		(set -x; install -D -m 0755 $$binary $(INSTALL_DIR)/usr/bin/$$dest); \
-	done
-	install -D -m 0755 bin/runc $(INSTALL_DIR)/usr/bin/runc
+override_dh_auto_install: binaries bin/runc
+	mkdir -p $(INSTALL_DIR)/usr/bin
+	install -D -m 0755 bin/* $(INSTALL_DIR)/usr/bin
 	install -D -m 0644 /root/common/containerd.service $(INSTALL_DIR)/lib/systemd/system/containerd.service
 	install -D -m 0644 /root/common/containerd.toml $(INSTALL_DIR)/etc/containerd/config.toml
