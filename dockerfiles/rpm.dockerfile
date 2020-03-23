@@ -45,6 +45,7 @@ FROM redhat-base AS rhel-base
 ENV BUILDTAGS=no_btrfs
 
 FROM redhat-base AS centos-base
+RUN if [ -f /etc/yum.repos.d/CentOS-PowerTools.repo ]; then sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/CentOS-PowerTools.repo; fi
 
 FROM redhat-base AS amzn-base
 
