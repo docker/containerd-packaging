@@ -202,7 +202,7 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 - containerd 1.2.9 release
 - Addresses CVE-2019-9512 (Ping Flood), CVE-2019-9514 (Reset Flood), and CVE-2019-9515 (Settings Flood).
 
-* Mon Aug 27 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.8-3.1
+* Tue Aug 27 2019 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.8-3.1
 - containerd 1.2.8 release
 - build with Go 1.12.9
 
