@@ -45,8 +45,7 @@ FROM redhat-base AS rhel-base
 ENV BUILDTAGS=no_btrfs
 
 FROM redhat-base AS centos-base
-# Overwrite repo that was failing on aarch64
-RUN sed -i 's/altarch/centos/g' /etc/yum.repos.d/CentOS-Sources.repo
+RUN if [ -f /etc/yum.repos.d/CentOS-PowerTools.repo ]; then sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/CentOS-PowerTools.repo; fi
 
 FROM redhat-base AS amzn-base
 

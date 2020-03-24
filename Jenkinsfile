@@ -8,6 +8,7 @@
 def images = [
     [image: "amazonlinux:2",                  arches: ["aarch64"]],
     [image: "centos:7",                       arches: ["amd64", "aarch64", "armhf"]],
+    [image: "centos:8",                       arches: ["amd64", "aarch64"]],          // Note: armhf (arm32) images are currently not available on Docker Hub
     [image: "debian:stretch",                 arches: ["amd64", "aarch64", "armhf"]], // Debian 9  (EOL: June, 2022)
     [image: "debian:buster",                  arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2024)
     [image: "fedora:29",                      arches: ["amd64", "aarch64"]],
