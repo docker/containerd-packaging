@@ -47,7 +47,7 @@ DIST_VERSION=$(lsb_release -sc)
 ARCH=$(dpkg --print-architecture)
 OUT_DIR="/out/${DIST_ID}/${DIST_VERSION}/${ARCH}/"
 mkdir -p "${OUT_DIR}"
-mv -v "../${PACKAGE}"* "${OUT_DIR}"
+mv -v ../*.deb "${OUT_DIR}"
 
 # Only create an archive if env variable is specified
 if [[ -n "${CREATE_ARCHIVE}" ]]; then
