@@ -18,6 +18,16 @@ source /.helpers
 
 set -e
 
+apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    devscripts \
+    equivs \
+    git \
+    lsb-release \
+ && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
 VERSION="$(git -C "${GO_SRC_PATH}" describe --tags | sed 's/^v//')"
 # Check if we're on a tagged version, change VERSION to dev build if not
 if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD >/dev/null 2>&1; then

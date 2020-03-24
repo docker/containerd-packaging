@@ -47,7 +47,7 @@ ifdef CREATE_ARCHIVE
 	VOLUME_MOUNTS+= -v "$(CURDIR)/archive:/archive"
 endif
 
-RUN=docker run --rm $(VOLUME_MOUNTS) -i $(ENV_VARS) $(BUILDER_IMAGE)
+RUN=docker run --security-opt seccomp=unconfined -e DEBIAN_FRONTEND=noninteractive --rm $(VOLUME_MOUNTS) -i $(ENV_VARS) $(BUILDER_IMAGE)
 CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
 CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
 
