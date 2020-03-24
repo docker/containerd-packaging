@@ -39,9 +39,10 @@ RUN go get github.com/cpuguy83/go-md2man/v2/@${MD2MAN_VERSION}
 
 FROM ${BUILD_IMAGE}
 RUN cat /etc/os-release
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Install some pre-reqs
-RUN apt-get update && apt-get install -y curl devscripts equivs git lsb-release
+RUN apt-get update && apt-get install -y --no-install-recommends curl devscripts equivs git lsb-release
 
 RUN mkdir -p /go
 ENV GOPATH=/go
