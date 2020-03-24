@@ -42,7 +42,14 @@ RUN cat /etc/os-release
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install some pre-reqs
-RUN apt-get update && apt-get install -y --no-install-recommends curl devscripts equivs git lsb-release
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    devscripts \
+    equivs \
+    git \
+    lsb-release \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /go
 ENV GOPATH=/go
@@ -56,7 +63,10 @@ COPY debian/ /root/containerd/debian/
 WORKDIR /root/containerd
 
 # Install all of our build dependencies, if any
-RUN mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control
+RUN apt-get update \
+ && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 # Copy over our entrypoint
 COPY scripts/build-deb /build-deb
