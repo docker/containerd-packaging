@@ -16,22 +16,24 @@ def generatePackageStep(opts, arch) {
                 try {
                     sh 'docker version'
                     sh 'docker info'
+                    sh 'apt list libseccomp2 -a'
                     sh '''
                     curl -fsSL "https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh" | bash || true
                     '''
+                    checkout scm
                     sh '''
                     if [ "$(uname -p)" = "armv7l" ]; then
+
                         docker pull arm32v7/ubuntu:focal;
 
                         # Minimal reproducer: this should pass
                         docker run -e DEBIAN_FRONTEND=noninteractive --rm --security-opt seccomp=unconfined arm32v7/ubuntu:focal sh -c 'apt-get -q update && apt-get install -y libc6';
 
                         # Minimal reproducer: this should fail
-                        docker run -e DEBIAN_FRONTEND=noninteractive --rm arm32v7/ubuntu:focal sh -c 'apt-get -q update && apt-get install -y libc6';
+                        docker run -e DEBIAN_FRONTEND=noninteractive --rm --security-opt seccomp=./default.json arm32v7/ubuntu:focal sh -c 'apt-get -q update && apt-get install -y libc6';
                     fi
                     '''
                     sh("docker pull ${opts.image}")
-                    checkout scm
                     sh("make BUILD_IMAGE=${opts.image} CREATE_ARCHIVE=1 clean build")
                     archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
                 } finally {
