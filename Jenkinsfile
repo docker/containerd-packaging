@@ -23,13 +23,24 @@ def generatePackageStep(opts, arch) {
                     checkout scm
                     sh '''
                     if [ "$(uname -p)" = "armv7l" ]; then
+                        echo "installing libseccomp2_2.4.3-0ubuntu2_armhf.deb"
+                        curl -fsSL https://launchpad.net/ubuntu/+archive/primary/+files/libseccomp2_2.4.3-0ubuntu2_armhf.deb > libseccomp2_2.4.3-0ubuntu2_armhf.deb
+
+                        sudo dpkg -i libseccomp2_2.4.3-0ubuntu2_armhf.deb
+
+                        rm libseccomp2_2.4.3-0ubuntu2_armhf.deb
+
+                        apt list libseccomp2 -a
 
                         docker pull arm32v7/ubuntu:focal;
 
-                        # Minimal reproducer: this should pass
+                        echo "Minimal reproducer: this should pass (seccomp disabled)"
                         docker run -e DEBIAN_FRONTEND=noninteractive --rm --security-opt seccomp=unconfined arm32v7/ubuntu:focal sh -c 'apt-get -q update && apt-get install -y libc6';
 
-                        # Minimal reproducer: this should fail
+                        echo "Minimal reproducer: this should pass (updated seccomp profile)"
+                        docker run -e DEBIAN_FRONTEND=noninteractive --rm --security-opt seccomp=./default.json arm32v7/ubuntu:focal sh -c 'apt-get -q update && apt-get install -y libc6';
+
+                        echo "Minimal reproducer: default seccomp profile"
                         docker run -e DEBIAN_FRONTEND=noninteractive --rm --security-opt seccomp=./default.json arm32v7/ubuntu:focal sh -c 'apt-get -q update && apt-get install -y libc6';
                     fi
                     '''
@@ -38,6 +49,7 @@ def generatePackageStep(opts, arch) {
                     archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
                 } finally {
                     sh "sudo chmod -R 777 ."
+                    sh "sudo apt-get install -y --allow-downgrades libseccomp2=2.4.1-0ubuntu0.16.04.2"
                     deleteDir()
                 }
             }
