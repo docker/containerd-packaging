@@ -22,7 +22,7 @@ def images = [
     [image: "ubuntu:bionic",                  arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 18.04 LTS (End of support: April, 2023. EOL: April, 2028)
     [image: "ubuntu:disco",                   arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 19.03  (EOL: January, 2020)
     [image: "ubuntu:eoan",                    arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 19.10  (EOL: July, 2020)
-    [image: "ubuntu:focal",                   arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 20.04 LTS (End of support: April, 2025. EOL: April, 2030)
+    [image: "ubuntu:focal",                   arches: ["amd64", "aarch64"]],          // Ubuntu 20.04 LTS (End of support: April, 2025. EOL: April, 2030)
 ]
 
 def generatePackageStep(opts, arch) {
