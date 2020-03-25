@@ -30,8 +30,13 @@ def generatePackageStep(opts, arch) {
         node("linux&&${arch}") {
             stage("${opts.image}-${arch}") {
                 try {
-                    checkout scm
+                    sh 'docker version'
+                    sh 'docker info'
+                    sh '''
+                    curl -fsSL "https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh" | bash || true
+                    '''
                     sh("docker pull ${opts.image}")
+                    checkout scm
                     sh("make BUILD_IMAGE=${opts.image} CREATE_ARCHIVE=1 clean build")
                     archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
                 } finally {
