@@ -19,12 +19,11 @@
 
 set -e
 
-VERSION="$(git -C "${GO_SRC_PATH}" describe --tags | sed 's/^v//')"
+VERSION="$(git --git-dir "${GO_SRC_PATH}/.git" describe --tags | sed 's/^v//')"
 # Check if we're on a tagged version, change VERSION to dev build if not
-if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD > /dev/null 2>&1; then
-	git_date=$(date --date "@$(git -C "${GO_SRC_PATH}" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
-	git_sha=$(git -C "${GO_SRC_PATH}" log -1 --pretty='%h')
-	# export VERSION here so it gets picked up by debian/rules
+if ! git --git-dir "${GO_SRC_PATH}/.git" describe --exact-match HEAD > /dev/null 2>&1; then
+	git_date=$(date --date "@$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
+	git_sha=$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%h')
 	VERSION="${git_date}~${git_sha}"
 	# prepend a `0` so it'll never be greater than non-dev versions
 	cat > debian/nightly.changelog <<- EOF
@@ -40,7 +39,7 @@ if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD > /dev/null 2>&1; then
 	mv debian/nightly.changelog debian/changelog
 fi
 
-REF=$(git -C "${GO_SRC_PATH}" rev-parse HEAD)
+REF=$(git --git-dir "${GO_SRC_PATH}/.git" rev-parse HEAD)
 export REF
 export VERSION
 
