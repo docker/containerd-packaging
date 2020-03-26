@@ -42,7 +42,6 @@ FROM ${BUILD_IMAGE} AS redhat-base
 RUN yum install -y yum-utils rpm-build git
 
 FROM redhat-base AS rhel-base
-ENV BUILDTAGS=no_btrfs
 
 FROM redhat-base AS centos-base
 RUN if [ -f /etc/yum.repos.d/CentOS-PowerTools.repo ]; then sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/CentOS-PowerTools.repo; fi
