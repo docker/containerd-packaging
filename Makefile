@@ -51,6 +51,15 @@ src/github.com/containerd/containerd:
 	git clone https://github.com/containerd/containerd.git $@
 endif
 
+# This targets allows building multiple distros at once, for example:
+#
+#     make docker.io/library/ubuntu:bionic docker.io/library/centos:7
+#
+# It is a shorthand for "make BUILD_IMAGE=mydistro:version build"
+.PHONY: docker.io/%
+docker.io/%:
+	$(MAKE) BUILD_IMAGE="$@" build
+
 .PHONY: checkout
 checkout: src
 	@git -C src/github.com/opencontainers/runc   checkout -q "$(RUNC_REF)"

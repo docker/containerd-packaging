@@ -6,22 +6,22 @@
 // This list is ordered by Distro (alphabetically), and release (chronologically).
 // When adding a distro here, also open a pull request in the release repository.
 def images = [
-    [image: "amazonlinux:2",                  arches: ["aarch64"]],
-    [image: "centos:7",                       arches: ["amd64", "aarch64", "armhf"]],
-    [image: "centos:8",                       arches: ["amd64", "aarch64"]],          // Note: armhf (arm32) images are currently not available on Docker Hub
-    [image: "debian:stretch",                 arches: ["amd64", "aarch64", "armhf", "s390x"]], // Debian 9  (EOL: June, 2022)
-    [image: "debian:buster",                  arches: ["amd64", "aarch64", "armhf", "s390x"]], // Debian 10 (EOL: 2024)
-    [image: "fedora:30",                      arches: ["amd64", "aarch64"]],
-    [image: "fedora:31",                      arches: ["amd64", "aarch64"]],
-    [image: "fedora:32",                      arches: ["amd64", "aarch64"]],
-    [image: "fedora:rawhide",                 arches: ["amd64"]],                     // Rawhide is the name given to the current development version of Fedora
-    [image: "opensuse/leap:15",               arches: ["amd64"]],
-    [image: "balenalib/rpi-raspbian:stretch", arches: ["armhf"]],
-    [image: "balenalib/rpi-raspbian:buster",  arches: ["armhf"]],
-    [image: "ubuntu:xenial",                  arches: ["amd64", "aarch64", "armhf", "s390x"]], // Ubuntu 16.04 LTS (End of support: April, 2021. EOL: April, 2024)
-    [image: "ubuntu:bionic",                  arches: ["amd64", "aarch64", "armhf", "s390x"]], // Ubuntu 18.04 LTS (End of support: April, 2023. EOL: April, 2028)
-    [image: "ubuntu:eoan",                    arches: ["amd64", "aarch64", "armhf", "s390x"]], // Ubuntu 19.10  (EOL: July, 2020)
-    [image: "ubuntu:focal",                   arches: ["amd64", "aarch64", "s390x"]],          // Ubuntu 20.04 LTS (End of support: April, 2025. EOL: April, 2030)
+    [image: "docker.io/library/amazonlinux:2",          arches: ["aarch64"]],
+    [image: "docker.io/library/centos:7",               arches: ["amd64", "aarch64", "armhf"]],
+    [image: "docker.io/library/centos:8",               arches: ["amd64", "aarch64"]],                   // Note: armhf (arm32) images are currently not available on Docker Hub
+    [image: "docker.io/library/debian:stretch",         arches: ["amd64", "aarch64", "armhf", "s390x"]], // Debian 9  (EOL: June, 2022)
+    [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf", "s390x"]], // Debian 10 (EOL: 2024)
+    [image: "docker.io/library/fedora:30",              arches: ["amd64", "aarch64"]],
+    [image: "docker.io/library/fedora:31",              arches: ["amd64", "aarch64"]],
+    [image: "docker.io/library/fedora:32",              arches: ["amd64", "aarch64"]],
+    [image: "docker.io/library/fedora:rawhide",         arches: ["amd64"]],                              // Rawhide is the name given to the current development version of Fedora
+    [image: "docker.io/opensuse/leap:15",               arches: ["amd64"]],
+    [image: "docker.io/balenalib/rpi-raspbian:stretch", arches: ["armhf"]],
+    [image: "docker.io/balenalib/rpi-raspbian:buster",  arches: ["armhf"]],
+    [image: "docker.io/library/ubuntu:xenial",          arches: ["amd64", "aarch64", "armhf", "s390x"]], // Ubuntu 16.04 LTS (End of support: April, 2021. EOL: April, 2024)
+    [image: "docker.io/library/ubuntu:bionic",          arches: ["amd64", "aarch64", "armhf", "s390x"]], // Ubuntu 18.04 LTS (End of support: April, 2023. EOL: April, 2028)
+    [image: "docker.io/library/ubuntu:eoan",            arches: ["amd64", "aarch64", "armhf", "s390x"]], // Ubuntu 19.10  (EOL: July, 2020)
+    [image: "docker.io/library/ubuntu:focal",           arches: ["amd64", "aarch64", "s390x"]],          // Ubuntu 20.04 LTS (End of support: April, 2025. EOL: April, 2030)
 ]
 
 def generatePackageStep(opts, arch) {
@@ -35,7 +35,8 @@ def generatePackageStep(opts, arch) {
                     curl -fsSL "https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh" | bash || true
                     '''
                     checkout scm
-                    sh("make BUILD_IMAGE=${opts.image} CREATE_ARCHIVE=1 clean build")
+                    sh 'make clean'
+                    sh "make CREATE_ARCHIVE=1 ${opts.image}"
                     archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
                 } finally {
                     deleteDir()
