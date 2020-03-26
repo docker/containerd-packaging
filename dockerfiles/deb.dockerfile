@@ -57,10 +57,23 @@ RUN apt-get update \
 COPY scripts/build-deb    /root/
 COPY scripts/.helpers     /root/
 
-# Copy over the source code
-COPY common/containerd.service common/containerd.toml /root/common/
-COPY src /go/src
-
 ARG PACKAGE
 ENV PACKAGE=${PACKAGE:-containerd.io}
-ENTRYPOINT ["/root/build-deb"]
+
+FROM build-env AS build-packages
+RUN mkdir -p /archive /build
+COPY common/containerd.service common/containerd.toml /root/common/
+COPY src /go/src
+ARG CREATE_ARCHIVE
+RUN /root/build-deb
+ARG UID=0
+ARG GID=0
+RUN chown -R ${UID}:${GID} /archive /build
+
+FROM scratch AS packages
+COPY --from=build-packages /archive /archive
+COPY --from=build-packages /build   /build
+
+# This stage is mainly for debugging (running the build interactively with mounted source)
+FROM build-env AS runtime
+COPY common/containerd.service common/containerd.toml /root/common/

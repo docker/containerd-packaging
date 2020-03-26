@@ -38,7 +38,6 @@ def generatePackageStep(opts, arch) {
                     sh("make BUILD_IMAGE=${opts.image} CREATE_ARCHIVE=1 clean build")
                     archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
                 } finally {
-                    sh "sudo chmod -R 777 ."
                     deleteDir()
                 }
             }

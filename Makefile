@@ -21,30 +21,12 @@ BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 # The PROGRESS variable allows overriding the docker build --progress option.
 # For example, use "make PROGRESS=plain ..." to show build progress in plain test
 PROGRESS=auto
-VOLUME_MOUNTS=-v "$(CURDIR)/build/:/build"
-
-ifdef CONTAINERD_DIR
-	VOLUME_MOUNTS+=-v "$(shell realpath $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
-endif
-
-ifdef RUNC_DIR
-	VOLUME_MOUNTS+=-v "$(shell realpath $(RUNC_DIR)):/go/src/github.com/opencontainers/runc"
-endif
-
-ENV_VARS=
-ifdef CREATE_ARCHIVE
-	ENV_VARS+=-e CREATE_ARCHIVE=1
-	VOLUME_MOUNTS+= -v "$(CURDIR)/archive:/archive"
-endif
-
-CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
-CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
+TARGET=packages
 
 all: build
 
 .PHONY: clean
 clean:
-	-$(CHOWN_TO_USER) build/
 	-$(RM) -r build/
 	-$(RM) -r artifacts
 	-$(RM) -r src
@@ -84,13 +66,14 @@ build:
 		--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
 		--build-arg BASE="$(BUILD_BASE)" \
+		--build-arg CREATE_ARCHIVE="$(CREATE_ARCHIVE)" \
+		--build-arg UID="$(shell id -u)" \
+		--build-arg GID="$(shell id -g)" \
 		--file="dockerfiles/$(BUILD_TYPE).dockerfile" \
 		--progress="$(PROGRESS)" \
-		--tag="$(BUILDER_IMAGE)" \
+		--target="$(TARGET)" \
+		--output=. \
 		.
-
-	@set -x; docker run --rm $(VOLUME_MOUNTS) -i $(ENV_VARS) "$(BUILDER_IMAGE)"
-	$(CHOWN_TO_USER) build/
 
 .PHONY: validate
 validate: ## Validate files license header
