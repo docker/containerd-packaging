@@ -13,9 +13,10 @@
 #   limitations under the License.
 
 ARG BUILD_IMAGE=ubuntu:bionic
-# Install golang since the package managed one probably is too old and ppa's don't cover all distros
 ARG GOLANG_IMAGE=golang:latest
 
+# Install golang from the official image, since the package managed
+# one probably is too old and ppa's don't cover all distros
 FROM ${GOLANG_IMAGE} AS golang
 
 FROM golang AS go-md2man
@@ -24,9 +25,16 @@ ARG GO111MODULE=on
 ARG MD2MAN_VERSION=v2.0.0
 RUN go get github.com/cpuguy83/go-md2man/v2/@${MD2MAN_VERSION}
 
-FROM ${BUILD_IMAGE}
-RUN cat /etc/os-release
+FROM ${BUILD_IMAGE} AS distro-image
+
+FROM distro-image AS build-env
+RUN mkdir -p /go
+ENV GOPATH=/go
+ENV PATH="${PATH}:/usr/local/go/bin:${GOPATH}/bin"
+ENV IMPORT_PATH=github.com/containerd/containerd
+ENV GO_SRC_PATH="/go/src/${IMPORT_PATH}"
 ARG DEBIAN_FRONTEND=noninteractive
+WORKDIR /root/containerd
 
 # Install some pre-reqs
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -38,29 +46,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /go
-ENV GOPATH=/go
-ENV PATH="${PATH}:/usr/local/go/bin:${GOPATH}/bin"
-ENV IMPORT_PATH=github.com/containerd/containerd
-ENV GO_SRC_PATH="/go/src/${IMPORT_PATH}"
-
-# Set up debian packaging files
-COPY common/ /root/common/
-COPY debian/ /root/containerd/debian/
-WORKDIR /root/containerd
-
-# Install all of our build dependencies, if any
+# Install build dependencies and build scripts
+COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
+COPY --from=golang    /usr/local/go/    /usr/local/go/
+COPY debian/ debian/
 RUN apt-get update \
  && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+COPY scripts/build-deb    /
+COPY scripts/.helpers     /
 
-# Copy over our entrypoint
-COPY scripts/build-deb /build-deb
-COPY scripts/.helpers /.helpers
-
-COPY --from=go-md2man      /go/bin/go-md2man /go/bin/go-md2man
-COPY --from=golang         /usr/local/go/    /usr/local/go/
+# Copy over the source code
+COPY common/containerd.service common/containerd.toml /root/common/
 COPY src /go/src
 
 ARG PACKAGE

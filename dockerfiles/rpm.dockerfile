@@ -14,9 +14,10 @@
 
 ARG BUILD_IMAGE=centos:7
 ARG BASE=centos
-# Install golang since the package managed one probably is too old and ppa's don't cover all distros
 ARG GOLANG_IMAGE=golang:latest
 
+# Install golang from the official image, since the package managed
+# one probably is too old and ppa's don't cover all distros
 FROM ${GOLANG_IMAGE} AS golang
 
 FROM golang AS go-md2man
@@ -52,23 +53,25 @@ RUN zypper -n install rpm-build git
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}
 RUN echo "%_topdir    /root/rpmbuild" > /root/.rpmmacros
 
+FROM ${BASE}-base AS distro-image
 
-FROM ${BASE}-base
+FROM distro-image AS build-env
 RUN mkdir -p /go
 ENV GOPATH=/go
 ENV PATH="${PATH}:/usr/local/go/bin:${GOPATH}/bin"
 ENV IMPORT_PATH=github.com/containerd/containerd
 ENV GO_SRC_PATH="/go/src/${IMPORT_PATH}"
-
-# Set up rpm packaging files
-COPY common/ /root/rpmbuild/SOURCES/
-COPY rpm/containerd.spec /root/rpmbuild/SPECS/containerd.spec
-COPY scripts/build-rpm /build-rpm
-COPY scripts/.rpm-helpers /.rpm-helpers
 WORKDIR /root/rpmbuild
 
-COPY --from=go-md2man      /go/bin/go-md2man /go/bin/go-md2man
-COPY --from=golang         /usr/local/go/    /usr/local/go/
+# Install build dependencies and build scripts
+COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
+COPY --from=golang    /usr/local/go/    /usr/local/go/
+COPY rpm/containerd.spec SPECS/containerd.spec
+COPY scripts/build-rpm    /
+COPY scripts/.rpm-helpers /
+
+# Copy over the source code
+COPY common/containerd.service common/containerd.toml SOURCES/
 COPY src /go/src
 
 ARG PACKAGE
