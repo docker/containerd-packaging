@@ -22,6 +22,8 @@ BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 # For example, use "make PROGRESS=plain ..." to show build progress in plain test
 PROGRESS=auto
 TARGET=packages
+CONTAINERD_COMMIT=$(shell git -C "src/github.com/containerd/containerd" log -1 --pretty='%h')
+RUNC_COMMIT=$(shell git -C "src/github.com/opencontainers/runc" log -1 --pretty='%h')
 
 all: build
 
@@ -57,6 +59,16 @@ checkout: src
 .PHONY: build
 build: checkout
 build:
+	@echo "--------------------------------------------------------------------"
+	@echo "Building $(TARGET) on $(BUILD_IMAGE)"
+	@echo ""
+	@echo "containerd   : $(REF) (commit: $(CONTAINERD_COMMIT))"
+	@echo "runc         : $(RUNC_REF) (commit: $(RUNC_COMMIT))"
+	@echo "architecture : $(shell uname -m)"
+	@echo "build image  : $(BUILD_IMAGE)"
+	@echo "golang image : $(GOLANG_IMAGE)"
+	@echo "--------------------------------------------------------------------"
+
 	@docker pull "$(BUILD_IMAGE)"
 
 	@if [ -z "$(BUILD_BASE)" ]; then echo "Invalid build image $(BUILD_IMAGE) no build base found"; exit 1; fi
