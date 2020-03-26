@@ -16,7 +16,8 @@
 
 NO_OUTPUT='>/dev/null 2>/dev/null'
 
-. /.rpm-helpers
+# shellcheck disable=SC1090
+. "$(dirname "$0")/.rpm-helpers"
 
 SPEC_FILE=SPECS/containerd.spec
 

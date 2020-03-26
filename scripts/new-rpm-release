@@ -18,7 +18,9 @@ set -e
 
 SPEC_FILE="rpm/containerd.spec"
 export SPEC_FILE
-. scripts/.rpm-helpers
+
+# shellcheck disable=SC1090
+. "$(dirname "$0")/.rpm-helpers"
 
 VERSION="$1"
 if [ -z "$VERSION" ]; then

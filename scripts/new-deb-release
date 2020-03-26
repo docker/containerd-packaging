@@ -14,7 +14,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-. scripts/.helpers
+# shellcheck disable=SC1090
+. "$(dirname "$0")/.helpers"
 
 VERSION=$1
 if [ -z "$VERSION" ]; then
