@@ -18,6 +18,9 @@ BUILD_IMAGE=centos:7
 BUILD_TYPE=$(shell ./scripts/deb-or-rpm $(BUILD_IMAGE))
 BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 
+# The PROGRESS variable allows overriding the docker build --progress option.
+# For example, use "make PROGRESS=plain ..." to show build progress in plain test
+PROGRESS=auto
 VOLUME_MOUNTS=-v "$(CURDIR)/build/:/build"
 
 ifdef CONTAINERD_DIR
@@ -82,6 +85,7 @@ build:
 		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
 		--build-arg BASE="$(BUILD_BASE)" \
 		--file="dockerfiles/$(BUILD_TYPE).dockerfile" \
+		--progress="$(PROGRESS)" \
 		--tag="$(BUILDER_IMAGE)" \
 		.
 
