@@ -72,7 +72,8 @@ COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
 COPY rpm/containerd.spec SPECS/containerd.spec
 COPY scripts/build-rpm    /root/
 COPY scripts/.rpm-helpers /root/
-RUN . /root/.rpm-helpers; install_build_deps SPECS/containerd.spec
+RUN . /root/.rpm-helpers \
+ && install_build_deps SPECS/containerd.spec
 
 ARG PACKAGE
 ENV PACKAGE=${PACKAGE:-containerd.io}

@@ -15,6 +15,13 @@ make docker.io/library/<distro>:<version> [docker.io/library/<distro>:<version> 
 
 After build completes, packages can be found in the `build` directory.
 
+To build static binaries:
+
+```bash
+make clean
+make static
+```
+
 ## Building a package from a local source directory
 
 Specify the path to the local source directory using `CONTAINERD_DIR` and/or

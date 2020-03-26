@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+#   Copyright 2018-2020 Docker Inc.
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+set -e
+
+VERSION="$(git --git-dir "${GO_SRC_PATH}/.git" describe --tags | sed 's/^v//')"
+# Check if we're on a tagged version, change VERSION to dev build if not
+if ! git --git-dir "${GO_SRC_PATH}/.git" describe --exact-match HEAD >/dev/null 2>&1; then
+	git_date=$(date --date "@$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
+	git_sha=$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%h')
+	VERSION="${git_date}~${git_sha}"
+fi
+
+ARCH=$(uname -m)
+DEST_DIR="/build/static/${ARCH}/"
+mkdir -p "${DEST_DIR}"
+
+# Build containerd
+(
+	set -x
+	export BUILDTAGS='netgo osusergo static_build seccomp apparmor selinux'
+	export EXTRA_FLAGS='-buildmode=pie'
+	export EXTRA_LDFLAGS='-extldflags "-fno-PIC -static"'
+
+	make -C "/go/src/github.com/containerd/containerd"
+	make -C "/go/src/github.com/containerd/containerd" DESTDIR="${DEST_DIR}" install
+)
+
+# Build runc
+(
+	set -x
+	RUNC_BUILDTAGS="seccomp apparmor selinux"
+	make -C "/go/src/github.com/opencontainers/runc" BUILDTAGS="${RUNC_BUILDTAGS}" static
+	install -D -p -t "${DEST_DIR}/bin" "/go/src/github.com/opencontainers/runc/runc"
+)
+
+tar -C "${DEST_DIR}" --exclude=containerd-stress -czf "${DEST_DIR}/containerd.io-${VERSION}.linux-${ARCH}.tar.gz" "bin/"
+rm -r "${DEST_DIR:?}/bin/"
