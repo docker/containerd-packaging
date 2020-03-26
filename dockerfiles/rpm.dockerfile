@@ -19,19 +19,6 @@ ARG GOLANG_IMAGE=golang:latest
 
 FROM ${GOLANG_IMAGE} AS golang
 
-FROM alpine:3.10 AS git
-RUN apk -u --no-cache add git
-
-FROM git AS containerd-src
-ARG REF=master
-RUN git clone https://github.com/containerd/containerd.git /containerd
-RUN git -C /containerd checkout "${REF}"
-
-FROM git AS runc-src
-ARG RUNC_REF=master
-RUN git clone https://github.com/opencontainers/runc.git /runc
-RUN git -C /runc checkout "${RUNC_REF}"
-
 FROM golang AS go-md2man
 ARG GOPROXY=direct
 ARG GO111MODULE=on
@@ -82,8 +69,7 @@ WORKDIR /root/rpmbuild
 
 COPY --from=go-md2man      /go/bin/go-md2man /go/bin/go-md2man
 COPY --from=golang         /usr/local/go/    /usr/local/go/
-COPY --from=containerd-src /containerd/      /go/src/github.com/containerd/containerd/
-COPY --from=runc-src       /runc/            /go/src/github.com/opencontainers/runc/
+COPY src /go/src
 
 ARG PACKAGE
 ENV PACKAGE=${PACKAGE:-containerd.io}

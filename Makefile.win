@@ -14,8 +14,21 @@
 
 include common/common.mk
 
-CONTAINERD_DIR?=C:/gopath/src/github.com/containerd/containerd
-CONTAINERD_MOUNT?=C:/gopath/src/github.com/containerd/containerd
+CONTAINERD_MOUNT:=C:/gopath/src/github.com/containerd/containerd
+
+src: src/github.com/containerd/containerd
+
+ifdef CONTAINERD_DIR
+src/github.com/containerd/containerd:
+	Xcopy /E /I "$(CONTAINERD_DIR)" $@
+else
+src/github.com/containerd/containerd:
+	git clone https://github.com/containerd/containerd.git $@
+endif
+
+.PHONY: checkout
+checkout: src
+	@git -C src/github.com/containerd/containerd checkout -q "$(REF)"
 
 # Windows builder, only difference is we installed make
 windows-image:
@@ -26,11 +39,11 @@ windows-image:
 		.
 	echo 1 > $@
 
-build/windows/%.exe: windows-image
+build/windows/%.exe: windows-image checkout
 	Powershell.exe New-Item -ItemType Directory -Force -Path build/windows/
 	docker run \
 		--rm \
-		-v "$(CONTAINERD_DIR):$(CONTAINERD_MOUNT)" \
+		-v "$(CURDIR)/src/:C:/gopath/src" \
 		-v "$(CURDIR)/build/windows:$(CONTAINERD_MOUNT)/bin" \
 		-w "$(CONTAINERD_MOUNT)" \
 		dockereng/containerd-windows-builder \
@@ -44,5 +57,6 @@ archive: build/windows/containerd.zip
 
 .PHONY: clean
 clean:
+	-$(RM) src
 	-$(RM) windows-image
 	-$(RM) build/windows

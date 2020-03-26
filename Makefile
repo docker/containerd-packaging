@@ -50,8 +50,33 @@ clean:
 	-$(CHOWN_TO_USER) build/
 	-$(RM) -r build/
 	-$(RM) -r artifacts
+	-$(RM) -r src
+
+src: src/github.com/opencontainers/runc src/github.com/containerd/containerd
+
+ifdef RUNC_DIR
+src/github.com/opencontainers/runc:
+	cp -r "$(RUNC_DIR)" src/github.com/opencontainers/runc
+else
+src/github.com/opencontainers/runc:
+	git clone https://github.com/opencontainers/runc.git $@
+endif
+
+ifdef CONTAINERD_DIR
+src/github.com/containerd/containerd:
+	cp -r "$(CONTAINERD_DIR)" $@
+else
+src/github.com/containerd/containerd:
+	git clone https://github.com/containerd/containerd.git $@
+endif
+
+.PHONY: checkout
+checkout: src
+	@git -C src/github.com/opencontainers/runc   checkout -q "$(RUNC_REF)"
+	@git -C src/github.com/containerd/containerd checkout -q "$(REF)"
 
 .PHONY: build
+build: checkout
 build:
 	@docker pull "$(BUILD_IMAGE)"
 

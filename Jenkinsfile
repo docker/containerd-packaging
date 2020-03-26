@@ -58,10 +58,7 @@ def packageBuildSteps = [
             stage("windows") {
                 try {
                     checkout scm
-                    sh("git clone https://github.com/containerd/containerd containerd-src")
-                    def sanitized_workspace=env.WORKSPACE.replaceAll("\\\\", '/')
-                    // Replace windows path separators with unix style path
-                    sh("make CONTAINERD_DIR=${sanitized_workspace}/containerd-src -f Makefile.win archive")
+                    sh("make -f Makefile.win archive")
                 } finally {
                     deleteDir()
                 }
