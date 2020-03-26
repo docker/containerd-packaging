@@ -31,7 +31,3 @@ endif
 BUILDER_IMAGE=containerd-builder-$@-$(GOARCH):$(shell git rev-parse --short HEAD)
 
 ARCH:=$(shell uname -m)
-
-BUILD_ARGS=--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
-	--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
-	--build-arg BASE="$(BUILD_BASE)"

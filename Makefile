@@ -18,11 +18,6 @@ BUILD_IMAGE=centos:7
 BUILD_TYPE=$(shell ./scripts/deb-or-rpm $(BUILD_IMAGE))
 BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 
-BUILD?=DOCKER_BUILDKIT=1 docker build \
-	$(BUILD_ARGS) \
-	-f dockerfiles/$(BUILD_TYPE).dockerfile \
-	-t $(BUILDER_IMAGE) .
-
 VOLUME_MOUNTS=-v "$(CURDIR)/build/:/build"
 
 ifdef CONTAINERD_DIR
@@ -39,7 +34,6 @@ ifdef CREATE_ARCHIVE
 	VOLUME_MOUNTS+= -v "$(CURDIR)/archive:/archive"
 endif
 
-RUN=docker run --rm $(VOLUME_MOUNTS) -i $(ENV_VARS) $(BUILDER_IMAGE)
 CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
 CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
 
@@ -83,8 +77,15 @@ build:
 	@if [ -z "$(BUILD_BASE)" ]; then echo "Invalid build image $(BUILD_IMAGE) no build base found"; exit 1; fi
 	@if [ -z "$(BUILD_TYPE)" ]; then echo "Invalid build image $(BUILD_IMAGE) no build type found"; exit 1; fi
 
-	$(BUILD)
-	$(RUN)
+	@set -x; DOCKER_BUILDKIT=1 docker build \
+		--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
+		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
+		--build-arg BASE="$(BUILD_BASE)" \
+		--file="dockerfiles/$(BUILD_TYPE).dockerfile" \
+		--tag="$(BUILDER_IMAGE)" \
+		.
+
+	@set -x; docker run --rm $(VOLUME_MOUNTS) -i $(ENV_VARS) "$(BUILDER_IMAGE)"
 	$(CHOWN_TO_USER) build/
 
 .PHONY: validate
