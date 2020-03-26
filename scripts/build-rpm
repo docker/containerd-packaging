@@ -24,14 +24,14 @@ set -e
 
 # copied from get.docker.com
 get_distribution() {
-    lsb_dist=""
-    # Every system that we officially support has /etc/os-release
-    if [ -r /etc/os-release ]; then
-        lsb_dist="$(. /etc/os-release && echo "$ID")"
-    fi
-    # Returning an empty string here should be alright since the
-    # case statements don't act unless you provide an actual value
-    echo "$lsb_dist"
+	lsb_dist=""
+	# Every system that we officially support has /etc/os-release
+	if [ -r /etc/os-release ]; then
+		lsb_dist="$(. /etc/os-release && echo "$ID")"
+	fi
+	# Returning an empty string here should be alright since the
+	# case statements don't act unless you provide an actual value
+	echo "$lsb_dist"
 }
 
 VERSION="$(git --git-dir "${GO_SRC_PATH}/.git" describe --tags | sed 's/^v//')"
@@ -39,14 +39,13 @@ RPM_VER_BITS=$(gen-rpm-ver-bits "${VERSION}")
 RPM_VERSION=$(echo "${RPM_VER_BITS}" | cut -f1 -d' ')
 RPM_RELEASE_VERSION=$(echo "${RPM_VER_BITS}" | cut -f2 -d' ')
 
-
 # Check if we're on a tagged version, change VERSION to dev build if not
-if ! git --git-dir "${GO_SRC_PATH}/.git" describe --exact-match HEAD >/dev/null 2>&1; then
-    git_date=$(date --date "@$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
-    git_sha=$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%h')
-    VERSION="0.${git_date}~${git_sha}"
-    RPM_RELEASE_VERSION=0
-    RPM_VERSION="$VERSION"
+if ! git --git-dir "${GO_SRC_PATH}/.git" describe --exact-match HEAD > /dev/null 2>&1; then
+	git_date=$(date --date "@$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
+	git_sha=$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%h')
+	VERSION="0.${git_date}~${git_sha}"
+	RPM_RELEASE_VERSION=0
+	RPM_VERSION="$VERSION"
 fi
 REF=$(git --git-dir "${GO_SRC_PATH}/.git" rev-parse HEAD)
 
@@ -58,30 +57,32 @@ export VERSION
 EXTRA_REPOS=${EXTRA_REPOS:-}
 
 pkg_manager="yum -y ${EXTRA_REPOS}"
+# shellcheck disable=SC2086
 if zypper --version ${NO_OUTPUT}; then
-    pkg_manager="zypper -n ${EXTRA_REPOS}"
+	pkg_manager="zypper -n ${EXTRA_REPOS}"
 elif dnf --version ${NO_OUTPUT}; then
-    pkg_manager="dnf -y ${EXTRA_REPOS}"
+	pkg_manager="dnf -y ${EXTRA_REPOS}"
 fi
 
 (
-    set -x
-    ${pkg_manager} install $(rpmspec -P ${SPEC_FILE} | grep BuildRequires | cut -d' ' -f2 | xargs)
+	set -x
+	# shellcheck disable=SC2046
+	${pkg_manager} install $(rpmspec -P "${SPEC_FILE}" | grep BuildRequires | cut -d' ' -f2 | xargs)
 )
 
-DIST_ID=$(. /etc/os-release; echo "${ID}")
-DIST_VERSION=$(. /etc/os-release; echo "${VERSION_ID}" | cut -d'.' -f1)
-ARCH=$(uname -m)
-DEST_DIR=/out/${DIST_ID}/${DIST_VERSION}/${ARCH}/
+DIST_ID="$(. /etc/os-release; echo "${ID}")"
+DIST_VERSION="$(. /etc/os-release; echo "${VERSION_ID}" | cut -d'.' -f1)"
+ARCH="$(uname -m)"
+DEST_DIR="/out/${DIST_ID}/${DIST_VERSION}/${ARCH}/"
 (
-    set -x
-    rpmbuild -ba "${SPEC_FILE}"
-    mkdir -p "${DEST_DIR}"
-    mv -v RPMS/*/*.rpm "${DEST_DIR}"
-    mv -v SRPMS/*.rpm "${DEST_DIR}"
+	set -x
+	rpmbuild -ba "${SPEC_FILE}"
+	mkdir -p "${DEST_DIR}"
+	mv -v RPMS/*/*.rpm "${DEST_DIR}"
+	mv -v SRPMS/*.rpm "${DEST_DIR}"
 )
 
 # Only create an archive if env variable is specified
-if [[ -n "${CREATE_ARCHIVE}" ]]; then
-    tar -C /out -cvzf "/archive/${DIST_ID}-${DIST_VERSION}-${ARCH}.tar.gz" "${DIST_ID}/${DIST_VERSION}/${ARCH}"
+if [ -n "${CREATE_ARCHIVE}" ]; then
+	tar -C /out -cvzf "/archive/${DIST_ID}-${DIST_VERSION}-${ARCH}.tar.gz" "${DIST_ID}/${DIST_VERSION}/${ARCH}"
 fi

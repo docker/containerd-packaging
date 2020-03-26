@@ -20,29 +20,35 @@ set -e
 
 VERSION="$(git -C "${GO_SRC_PATH}" describe --tags | sed 's/^v//')"
 # Check if we're on a tagged version, change VERSION to dev build if not
-if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD >/dev/null 2>&1; then
-    git_date=$(date --date "@$(git -C "${GO_SRC_PATH}" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
-    git_sha=$(git -C "${GO_SRC_PATH}" log -1 --pretty='%h')
-    # export VERSION here so it gets picked up by debian/rules
-    VERSION="${git_date}~${git_sha}"
-    # prepend a `0` so it'll never be greater than non-dev versions
-    cat > debian/nightly.changelog <<-EOF
-$(control_field Package) (0.${VERSION}-1) development; urgency=medium
+if ! git -C "${GO_SRC_PATH}" describe --exact-match HEAD > /dev/null 2>&1; then
+	git_date=$(date --date "@$(git -C "${GO_SRC_PATH}" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
+	git_sha=$(git -C "${GO_SRC_PATH}" log -1 --pretty='%h')
+	# export VERSION here so it gets picked up by debian/rules
+	VERSION="${git_date}~${git_sha}"
+	# prepend a `0` so it'll never be greater than non-dev versions
+	cat > debian/nightly.changelog <<- EOF
+		$(control_field Package) (0.${VERSION}-1) development; urgency=medium
 
-  * Release for ${git_sha}
+		  * Release for ${git_sha}
 
- -- $(control_field Maintainer)  $(date --rfc-2822)
+		 -- $(control_field Maintainer)  $(date --rfc-2822)
 
-EOF
-    cat debian/changelog >> debian/nightly.changelog
-    cat debian/nightly.changelog
-    mv debian/nightly.changelog debian/changelog
+	EOF
+	cat debian/changelog >> debian/nightly.changelog
+	cat debian/nightly.changelog
+	mv debian/nightly.changelog debian/changelog
 fi
+
 REF=$(git -C "${GO_SRC_PATH}" rev-parse HEAD)
 export REF
 export VERSION
-(set -x; dpkg-buildpackage -uc -us)
-DIST_ID=$(. /etc/os-release; echo "$ID")
+
+(
+	set -x
+	dpkg-buildpackage -uc -us
+)
+
+DIST_ID="$(. /etc/os-release; echo "${ID}")"
 DIST_VERSION=$(lsb_release -sc)
 ARCH=$(dpkg --print-architecture)
 OUT_DIR="/out/${DIST_ID}/${DIST_VERSION}/${ARCH}/"
@@ -50,6 +56,6 @@ mkdir -p "${OUT_DIR}"
 mv -v ../*.deb "${OUT_DIR}"
 
 # Only create an archive if env variable is specified
-if [[ -n "${CREATE_ARCHIVE}" ]]; then
-tar -C /out -cvzf "/archive/${DIST_ID}-${DIST_VERSION}-${ARCH}.tar.gz" "${DIST_ID}/${DIST_VERSION}/${ARCH}"
+if [ -n "${CREATE_ARCHIVE}" ]; then
+	tar -C /out -cvzf "/archive/${DIST_ID}-${DIST_VERSION}-${ARCH}.tar.gz" "${DIST_ID}/${DIST_VERSION}/${ARCH}"
 fi

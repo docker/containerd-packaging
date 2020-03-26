@@ -1,43 +1,43 @@
 #!/usr/bin/env bash
 
-
 gen-test-ver() {
-    local version=$1
-    local suffix=$2
-    local base_release_ver=$3
-    SPEC_FILE=${SPEC_FILE:-SPECS/containerd.spec}
-    test_num=${version#*-${suffix}.}
-    without_rpm_ver="${base_release_ver}.${test_num}.${suffix}.${test_num}"
-    # This only really matters for blessed builds (i.e. builds that are only rpm specific or have a version specific in the spec)
-    # should output the latest rpm build number so that it gets placed accordingly in the repo
-    if grep -q "${version%-${suffix}.*}-${without_rpm_ver}" "${SPEC_FILE}"; then
-        grep -o "${version%-${suffix}.*}-${without_rpm_ver}.[0-9]*" "${SPEC_FILE}" | head -n 1 | cut -d"-" -f 2
-    else
-        echo "${without_rpm_ver}.1"
-    fi
+	local version=$1
+	local suffix=$2
+	local base_release_ver=$3
+	SPEC_FILE=${SPEC_FILE:-SPECS/containerd.spec}
+	test_num=${version#*-${suffix}.}
+	without_rpm_ver="${base_release_ver}.${test_num}.${suffix}.${test_num}"
+	# This only really matters for blessed builds (i.e. builds that are only rpm specific or have a version specific in the spec)
+	# should output the latest rpm build number so that it gets placed accordingly in the repo
+	if grep -q "${version%-${suffix}.*}-${without_rpm_ver}" "${SPEC_FILE}"; then
+		grep -o "${version%-${suffix}.*}-${without_rpm_ver}.[0-9]*" "${SPEC_FILE}" | head -n 1 | cut -d"-" -f 2
+	else
+		echo "${without_rpm_ver}.1"
+	fi
 }
 
 gen-rpm-ver-bits() {
-    VERSION=$1
-    VER_DOT=$(gen-rpm-release-ver-dot "${VERSION}")
-    case "$VERSION" in
-        *beta*)
-            result="${VERSION%-beta.*} $(gen-test-ver "${VERSION}" beta 1)${VER_DOT}"
-            ;;
-        *rc*)
-            result="${VERSION%-rc.*} $(gen-test-ver "${VERSION}" rc 2)${VER_DOT}"
-            ;;
-        *)
-            result="${VERSION} 3${VER_DOT}"
-    esac
-    echo "$result"
+	VERSION=$1
+	VER_DOT=$(gen-rpm-release-ver-dot "${VERSION}")
+	case "$VERSION" in
+		*beta*)
+			result="${VERSION%-beta.*} $(gen-test-ver "${VERSION}" beta 1)${VER_DOT}"
+			;;
+		*rc*)
+			result="${VERSION%-rc.*} $(gen-test-ver "${VERSION}" rc 2)${VER_DOT}"
+			;;
+		*)
+			result="${VERSION} 3${VER_DOT}"
+			;;
+	esac
+	echo "$result"
 }
 
 gen-rpm-release-ver-dot() {
-    VERSION=$1
-    SPEC_FILE=${SPEC_FILE:-SPECS/containerd.spec}
-    # Find if the version is just releasing a package version
-    if grep -q "${VERSION}-" "${SPEC_FILE}"; then
-        echo ".$(grep -c "${VERSION}-" "${SPEC_FILE}")"
-    fi
+	VERSION=$1
+	SPEC_FILE=${SPEC_FILE:-SPECS/containerd.spec}
+	# Find if the version is just releasing a package version
+	if grep -q "${VERSION}-" "${SPEC_FILE}"; then
+		echo ".$(grep -c "${VERSION}-" "${SPEC_FILE}")"
+	fi
 }
