@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:experimental
+
+
 #   Copyright 2018-2020 Docker Inc.
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,7 +68,6 @@ WORKDIR /root/rpmbuild
 
 # Install build dependencies and build scripts
 COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
-COPY --from=golang    /usr/local/go/    /usr/local/go/
 COPY rpm/containerd.spec SPECS/containerd.spec
 COPY scripts/build-rpm    /root/
 COPY scripts/.rpm-helpers /root/
@@ -77,9 +79,14 @@ ENV PACKAGE=${PACKAGE:-containerd.io}
 FROM build-env AS build-packages
 RUN mkdir -p /archive /build
 COPY common/containerd.service common/containerd.toml SOURCES/
-COPY src /go/src
 ARG CREATE_ARCHIVE
-RUN /root/build-rpm
+# NOTE: not using a cache-mount for /root/.cache/go-build, to prevent issues
+#       with CGO when building multiple distros on the same machine / build-cache
+RUN --mount=type=bind,from=golang,source=/usr/local/go/,target=/usr/local/go/ \
+    --mount=type=bind,source=/src,target=/go/src,rw \
+    --mount=type=bind,source=/src/github.com/containerd/containerd,target=/root/rpmbuild/SOURCES/containerd \
+    --mount=type=bind,source=/src/github.com/opencontainers/runc,target=/root/rpmbuild/SOURCES/runc \
+    /root/build-rpm
 ARG UID=0
 ARG GID=0
 RUN chown -R ${UID}:${GID} /archive /build
@@ -115,4 +122,5 @@ COPY --from=verify-packages /build   /build
 
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime
+COPY --from=golang /usr/local/go/ /usr/local/go/
 COPY common/containerd.service common/containerd.toml SOURCES/

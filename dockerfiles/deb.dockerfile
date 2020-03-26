@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:experimental
+
+
 #   Copyright 2018-2020 Docker Inc.
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,23 +40,26 @@ ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /root/containerd
 
 # Install some pre-reqs
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# NOTE: not using a cache-mount for apt, to prevent issues when building multiple
+#       distros on the same machine / build-cache
+RUN apt-get update -q && apt-get install -y --no-install-recommends \
     curl \
     devscripts \
     equivs \
     git \
     lsb-release \
  && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/cache/apt /var/lib/apt/lists/*
 
 # Install build dependencies and build scripts
 COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
-COPY --from=golang    /usr/local/go/    /usr/local/go/
 COPY debian/ debian/
-RUN apt-get update \
+# NOTE: not using a cache-mount for apt, to prevent issues when building multiple
+#       distros on the same machine / build-cache
+RUN apt-get update -q \
  && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control \
  && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/cache/apt /var/lib/apt/lists/*
 COPY scripts/build-deb    /root/
 COPY scripts/.helpers     /root/
 
@@ -63,9 +69,12 @@ ENV PACKAGE=${PACKAGE:-containerd.io}
 FROM build-env AS build-packages
 RUN mkdir -p /archive /build
 COPY common/containerd.service common/containerd.toml /root/common/
-COPY src /go/src
 ARG CREATE_ARCHIVE
-RUN /root/build-deb
+# NOTE: not using a cache-mount for /root/.cache/go-build, to prevent issues
+#       with CGO when building multiple distros on the same machine / build-cache
+RUN --mount=type=bind,from=golang,source=/usr/local/go/,target=/usr/local/go/ \
+    --mount=type=bind,source=/src,target=/go/src,rw \
+    /root/build-deb
 ARG UID=0
 ARG GID=0
 RUN chown -R ${UID}:${GID} /archive /build
@@ -76,6 +85,8 @@ RUN chown -R ${UID}:${GID} /archive /build
 # completely defunct.
 FROM distro-image AS verify-packages
 COPY --from=build-packages /build /build
+# NOTE: not using a cache-mount for apt, to prevent issues when building multiple
+#       distros on the same machine / build-cache
 RUN apt-get update -q \
  && dpkg --force-depends -i $(find /build -mindepth 3 -type f -name containerd.io_*.deb) || true; \
     apt-get -y install --no-install-recommends --fix-broken \
@@ -91,4 +102,5 @@ COPY --from=verify-packages /build   /build
 
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime
+COPY --from=golang /usr/local/go/ /usr/local/go/
 COPY common/containerd.service common/containerd.toml /root/common/
