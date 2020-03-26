@@ -2,12 +2,33 @@
 
 # Usage:
 
-## For Developers:
+To build a distro-specific package (rpm or deb):
 
-Making a developer package is as simple as:
+```bash
+make clean
+make docker.io/library/<distro>:<version> [docker.io/library/<distro>:<version> ...]
 
-```shell
-make CONTAINERD_DIR=${GOPATH}/src/github.com/containerd/containerd <all|rpm|deb>
+# for example:
+# make docker.io/library/centos:7
+# make docker.io/library/ubuntu:bionic
+```
+
+After build completes, packages can be found in the `build` directory.
+
+## Building a package from a local source directory
+
+Specify the path to the local source directory using `CONTAINERD_DIR` and/or
+`RUNC_DIR`:
+
+```bash
+make REF=<git reference> CONTAINERD_DIR=<path to repository> docker.io/library/<distro>:<version>
+```
+
+For example:
+
+```bash
+make clean
+make REF=HEAD CONTAINERD_DIR=/home/me/go/src/github.com/containerd/containerd docker.io/library/ubuntu:bionic
 ```
 
 ## For package maintainers:
