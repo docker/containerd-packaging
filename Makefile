@@ -76,6 +76,18 @@ checkout: src
 	./scripts/checkout.sh src/github.com/containerd/containerd "$(REF)"
 	./scripts/checkout.sh src/github.com/opencontainers/runc "$$(./scripts/determine-runc-version)"
 
+# NOTE: building static binaries currently only works when using an
+#       ubuntu/debian BUILD_IMAGE, because build-dependencies are not
+#       installed beforehand.
+.PHONY: static
+static: TARGET=binaries
+static: build
+
+# This target is used for building rpm, deb, and static packages:
+#
+# - If TARGET=binaries, static binaries are built
+# - If TARGET is not specified, the default is either "rpm" or "deb",
+#   depending on the BUILD_IMAGE
 .PHONY: build
 build: checkout common/containerd.service
 build:
