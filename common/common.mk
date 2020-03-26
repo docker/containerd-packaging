@@ -12,7 +12,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-GOARCH=$(shell docker run --rm golang go env GOARCH 2>/dev/null)
 REF?=HEAD
 RUNC_REF?=dc9208a3303feef5b3839f4323d9beb36df0a9dd
 
@@ -28,6 +27,7 @@ ifeq ($(OS),Windows_NT)
 else
        GOLANG_IMAGE=docker.io/library/golang:$(GOVERSION)-buster
 endif
+GOARCH=$(shell docker run --rm $(GOLANG_IMAGE) go env GOARCH 2>/dev/null)
 BUILDER_IMAGE=containerd-builder-$@-$(GOARCH):$(shell git rev-parse --short HEAD)
 
 ARCH:=$(shell uname -m)
