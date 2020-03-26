@@ -23,7 +23,7 @@ BUILD?=DOCKER_BUILDKIT=1 docker build \
 	-f dockerfiles/$(BUILD_TYPE).dockerfile \
 	-t $(BUILDER_IMAGE) .
 
-VOLUME_MOUNTS=-v "$(CURDIR)/build/:/out"
+VOLUME_MOUNTS=-v "$(CURDIR)/build/:/build"
 
 ifdef CONTAINERD_DIR
 	VOLUME_MOUNTS+=-v "$(shell realpath $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
