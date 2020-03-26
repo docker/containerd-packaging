@@ -84,9 +84,34 @@ ARG UID=0
 ARG GID=0
 RUN chown -R ${UID}:${GID} /archive /build
 
+# Verify that installing the package succeeds succesfully, and if we're able
+# to run both containerd and runc. This is just a rudimentary check to make
+# sure that package dependencies are installed and that the binaries are not
+# completely defunct.
+#
+# For rpms, installing packages with 'rpm -ivh my-local-package.rpm' or
+# 'yum --nogpgcheck localinstall packagename.arch.rpm' does not perform
+# dependency resolution, so we need to setup a local repository to verify the
+# installation (including dependencies).
+#
+# NOTE: Installation of source-packages is not currently tested here.
+FROM distro-image AS verify-packages
+COPY scripts/.rpm-helpers /root/
+RUN . /root/.rpm-helpers; install_package createrepo
+RUN if [ -d "/etc/zypp/repos.d/" ]; then ln -s "/etc/zypp/repos.d" "/etc/yum.repos.d"; fi \
+ && echo -e "[local]\nname=Test Repo\nbaseurl=file:///build/\nenabled=1\ngpgcheck=0" >  "/etc/yum.repos.d/local.repo"
+COPY --from=build-packages /build/. /build/
+RUN createrepo /build \
+ && . /root/.rpm-helpers \
+ && install_package containerd.io \
+ && rm -rf /build/repodata
+RUN containerd --version
+RUN ctr --version
+RUN runc --version
+
 FROM scratch AS packages
-COPY --from=build-packages /archive /archive
-COPY --from=build-packages /build   /build
+COPY --from=build-packages  /archive /archive
+COPY --from=verify-packages /build   /build
 
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime

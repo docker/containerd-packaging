@@ -74,3 +74,18 @@ install_build_deps() (
 		${pkg_manager} install $(rpmspec -P "${SPEC_FILE}" | grep BuildRequires | cut -d' ' -f2 | xargs)
 	fi
 )
+
+install_package() (
+	if type yum >/dev/null 2>/dev/null; then
+		pkg_manager="yum -y"
+	elif type dnf >/dev/null 2>/dev/null; then
+		pkg_manager="dnf -y"
+	elif type zypper >/dev/null 2>/dev/null; then
+		pkg_manager="zypper -n"
+	else
+		echo "unable to detect package manager"
+		exit 1
+	fi
+	# shellcheck disable=SC2046
+	${pkg_manager} install "$@"
+)

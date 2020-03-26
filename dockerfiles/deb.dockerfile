@@ -70,9 +70,24 @@ ARG UID=0
 ARG GID=0
 RUN chown -R ${UID}:${GID} /archive /build
 
+# Verify that installing the package succeeds succesfully, and if we're able
+# to run both containerd and runc. This is just a rudimentary check to make
+# sure that package dependencies are installed and that the binaries are not
+# completely defunct.
+FROM distro-image AS verify-packages
+COPY --from=build-packages /build /build
+RUN apt-get update -q \
+ && dpkg --force-depends -i $(find /build -mindepth 3 -type f -name containerd.io_*.deb) || true; \
+    apt-get -y install --no-install-recommends --fix-broken \
+ && apt-get clean \
+ && rm -rf /var/cache/apt /var/lib/apt/lists/*
+RUN containerd --version
+RUN ctr --version
+RUN runc --version
+
 FROM scratch AS packages
-COPY --from=build-packages /archive /archive
-COPY --from=build-packages /build   /build
+COPY --from=build-packages  /archive /archive
+COPY --from=verify-packages /build   /build
 
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime
