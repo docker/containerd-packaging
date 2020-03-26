@@ -67,8 +67,8 @@ WORKDIR /root/rpmbuild
 COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
 COPY --from=golang    /usr/local/go/    /usr/local/go/
 COPY rpm/containerd.spec SPECS/containerd.spec
-COPY scripts/build-rpm    /
-COPY scripts/.rpm-helpers /
+COPY scripts/build-rpm    /root/
+COPY scripts/.rpm-helpers /root/
 
 # Copy over the source code
 COPY common/containerd.service common/containerd.toml SOURCES/
@@ -76,4 +76,4 @@ COPY src /go/src
 
 ARG PACKAGE
 ENV PACKAGE=${PACKAGE:-containerd.io}
-ENTRYPOINT ["/build-rpm"]
+ENTRYPOINT ["/root/build-rpm"]

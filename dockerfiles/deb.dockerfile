@@ -54,8 +54,8 @@ RUN apt-get update \
  && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
-COPY scripts/build-deb    /
-COPY scripts/.helpers     /
+COPY scripts/build-deb    /root/
+COPY scripts/.helpers     /root/
 
 # Copy over the source code
 COPY common/containerd.service common/containerd.toml /root/common/
@@ -63,4 +63,4 @@ COPY src /go/src
 
 ARG PACKAGE
 ENV PACKAGE=${PACKAGE:-containerd.io}
-ENTRYPOINT ["/build-deb"]
+ENTRYPOINT ["/root/build-deb"]
