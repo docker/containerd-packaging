@@ -27,7 +27,11 @@ def images = [
 
 def generatePackageStep(opts, arch) {
     return {
-        node("linux&&${arch}") {
+        def nodeLabel = "linux&&${arch}"
+        if (arch == "armhf") {
+            nodeLabel = "ubuntu-1804-overlay2-arm32v7"
+        }
+        node(nodeLabel) {
             stage("${opts.image}-${arch}") {
                 try {
                     sh 'docker version'
