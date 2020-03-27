@@ -28,12 +28,20 @@ ARCH=$(uname -m)
 DEST_DIR="/build/static/${ARCH}/"
 mkdir -p "${DEST_DIR}"
 
+. "/etc/os-release"
+
 # Build containerd
 (
 	set -x
 	export BUILDTAGS='netgo osusergo static_build seccomp apparmor selinux'
 	export EXTRA_FLAGS='-buildmode=pie'
 	export EXTRA_LDFLAGS='-extldflags "-fno-PIC -static"'
+
+	case "${ID}" in
+		centos|ol|rhel)
+			BUILDTAGS='netgo osusergo static_build apparmor selinux no_btrfs'
+			;;
+	esac
 
 	make -C "/go/src/github.com/containerd/containerd"
 	make -C "/go/src/github.com/containerd/containerd" DESTDIR="${DEST_DIR}" install
@@ -43,6 +51,25 @@ mkdir -p "${DEST_DIR}"
 (
 	set -x
 	RUNC_BUILDTAGS="seccomp apparmor selinux"
+
+	case "${ID}" in
+	fedora)
+		# seccomp requires the libseccomp-static package, which is available on
+		# Fedora, but not on RHEL/CentOS
+		#
+		# /usr/local/go/pkg/tool/linux_amd64/link: running gcc failed: exit status 1
+		# /usr/bin/ld: cannot find -lseccomp
+		#
+		# With LD_DEBUG=libs
+		# go build github.com/opencontainers/runc/vendor/github.com/seccomp/libseccomp-golang: invalid flag in pkg-config --cflags: 1277:
+		# make: Leaving directory '/go/src/github.com/opencontainers/runc'
+		dnf -y install libseccomp-static
+		;;
+	centos|ol|rhel)
+		RUNC_BUILDTAGS="apparmor selinux"
+		;;
+	esac
+
 	make -C "/go/src/github.com/opencontainers/runc" BUILDTAGS="${RUNC_BUILDTAGS}" static
 	install -D -p -t "${DEST_DIR}/bin" "/go/src/github.com/opencontainers/runc/runc"
 )
