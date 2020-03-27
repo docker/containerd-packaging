@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 #   Copyright 2018-2020 Docker Inc.
 
@@ -16,7 +16,7 @@
 
 NO_OUTPUT='>/dev/null 2>/dev/null'
 
-source /.rpm-helpers
+. /.rpm-helpers
 
 SPEC_FILE=SPECS/containerd.spec
 
@@ -35,7 +35,7 @@ get_distribution() {
 }
 
 VERSION="$(git --git-dir "${GO_SRC_PATH}/.git" describe --tags | sed 's/^v//')"
-RPM_VER_BITS=$(gen-rpm-ver-bits "${VERSION}")
+RPM_VER_BITS=$(gen_rpm_ver_bits "${VERSION}")
 RPM_VERSION=$(echo "${RPM_VER_BITS}" | cut -f1 -d' ')
 RPM_RELEASE_VERSION=$(echo "${RPM_VER_BITS}" | cut -f2 -d' ')
 
