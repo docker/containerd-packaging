@@ -14,8 +14,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-NO_OUTPUT='>/dev/null 2>/dev/null'
-
 # shellcheck disable=SC1090
 . "$(dirname "$0")/.rpm-helpers"
 
@@ -55,21 +53,7 @@ export RPM_RELEASE_VERSION
 export RPM_VERSION
 export VERSION
 
-EXTRA_REPOS=${EXTRA_REPOS:-}
-
-pkg_manager="yum -y ${EXTRA_REPOS}"
-# shellcheck disable=SC2086
-if zypper --version ${NO_OUTPUT}; then
-	pkg_manager="zypper -n ${EXTRA_REPOS}"
-elif dnf --version ${NO_OUTPUT}; then
-	pkg_manager="dnf -y ${EXTRA_REPOS}"
-fi
-
-(
-	set -x
-	# shellcheck disable=SC2046
-	${pkg_manager} install $(rpmspec -P "${SPEC_FILE}" | grep BuildRequires | cut -d' ' -f2 | xargs)
-)
+install_build_deps "${SPEC_FILE}"
 
 DIST_ID="$(. /etc/os-release; echo "${ID}")"
 DIST_VERSION="$(. /etc/os-release; echo "${VERSION_ID}" | cut -d'.' -f1)"

@@ -69,6 +69,7 @@ COPY --from=golang    /usr/local/go/    /usr/local/go/
 COPY rpm/containerd.spec SPECS/containerd.spec
 COPY scripts/build-rpm    /root/
 COPY scripts/.rpm-helpers /root/
+RUN . /root/.rpm-helpers; install_build_deps SPECS/containerd.spec
 
 # Copy over the source code
 COPY common/containerd.service common/containerd.toml SOURCES/
