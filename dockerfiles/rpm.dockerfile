@@ -46,6 +46,9 @@ ENV BUILDTAGS=no_btrfs
 
 FROM redhat-base AS centos-base
 RUN if [ -f /etc/yum.repos.d/CentOS-PowerTools.repo ]; then sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/CentOS-PowerTools.repo; fi
+# In aarch64 (arm64) images, the altarch repo is specified as repository, but
+# failing, so replace the URL.
+RUN if [ -f /etc/yum.repos.d/CentOS-Sources.repo ]; then sed -i 's/altarch/centos/g' /etc/yum.repos.d/CentOS-Sources.repo; fi
 
 FROM redhat-base AS amzn-base
 
