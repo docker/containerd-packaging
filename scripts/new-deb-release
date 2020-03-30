@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 #   Copyright 2018-2020 Docker Inc.
 
@@ -14,30 +14,34 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-source scripts/.helpers
+# shellcheck disable=SC1090
+. "$(dirname "$0")/.helpers"
 
 VERSION=$1
 if [ -z "$VERSION" ]; then
-    echo "Usage: $0 <VERSION>"
-    exit 1
+	echo "Usage: $0 <VERSION>"
+	exit 1
 fi
 URGENCY=${URGENCY:-medium}
 
-NEW_DEB_VERSION=${VERSION//-/\~}
+NEW_DEB_VERSION="$(echo "${VERSION}" | sed -e 's/-/\~/g')"
 DEB_ITERATION=1
 
-while grep "$NEW_DEB_VERSION-$DEB_ITERATION" debian/changelog >/dev/null 2>&1;do
-    ((++DEB_ITERATION))
+while grep "$NEW_DEB_VERSION-$DEB_ITERATION" debian/changelog > /dev/null 2>&1; do
+	DEB_ITERATION=$((DEB_ITERATION + 1))
 done
 
-cat > debian/new.changelog <<-EOF
-$(control_field Package) (${NEW_DEB_VERSION}-${DEB_ITERATION}) release; urgency=${URGENCY}
+cat > debian/new.changelog <<- EOF
+	$(control_field Package) (${NEW_DEB_VERSION}-${DEB_ITERATION}) release; urgency=${URGENCY}
 
-  * TODO: Insert release changes here
+	  * TODO: Insert release changes here
 
- -- $(git config user.name) <$(git config user.email)>  $(date --rfc-2822)
+	 -- $(git config user.name) <$(git config user.email)>  $(date --rfc-2822)
 
 EOF
 cat debian/changelog >> debian/new.changelog
 cat debian/new.changelog
-(set -x; mv debian/new.changelog debian/changelog)
+(
+	set -x
+	mv debian/new.changelog debian/changelog
+)

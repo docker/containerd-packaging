@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 #   Copyright The containerd Authors.
 
@@ -14,13 +14,12 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-
-set -eu -o pipefail
+set -eu -o
 
 if ! command -v ltag; then
-    >&2 echo "ERROR: ltag not found. Install with:"
-    >&2 echo "    go get -u github.com/kunalkushwaha/ltag"
-    exit 1
+	echo >&2 "ERROR: ltag not found. Install with:"
+	echo >&2 "    go get -u github.com/kunalkushwaha/ltag"
+	exit 1
 fi
 
 BASEPATH="${1-}"

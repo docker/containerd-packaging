@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 #   Copyright 2018-2020 Docker Inc.
 
@@ -15,18 +15,18 @@
 #   limitations under the License.
 
 IMAGE=$1
-potential=$(docker run --rm -i "$IMAGE" cat /etc/os-release 2>/dev/null | grep "^ID=" | cut -d'=' -f2 | sed 's/"//g')
+potential=$(docker run --rm -i "$IMAGE" cat /etc/os-release 2> /dev/null | grep "^ID=" | cut -d'=' -f2 | sed 's/"//g')
 
 if [ -z "$potential" ]; then
-    exit 1
+	exit 1
 fi
 
 case $potential in
-    # Since we use both opensuse and sles to compile these
-    *sles*|*suse*)
-        echo suse
-        ;;
-    *)
-        echo "$potential"
-        ;;
+	# Since we use both opensuse and sles to compile these
+	*sles* | *suse*)
+		echo suse
+		;;
+	*)
+		echo "$potential"
+		;;
 esac

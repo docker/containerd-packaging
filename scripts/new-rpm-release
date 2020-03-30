@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 #   Copyright 2018-2020 Docker Inc.
 
@@ -18,20 +18,22 @@ set -e
 
 SPEC_FILE="rpm/containerd.spec"
 export SPEC_FILE
-source scripts/.rpm-helpers
+
+# shellcheck disable=SC1090
+. "$(dirname "$0")/.rpm-helpers"
 
 VERSION="$1"
 if [ -z "$VERSION" ]; then
-    echo "Usage: $0 <VERSION>"
-    exit 1
+	echo "Usage: $0 <VERSION>"
+	exit 1
 fi
-RPM_VER_BITS=$(gen-rpm-ver-bits "${VERSION}")
+RPM_VER_BITS=$(gen_rpm_ver_bits "${VERSION}")
 RPM_VERSION=$(echo "${RPM_VER_BITS}" | cut -f1 -d' ')
 RPM_RELEASE_VERSION=$(echo "${RPM_VER_BITS}" | cut -f2 -d' ' | sed 's/\.[0-9]*$//')
 RPM_ITERATION=1
 
-while grep "$RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION" "${SPEC_FILE}" >/dev/null 2>&1;do
-    ((++RPM_ITERATION))
+while grep "$RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION" "${SPEC_FILE}" > /dev/null 2>&1; do
+	RPM_ITERATION=$((RPM_ITERATION + 1))
 done
 
 cat > rpm/new.changelog << EOF
@@ -41,8 +43,8 @@ cat > rpm/new.changelog << EOF
 EOF
 
 cleanup() {
-    rm rpm/new.changelog
-    rm "${SPEC_FILE}.bak"
+	rm rpm/new.changelog
+	rm "${SPEC_FILE}.bak"
 }
 
 trap cleanup EXIT

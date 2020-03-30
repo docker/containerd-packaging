@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 #   Copyright 2018-2020 Docker Inc.
 
@@ -17,13 +17,13 @@
 IMAGE=$1
 
 run() {
-    docker run --rm -i "${IMAGE}" sh -c "$*" >/dev/null 2>/dev/null
+	docker run --rm -i "${IMAGE}" sh -c "$*" > /dev/null 2> /dev/null
 }
 
 if run rpm --version; then
-    echo "rpm"
+	echo "rpm"
 elif run dpkg --version; then
-    echo "deb"
+	echo "deb"
 else
-    exit 1
+	exit 1
 fi
