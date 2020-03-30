@@ -14,8 +14,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-INSTALL_DIR=debian/containerd.io
-
 %:
 	dh $@ --with systemd
 
@@ -45,7 +43,7 @@ override_dh_systemd_start:
 	sed -i 's/_dh_action=try-restart/_dh_action=restart/g' ./debian/containerd.io.postinst.debhelper
 
 override_dh_auto_install: binaries bin/runc
-	mkdir -p $(INSTALL_DIR)/usr/bin
-	install -D -m 0755 bin/* $(INSTALL_DIR)/usr/bin
-	install -D -m 0644 /root/common/containerd.service $(INSTALL_DIR)/lib/systemd/system/containerd.service
-	install -D -m 0644 /root/common/containerd.toml $(INSTALL_DIR)/etc/containerd/config.toml
+	mkdir -p debian/containerd.io/usr/bin
+	install -D -m 0755 bin/* debian/containerd.io/usr/bin
+	install -D -m 0644 /root/common/containerd.service debian/containerd.io/lib/systemd/system/containerd.service
+	install -D -m 0644 /root/common/containerd.toml    debian/containerd.io/etc/containerd/config.toml
