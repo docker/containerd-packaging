@@ -20,7 +20,6 @@ GOLANG_IMAGE=docker.io/library/golang:$(GOVERSION)
 BUILDER_IMAGE=containerd-builder-$@-$(GOARCH):$(shell git rev-parse --short HEAD)
 
 ARCH:=$(shell uname -m)
-PACKAGE?=containerd.io
 
 BUILD_ARGS=--build-arg REF="$(REF)" \
 	--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
