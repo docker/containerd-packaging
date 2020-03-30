@@ -35,7 +35,6 @@ def generatePackageStep(opts, arch) {
                     sh '''
                     curl -fsSL "https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh" | bash || true
                     '''
-                    sh("docker pull ${opts.image}")
                     checkout scm
                     sh("make BUILD_IMAGE=${opts.image} CREATE_ARCHIVE=1 clean build")
                     archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)

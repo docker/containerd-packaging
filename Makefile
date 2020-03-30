@@ -18,14 +18,6 @@ BUILD_IMAGE=centos:7
 BUILD_TYPE=$(shell ./scripts/deb-or-rpm $(BUILD_IMAGE))
 BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 
-ifeq ($(BUILD_BASE),)
-$(error Invalid build image $(BUILD_IMAGE) no build base found)
-endif
-
-ifeq ($(BUILD_TYPE),)
-$(error Invalid build image $(BUILD_IMAGE) no build type found)
-endif
-
 BUILD?=DOCKER_BUILDKIT=1 docker build \
 	$(BUILD_ARGS) \
 	-f dockerfiles/$(BUILD_TYPE).dockerfile \
@@ -61,6 +53,11 @@ clean:
 
 .PHONY: build
 build:
+	@docker pull "$(BUILD_IMAGE)"
+
+	@if [ -z "$(BUILD_BASE)" ]; then echo "Invalid build image $(BUILD_IMAGE) no build base found"; exit 1; fi
+	@if [ -z "$(BUILD_TYPE)" ]; then echo "Invalid build image $(BUILD_IMAGE) no build type found"; exit 1; fi
+
 	$(BUILD)
 	$(RUN)
 	$(CHOWN_TO_USER) build/
@@ -68,4 +65,3 @@ build:
 .PHONY: validate
 validate: ## Validate files license header
 	docker run --rm -v $(CURDIR):/work -w /work $(GOLANG_IMAGE) bash -c 'go get -u github.com/kunalkushwaha/ltag && ./scripts/validate/fileheader'
-
