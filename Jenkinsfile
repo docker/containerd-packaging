@@ -11,10 +11,10 @@ def images = [
     [image: "centos:8",                       arches: ["amd64", "aarch64"]],          // Note: armhf (arm32) images are currently not available on Docker Hub
     [image: "debian:stretch",                 arches: ["amd64", "aarch64", "armhf"]], // Debian 9  (EOL: June, 2022)
     [image: "debian:buster",                  arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2024)
-    [image: "fedora:29",                      arches: ["amd64", "aarch64"]],
     [image: "fedora:30",                      arches: ["amd64", "aarch64"]],
     [image: "fedora:31",                      arches: ["amd64", "aarch64"]],
-    [image: "fedora:latest",                  arches: ["amd64"]],
+    [image: "fedora:32",                      arches: ["amd64", "aarch64"]],
+    [image: "fedora:rawhide",                 arches: ["amd64"]],                     // Rawhide is the name given to the current development version of Fedora
     [image: "opensuse/leap:15",               arches: ["amd64"]],
     [image: "balenalib/rpi-raspbian:stretch", arches: ["armhf"]],
     [image: "balenalib/rpi-raspbian:buster",  arches: ["armhf"]],
