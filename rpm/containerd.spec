@@ -58,6 +58,7 @@ Source3: runc
 %if "%{?dist}" != ".amzn2"
 Requires: container-selinux >= 2:2.74
 %endif
+Requires: libseccomp
 %endif
 BuildRequires: make
 BuildRequires: gcc
