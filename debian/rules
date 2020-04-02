@@ -36,13 +36,22 @@ bin/runc:
 		BUILDTAGS='seccomp apparmor selinux' \
 		runc install
 
-override_dh_auto_build: binaries bin/runc
+man: ## Create containerd man pages
+	@echo "+ make -C $(GO_SRC_PATH) --no-print-directory man"
+	@make -C $(GO_SRC_PATH) --no-print-directory man
+
+	# copy the generated man pages instead of using "make install-man" to allow
+	# dh_installman doing its magic
+	install -d man
+	install -D -m 0644 $(GO_SRC_PATH)/man/* man
+
+override_dh_auto_build: binaries bin/runc man
 
 override_dh_systemd_start:
 	dh_systemd_start --restart-after-upgrade
 	sed -i 's/_dh_action=try-restart/_dh_action=restart/g' ./debian/containerd.io.postinst.debhelper
 
-override_dh_auto_install: binaries bin/runc
+override_dh_auto_install: binaries bin/runc man
 	mkdir -p debian/containerd.io/usr/bin
 	install -D -m 0755 bin/* debian/containerd.io/usr/bin
 	install -D -m 0644 /root/common/containerd.service debian/containerd.io/lib/systemd/system/containerd.service
