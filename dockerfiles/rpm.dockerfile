@@ -15,7 +15,7 @@
 ARG BUILD_IMAGE=centos:7
 ARG BASE=centos
 # Install golang since the package managed one probably is too old and ppa's don't cover all distros
-ARG GOLANG_IMAGE
+ARG GOLANG_IMAGE=golang:latest
 
 FROM ${GOLANG_IMAGE} AS golang
 
