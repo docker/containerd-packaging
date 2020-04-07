@@ -121,11 +121,13 @@ install -D -m 0755 bin/* %{buildroot}%{_bindir}
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
 
-# install manpages
-install -d %{buildroot}%{_mandir}/man1
-install -p -m 644 man/*.1 $RPM_BUILD_ROOT/%{_mandir}/man1
-install -d %{buildroot}%{_mandir}/man5
-install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
+# install manpages, taking into account that not all sections may be present
+for i in $(seq 1 8); do
+    if ls man/*.${i} 1> /dev/null 2>&1; then
+        install -d %{buildroot}%{_mandir}/man${i};
+        install -p -m 644 man/*.${i} %{buildroot}%{_mandir}/man${i};
+    fi
+done
 
 %post
 %systemd_post containerd.service
@@ -145,8 +147,7 @@ install -p -m 644 man/*.5 $RPM_BUILD_ROOT/%{_mandir}/man5
 %{_bindir}/*
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
-/%{_mandir}/man1/*
-/%{_mandir}/man5/*
+%{_mandir}/man*/*
 %config(noreplace) %{_sysconfdir}/containerd/config.toml
 
 
