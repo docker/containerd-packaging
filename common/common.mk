@@ -23,6 +23,11 @@ GOVERSION?=$(shell curl -fsSL "https://raw.githubusercontent.com/containerd/cont
 endif
 
 GOLANG_IMAGE=golang:$(GOVERSION)
+ifeq ($(OS),Windows_NT)
+       GOLANG_IMAGE=docker.io/library/golang:$(GOVERSION)
+else
+       GOLANG_IMAGE=docker.io/library/golang:$(GOVERSION)-buster
+endif
 BUILDER_IMAGE=containerd-builder-$@-$(GOARCH):$(shell git rev-parse --short HEAD)
 
 ARCH:=$(shell uname -m)
