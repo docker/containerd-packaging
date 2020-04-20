@@ -37,7 +37,7 @@ src: src/github.com/opencontainers/runc src/github.com/containerd/containerd
 
 ifdef RUNC_DIR
 src/github.com/opencontainers/runc:
-	mkdir -p $@
+	mkdir -p "$(@D)"
 	cp -r "$(RUNC_DIR)" $@
 else
 src/github.com/opencontainers/runc:
@@ -46,7 +46,7 @@ endif
 
 ifdef CONTAINERD_DIR
 src/github.com/containerd/containerd:
-	mkdir -p $@
+	mkdir -p "$(@D)"
 	cp -r "$(CONTAINERD_DIR)" $@
 else
 src/github.com/containerd/containerd:
