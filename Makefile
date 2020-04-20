@@ -84,6 +84,7 @@ build:
 	@if [ -z "$(BUILD_TYPE)" ]; then echo "Invalid build image $(BUILD_IMAGE) no build type found"; exit 1; fi
 
 	@set -x; DOCKER_BUILDKIT=1 docker build \
+		--pull \
 		--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
 		--build-arg BASE="$(BUILD_BASE)" \
