@@ -37,7 +37,8 @@ src: src/github.com/opencontainers/runc src/github.com/containerd/containerd
 
 ifdef RUNC_DIR
 src/github.com/opencontainers/runc:
-	cp -r "$(RUNC_DIR)" src/github.com/opencontainers/runc
+	mkdir -p $@
+	cp -r "$(RUNC_DIR)" $@
 else
 src/github.com/opencontainers/runc:
 	git clone https://github.com/opencontainers/runc.git $@
@@ -45,6 +46,7 @@ endif
 
 ifdef CONTAINERD_DIR
 src/github.com/containerd/containerd:
+	mkdir -p $@
 	cp -r "$(CONTAINERD_DIR)" $@
 else
 src/github.com/containerd/containerd:
