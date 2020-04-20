@@ -18,49 +18,84 @@ BUILD_IMAGE=centos:7
 BUILD_TYPE=$(shell ./scripts/deb-or-rpm $(BUILD_IMAGE))
 BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 
-BUILD?=DOCKER_BUILDKIT=1 docker build \
-	$(BUILD_ARGS) \
-	-f dockerfiles/$(BUILD_TYPE).dockerfile \
-	-t $(BUILDER_IMAGE) .
-
-VOLUME_MOUNTS=-v "$(CURDIR)/build/:/out"
-
-ifdef CONTAINERD_DIR
-	VOLUME_MOUNTS+=-v "$(shell realpath $(CONTAINERD_DIR)):/go/src/github.com/containerd/containerd"
-endif
-
-ifdef RUNC_DIR
-	VOLUME_MOUNTS+=-v "$(shell realpath $(RUNC_DIR)):/go/src/github.com/opencontainers/runc"
-endif
-
-ENV_VARS=
-ifdef CREATE_ARCHIVE
-	ENV_VARS+=-e CREATE_ARCHIVE=1
-	VOLUME_MOUNTS+= -v "$(CURDIR)/archive:/archive"
-endif
-
-RUN=docker run --rm $(VOLUME_MOUNTS) -i $(ENV_VARS) $(BUILDER_IMAGE)
-CHOWN=docker run --rm -v $(CURDIR):/v -w /v alpine chown
-CHOWN_TO_USER=$(CHOWN) -R $(shell id -u):$(shell id -g)
+# The PROGRESS variable allows overriding the docker build --progress option.
+# For example, use "make PROGRESS=plain ..." to show build progress in plain test
+PROGRESS=auto
+TARGET=packages
+CONTAINERD_COMMIT=$(shell git -C "src/github.com/containerd/containerd" log -1 --pretty='%h')
+RUNC_COMMIT=$(shell git -C "src/github.com/opencontainers/runc" log -1 --pretty='%h')
 
 all: build
 
 .PHONY: clean
 clean:
-	-$(CHOWN_TO_USER) build/
 	-$(RM) -r build/
 	-$(RM) -r artifacts
+	-$(RM) -r src
+
+src: src/github.com/opencontainers/runc src/github.com/containerd/containerd
+
+ifdef RUNC_DIR
+src/github.com/opencontainers/runc:
+	cp -r "$(RUNC_DIR)" src/github.com/opencontainers/runc
+else
+src/github.com/opencontainers/runc:
+	git clone https://github.com/opencontainers/runc.git $@
+endif
+
+ifdef CONTAINERD_DIR
+src/github.com/containerd/containerd:
+	cp -r "$(CONTAINERD_DIR)" $@
+else
+src/github.com/containerd/containerd:
+	git clone https://github.com/containerd/containerd.git $@
+endif
+
+# This targets allows building multiple distros at once, for example:
+#
+#     make docker.io/library/ubuntu:bionic docker.io/library/centos:7
+#
+# It is a shorthand for "make BUILD_IMAGE=mydistro:version build"
+.PHONY: docker.io/%
+docker.io/%:
+	$(MAKE) BUILD_IMAGE="$@" build
+
+.PHONY: checkout
+checkout: src
+	@git -C src/github.com/opencontainers/runc   checkout -q "$(RUNC_REF)"
+	@git -C src/github.com/containerd/containerd checkout -q "$(REF)"
 
 .PHONY: build
+build: checkout
 build:
+	@echo "--------------------------------------------------------------------"
+	@echo "Building $(TARGET) on $(BUILD_IMAGE)"
+	@echo ""
+	@echo "containerd   : $(REF) (commit: $(CONTAINERD_COMMIT))"
+	@echo "runc         : $(RUNC_REF) (commit: $(RUNC_COMMIT))"
+	@echo "architecture : $(shell uname -m)"
+	@echo "build image  : $(BUILD_IMAGE)"
+	@echo "golang image : $(GOLANG_IMAGE)"
+	@echo "--------------------------------------------------------------------"
+
 	@docker pull "$(BUILD_IMAGE)"
 
 	@if [ -z "$(BUILD_BASE)" ]; then echo "Invalid build image $(BUILD_IMAGE) no build base found"; exit 1; fi
 	@if [ -z "$(BUILD_TYPE)" ]; then echo "Invalid build image $(BUILD_IMAGE) no build type found"; exit 1; fi
 
-	$(BUILD)
-	$(RUN)
-	$(CHOWN_TO_USER) build/
+	@set -x; DOCKER_BUILDKIT=1 docker build \
+		--pull \
+		--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
+		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
+		--build-arg BASE="$(BUILD_BASE)" \
+		--build-arg CREATE_ARCHIVE="$(CREATE_ARCHIVE)" \
+		--build-arg UID="$(shell id -u)" \
+		--build-arg GID="$(shell id -g)" \
+		--file="dockerfiles/$(BUILD_TYPE).dockerfile" \
+		--progress="$(PROGRESS)" \
+		--target="$(TARGET)" \
+		--output=. \
+		.
 
 .PHONY: validate
 validate: ## Validate files license header

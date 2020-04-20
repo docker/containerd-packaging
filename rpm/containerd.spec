@@ -86,12 +86,17 @@ low-level storage and network attachments, etc.
 
 %prep
 rm -rf %{_topdir}/BUILD/
-# Copy over our source code from our gopath to our source directory
-cp -rf /go/src/%{import_path} %{_topdir}/SOURCES/containerd
+if [ ! -d %{_topdir}/SOURCES/containerd ]; then
+    # Copy over our source code from our gopath to our source directory
+    cp -rf /go/src/%{import_path} %{_topdir}/SOURCES/containerd;
+fi
 # symlink the go source path to our build directory
 ln -s /go/src/%{import_path} %{_topdir}/BUILD
-# Copy over our source code from our gopath to our source directory
-cp -rf /go/src/github.com/opencontainers/runc %{_topdir}/SOURCES/runc
+
+if [ ! -d %{_topdir}/SOURCES/runc ]; then
+    # Copy over our source code from our gopath to our source directory
+    cp -rf /go/src/github.com/opencontainers/runc %{_topdir}/SOURCES/runc
+fi
 cd %{_topdir}/BUILD/
 
 

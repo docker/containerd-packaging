@@ -41,3 +41,51 @@ gen_rpm_release_ver_dot() (
 		echo ".$(grep -c "${version}-" "${spec_file}")"
 	fi
 )
+
+install_build_deps() (
+	set -e -x
+
+	SPEC_FILE="${1?USAGE: install_build_deps SPEC_FILE}"
+
+	# set dummy NPM_VERSION and RPM_RELEASE_VERSION if they're not set to make the spec valid
+	export RPM_VERSION="${RPM_VERSION:=0.0.1}"
+	export RPM_RELEASE_VERSION="${RPM_RELEASE_VERSION:=dev}"
+
+	if type yum-builddep >/dev/null 2>/dev/null; then
+		# shellcheck disable=SC2086
+		yum-builddep -y ${EXTRA_REPOS} "${SPEC_FILE}"
+	elif type dnf >/dev/null 2>/dev/null; then
+		# shellcheck disable=SC2086
+		dnf builddep -y ${EXTRA_REPOS} "${SPEC_FILE}"
+	else
+		# either yum-utils is not installed, or we're running on SUSE/openSuSE.
+		# Zypper does not have a proper equivalent for installing build dependencies.
+		#
+		# This manual approach does an attempt to install dependencies
+		if type yum >/dev/null 2>/dev/null; then
+			pkg_manager="yum -y ${EXTRA_REPOS}"
+		elif type zypper >/dev/null 2>/dev/null; then
+			pkg_manager="zypper -n ${EXTRA_REPOS}"
+		else
+			echo "unable to detect package manager";
+			exit 1;
+		fi
+		# shellcheck disable=SC2046
+		${pkg_manager} install $(rpmspec -P "${SPEC_FILE}" | grep BuildRequires | cut -d' ' -f2 | xargs)
+	fi
+)
+
+install_package() (
+	if type yum >/dev/null 2>/dev/null; then
+		pkg_manager="yum -y"
+	elif type dnf >/dev/null 2>/dev/null; then
+		pkg_manager="dnf -y"
+	elif type zypper >/dev/null 2>/dev/null; then
+		pkg_manager="zypper -n"
+	else
+		echo "unable to detect package manager"
+		exit 1
+	fi
+	# shellcheck disable=SC2046
+	${pkg_manager} install "$@"
+)
