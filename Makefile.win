@@ -21,7 +21,7 @@ src/github.com/containerd/containerd:
 	Xcopy /E /I "$(CONTAINERD_DIR)" $@
 else
 src/github.com/containerd/containerd:
-	git clone https://github.com/containerd/containerd.git $@
+	git clone "$(CONTAINERD_REMOTE)" $@
 endif
 
 .PHONY: checkout

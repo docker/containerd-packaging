@@ -50,7 +50,7 @@ src/github.com/containerd/containerd:
 	cp -r "$(CONTAINERD_DIR)" $@
 else
 src/github.com/containerd/containerd:
-	git clone https://github.com/containerd/containerd.git $@
+	git clone "$(CONTAINERD_REMOTE)" $@
 endif
 
 # This targets allows building multiple distros at once, for example:
