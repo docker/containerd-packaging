@@ -7,8 +7,8 @@
 // When adding a distro here, also open a pull request in the release repository.
 def images = [
     [image: "docker.io/library/amazonlinux:2",          arches: ["aarch64"]],
-    [image: "docker.io/library/centos:7",               arches: ["amd64", "aarch64", "armhf"]],
-    [image: "docker.io/library/centos:8",               arches: ["amd64", "aarch64"]],                   // Note: armhf (arm32) images are currently not available on Docker Hub
+    [image: "docker.io/library/centos:7",               arches: ["amd64", "aarch64"]],
+    [image: "docker.io/library/centos:8",               arches: ["amd64", "aarch64"]],
     [image: "docker.io/library/debian:stretch",         arches: ["amd64", "aarch64", "armhf", "s390x"]], // Debian 9  (EOL: June, 2022)
     [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf", "s390x"]], // Debian 10 (EOL: 2024)
     [image: "docker.io/library/fedora:30",              arches: ["amd64", "aarch64"]],
