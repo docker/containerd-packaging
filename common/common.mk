@@ -12,12 +12,16 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+# NOTE: When overriding CONTAINERD_REMOTE, make sure to also specify
+#       GOVERSION, as it's hardcoded to look in the upstream repository
+CONTAINERD_REMOTE?=https://github.com/containerd/containerd.git
 REF?=HEAD
 RUNC_REF?=dc9208a3303feef5b3839f4323d9beb36df0a9dd
 
 ifdef CONTAINERD_DIR
 GOVERSION?=$(shell grep "ARG GOLANG_VERSION" $(CONTAINERD_DIR)/contrib/Dockerfile.test | awk -F'=' '{print $$2}')
 else
+# TODO adjust GOVERSION macro to take CONTAINERD_REMOTE into account
 GOVERSION?=$(shell curl -fsSL "https://raw.githubusercontent.com/containerd/containerd/$(REF)/contrib/Dockerfile.test" | grep "ARG GOLANG_VERSION" | awk -F'=' '{print $$2}')
 endif
 
