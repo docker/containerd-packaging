@@ -14,7 +14,8 @@
 
 # NOTE: When overriding CONTAINERD_REMOTE, make sure to also specify
 #       GOVERSION, as it's hardcoded to look in the upstream repository
-CONTAINERD_REMOTE?=https://github.com/containerd/containerd.git
+CONTAINERD_REMOTE ?=https://github.com/containerd/containerd.git
+RUNC_REMOTE       ?=https://github.com/opencontainers/runc.git
 REF?=HEAD
 RUNC_REF?=dc9208a3303feef5b3839f4323d9beb36df0a9dd
 
