@@ -32,6 +32,7 @@ clean:
 	-$(RM) -r build/
 	-$(RM) -r artifacts
 	-$(RM) -r src
+	-docker builder prune -f --filter until=24h
 
 .PHONY: src
 src: src/github.com/opencontainers/runc src/github.com/containerd/containerd
