@@ -40,7 +40,7 @@ windows-image:
 		.
 	echo 1 > $@
 
-build/windows/%.exe: windows-image checkout
+build/windows/%: windows-image checkout
 	Powershell.exe New-Item -ItemType Directory -Force -Path build/windows/
 	docker run \
 		--rm \
@@ -48,7 +48,7 @@ build/windows/%.exe: windows-image checkout
 		-v "$(CURDIR)/build/windows:C:/gopath/src/github.com/containerd/containerd/bin" \
 		-w "C:/gopath/src/github.com/containerd/containerd" \
 		dockereng/containerd-windows-builder \
-		make bin/$*
+		make BINARY_SUFFIX=".exe" bin/$*
 
 build/windows/containerd.zip: build/windows/containerd.exe build/windows/ctr.exe
 	Powershell.exe Compress-Archive -Force -Path 'build/windows/*.exe' -DestinationPath '$@'
