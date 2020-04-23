@@ -37,9 +37,9 @@ def generatePackageStep(opts, arch) {
                     checkout scm
                     sh 'make clean'
                     withDockerRegistry([url: "", credentialsId: "dockerbuildbot-index.docker.io"]) {
-                        sh "make CREATE_ARCHIVE=1 ${opts.image}"
+                        sh "make ${opts.image}"
                     }
-                    archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
+                    archiveArtifacts(artifacts: 'build/**/containerd.io*.*', onlyIfSuccessful: true)
                 } finally {
                     deleteDir()
                 }
