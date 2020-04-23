@@ -36,8 +36,8 @@ def generatePackageStep(opts, arch) {
                     '''
                     checkout scm
                     sh 'make clean'
-                    sh "make CREATE_ARCHIVE=1 ${opts.image}"
-                    archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
+                    sh "make ${opts.image}"
+                    archiveArtifacts(artifacts: 'build/**/containerd.io*.*', onlyIfSuccessful: true)
                 } finally {
                     deleteDir()
                 }
