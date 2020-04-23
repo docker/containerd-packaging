@@ -34,6 +34,7 @@ checkout: src
 # Windows builder, only difference is we installed make
 windows-image:
 	docker build \
+		--pull \
 		--build-arg GOLANG_IMAGE=$(GOLANG_IMAGE) \
 		-t dockereng/containerd-windows-builder \
 		-f dockerfiles/win.dockerfile \
