@@ -42,7 +42,8 @@ src/github.com/opencontainers/runc:
 	cp -r "$(RUNC_DIR)" $@
 else
 src/github.com/opencontainers/runc:
-	git clone "$(RUNC_REMOTE)" $@
+	git init $@
+	git -C $@ remote add origin "$(RUNC_REMOTE)"
 endif
 
 ifdef CONTAINERD_DIR
@@ -51,7 +52,8 @@ src/github.com/containerd/containerd:
 	cp -r "$(CONTAINERD_DIR)" $@
 else
 src/github.com/containerd/containerd:
-	git clone "$(CONTAINERD_REMOTE)" $@
+	git init $@
+	git -C $@ remote add origin "$(CONTAINERD_REMOTE)"
 endif
 
 # This targets allows building multiple distros at once, for example:
@@ -65,8 +67,10 @@ docker.io/%:
 
 .PHONY: checkout
 checkout: src
-	@git -C src/github.com/opencontainers/runc   checkout -q "$(RUNC_REF)"
-	@git -C src/github.com/containerd/containerd checkout -q "$(REF)"
+	@git -C src/github.com/opencontainers/runc fetch --depth 1 origin "$(RUNC_REF)"
+	@git -C src/github.com/opencontainers/runc checkout -q FETCH_HEAD
+	@git -C src/github.com/containerd/containerd fetch --depth 1 origin "$(REF)"
+	@git -C src/github.com/containerd/containerd checkout -q FETCH_HEAD
 
 .PHONY: build
 build: checkout

@@ -22,12 +22,14 @@ src/github.com/containerd/containerd:
 	Xcopy /E /I "$(CONTAINERD_DIR)" $@
 else
 src/github.com/containerd/containerd:
-	git clone "$(CONTAINERD_REMOTE)" $@
+	git init $@
+	git -C $@ remote add origin "$(CONTAINERD_REMOTE)"
 endif
 
 .PHONY: checkout
 checkout: src
-	@git -C src/github.com/containerd/containerd checkout -q "$(REF)"
+	@git -C src/github.com/containerd/containerd fetch --depth 1 origin "$(REF)"
+	@git -C src/github.com/containerd/containerd checkout -q FETCH_HEAD
 
 # Windows builder, only difference is we installed make
 windows-image:
