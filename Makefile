@@ -33,6 +33,7 @@ clean:
 	-$(RM) -r artifacts
 	-$(RM) -r src
 
+.PHONY: src
 src: src/github.com/opencontainers/runc src/github.com/containerd/containerd
 
 ifdef RUNC_DIR
@@ -41,7 +42,7 @@ src/github.com/opencontainers/runc:
 	cp -r "$(RUNC_DIR)" $@
 else
 src/github.com/opencontainers/runc:
-	git clone https://github.com/opencontainers/runc.git $@
+	git clone "$(RUNC_REMOTE)" $@
 endif
 
 ifdef CONTAINERD_DIR
