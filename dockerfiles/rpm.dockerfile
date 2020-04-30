@@ -64,6 +64,7 @@ ENV GOPATH=/go
 ENV PATH="${PATH}:/usr/local/go/bin:${GOPATH}/bin"
 ENV IMPORT_PATH=github.com/containerd/containerd
 ENV GO_SRC_PATH="/go/src/${IMPORT_PATH}"
+ENV CC=gcc
 WORKDIR /root/rpmbuild
 
 # Install build dependencies and build scripts
