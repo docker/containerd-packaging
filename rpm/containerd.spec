@@ -157,6 +157,10 @@ done
 
 
 %changelog
+* Fri May 01 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.13-3.2
+- Build packages for RHEL-7 on s390x, CentOS 8, and Fedora 32
+- Add libseccomp as required dependency
+
 * Mon Feb 17 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.13-3.1
 - Update to containerd 1.2.13, which fixes a regression introduced in v1.2.12
   that caused container/shim to hang on single core machines, and fixes an issue
