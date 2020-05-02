@@ -109,7 +109,7 @@ BUILDTAGS="seccomp selinux"
 BUILDTAGS="${BUILDTAGS} no_btrfs"
 %endif
 
-make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} GO_BUILDTAGS="${BUILDTAGS}"
+make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
 
 # Remove containerd-stress, as we're not shipping it as part of the packages
 rm -f bin/containerd-stress
