@@ -1,3 +1,11 @@
+containerd.io (1.2.13-2) release; urgency=medium
+
+  * Build packages for Ubuntu 20.04
+  * Include man pages
+  * Add libseccomp as required dependency
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Fri, 01 May 2020 23:41:28 +0000
+
 containerd.io (1.2.13-1) release; urgency=medium
 
   * Update to containerd 1.2.13, which fixes a regression introduced in v1.2.12
