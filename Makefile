@@ -68,10 +68,8 @@ docker.io/%:
 
 .PHONY: checkout
 checkout: src
-	@git -C src/github.com/opencontainers/runc fetch --depth 1 origin "$(RUNC_REF)"
-	@git -C src/github.com/opencontainers/runc checkout -q FETCH_HEAD
-	@git -C src/github.com/containerd/containerd fetch --depth 1 origin "$(REF)"
-	@git -C src/github.com/containerd/containerd checkout -q FETCH_HEAD
+	./scripts/checkout.sh src/github.com/opencontainers/runc "$(RUNC_REF)"
+	./scripts/checkout.sh src/github.com/containerd/containerd "$(REF)"
 
 .PHONY: build
 build: checkout
