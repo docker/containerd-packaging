@@ -7,12 +7,11 @@
 // When adding a distro here, also open a pull request in the release repository.
 def images = [
     [image: "docker.io/library/ubuntu:focal",           arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 20.04 LTS (End of support: April, 2025. EOL: April, 2030)
-    [image: "docker.io/library/ubuntu:groovy",          arches: ["amd64", "aarch64"]],          // Ubuntu 20.10 (EOL: July, 2021)
 ]
 
 def generatePackageStep(opts, arch) {
     return {
-        wrappedNode(label: "linux&&${arch}") {
+        wrappedNode(label: "ubuntu-1804&&${arch}") {
             stage("${opts.image}-${arch}") {
                 try {
                     sh 'docker version'
