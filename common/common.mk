@@ -17,7 +17,8 @@
 CONTAINERD_REMOTE ?=https://github.com/containerd/containerd.git
 RUNC_REMOTE       ?=https://github.com/opencontainers/runc.git
 REF?=HEAD
-RUNC_REF?=dc9208a3303feef5b3839f4323d9beb36df0a9dd
+# v1.0.0-rc91
+RUNC_REF?=24a3cf88a7ae5f4995f6750654c0e2ca61ef4bb2
 
 ifdef CONTAINERD_DIR
 GOVERSION?=$(shell grep "ARG GOLANG_VERSION" $(CONTAINERD_DIR)/contrib/Dockerfile.test | awk -F'=' '{print $$2}')
