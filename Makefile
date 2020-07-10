@@ -94,7 +94,21 @@ build:
 	@if [ -z "$(BUILD_BASE)" ]; then echo "Invalid build image $(BUILD_IMAGE) no build base found"; exit 1; fi
 	@if [ -z "$(BUILD_TYPE)" ]; then echo "Invalid build image $(BUILD_IMAGE) no build type found"; exit 1; fi
 
-	@set -x; DOCKER_BUILDKIT=1 docker build \
+#	@set -x; DOCKER_BUILDKIT=1 docker build \
+#		--pull \
+#		--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
+#		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
+#		--build-arg BASE="$(BUILD_BASE)" \
+#		--build-arg CREATE_ARCHIVE="$(CREATE_ARCHIVE)" \
+#		--build-arg UID="$(shell id -u)" \
+#		--build-arg GID="$(shell id -g)" \
+#		--file="dockerfiles/$(BUILD_TYPE).dockerfile" \
+#		--progress="$(PROGRESS)" \
+#		--target="$(TARGET)" \
+#		--output=. \
+#		.
+#
+	@set -x; DOCKER_BUILDKIT=0 docker build \
 		--pull \
 		--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
@@ -102,11 +116,15 @@ build:
 		--build-arg CREATE_ARCHIVE="$(CREATE_ARCHIVE)" \
 		--build-arg UID="$(shell id -u)" \
 		--build-arg GID="$(shell id -g)" \
-		--file="dockerfiles/$(BUILD_TYPE).dockerfile" \
+		--file="dockerfiles/$(BUILD_TYPE).dockerfile.nobuildkit" \
 		--progress="$(PROGRESS)" \
 		--target="$(TARGET)" \
-		--output=. \
+		--tag=containerd \
 		.
+	@set -x; export cid=$$(docker create containerd sh); \
+	docker cp $$cid:/archive/ ./; \
+	docker cp $$cid:/build/ ./; \
+	docker rm -f $$cid
 
 .PHONY: validate
 validate: ## Validate files license header
