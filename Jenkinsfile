@@ -14,13 +14,15 @@ def generatePackageStep(opts, arch) {
         wrappedNode(label: "ubuntu-1804&&${arch}") {
             stage("${opts.image}-${arch}") {
                 try {
-                    sh '''
-                    sudo mkdir -p /etc/docker
-                    sudo sh -c \'echo {\\"builder\\":{\\"entitlements\\":{\\"security-insecure\\": true}}} > /etc/docker/daemon.json\'
-                    cat /etc/docker/daemon.json
-                    sudo systemctl restart docker
-                    sudo journalctl -u docker
-                    '''
+                    if (arch == "armhf") {
+                        // TODO remove this: temporarily using "insecure" builds on armhf to disable seccomp
+                        sh '''
+                        sudo mkdir -p /etc/docker
+                        sudo sh -c \'echo {\\"builder\\":{\\"entitlements\\":{\\"security-insecure\\": true}}} > /etc/docker/daemon.json\'
+                        cat /etc/docker/daemon.json
+                        sudo systemctl restart docker
+                        '''
+                    }
                     sh 'docker version'
                     sh 'docker info'
                     sh '''

@@ -74,7 +74,6 @@ ARG CREATE_ARCHIVE
 #       with CGO when building multiple distros on the same machine / build-cache
 RUN --mount=type=bind,from=golang,source=/usr/local/go/,target=/usr/local/go/ \
     --mount=type=bind,source=/src,target=/go/src,rw \
-    --security=insecure \
     /root/build-deb
 ARG UID=0
 ARG GID=0
