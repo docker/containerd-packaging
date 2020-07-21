@@ -27,7 +27,7 @@ checkout() (
 	else
 		REF="FETCH_HEAD"
 	fi
-	git -C "$SRC" fetch --depth 1 origin "$REF_FETCH"
+	git -C "$SRC" fetch --update-head-ok --depth 1 origin "$REF_FETCH"
 	git -C "$SRC" checkout -q "$REF"
 )
 
