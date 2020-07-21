@@ -17,13 +17,18 @@
 CONTAINERD_REMOTE ?=https://github.com/containerd/containerd.git
 RUNC_REMOTE       ?=https://github.com/opencontainers/runc.git
 REF?=HEAD
-RUNC_REF?=dc9208a3303feef5b3839f4323d9beb36df0a9dd
 
+# Select the default version of Golang and runc based on the containerd source.
+# The runc version commit/tag is defined in vendor.conf. Code below is based on
+# the code used in the containerd repository:
+# https://github.com/containerd/containerd/blob/499fbb0337c9138b5360117e0b25a7a1428f9667/script/setup/install-runc#L24
 ifdef CONTAINERD_DIR
 GOVERSION?=$(shell grep "ARG GOLANG_VERSION" $(CONTAINERD_DIR)/contrib/Dockerfile.test | awk -F'=' '{print $$2}')
+RUNC_REF?=$(shell grep "opencontainers/runc" "$(CONTAINERD_DIR)/vendor.conf" | awk '{print $$2}')
 else
-# TODO adjust GOVERSION macro to take CONTAINERD_REMOTE into account
+# TODO adjust GOVERSION and RUNC_REF macro to take CONTAINERD_REMOTE into account
 GOVERSION?=$(shell curl -fsSL "https://raw.githubusercontent.com/containerd/containerd/$(REF)/contrib/Dockerfile.test" | grep "ARG GOLANG_VERSION" | awk -F'=' '{print $$2}')
+RUNC_REF?=$(shell curl -fsSL "https://raw.githubusercontent.com/containerd/containerd/$(REF)/vendor.conf" | grep "opencontainers/runc" | awk '{print $$2}')
 endif
 
 GOLANG_IMAGE=golang:$(GOVERSION)
