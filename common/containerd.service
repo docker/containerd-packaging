@@ -29,5 +29,12 @@ LimitNPROC=infinity
 LimitCORE=infinity
 TasksMax=infinity
 
+# Decreases the likelihood that containerd is killed due to memory pressure.
+#
+# Refer to the following link for more information about the OOMScoreAdjust
+# configuration property:
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#OOMScoreAdjust=
+OOMScoreAdjust=-999
+
 [Install]
 WantedBy=multi-user.target
