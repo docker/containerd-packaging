@@ -22,6 +22,8 @@ ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/bin/containerd
 KillMode=process
 Delegate=yes
+Restart=always
+RestartSec=5
 LimitNOFILE=1048576
 # Having non-zero Limit*s causes performance problems due to accounting overhead
 # in the kernel. We recommend using cgroups to do container-local accounting.
