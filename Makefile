@@ -30,12 +30,17 @@ all: build
 .PHONY: clean
 clean:
 	-$(RM) -r build/
+	-$(RM) -f common/containerd.service
 	-$(RM) -r artifacts
 	-$(RM) -r src
 	-docker builder prune -f --filter until=24h
 
 .PHONY: src
 src: src/github.com/opencontainers/runc src/github.com/containerd/containerd
+
+common/containerd.service: checkout
+	# upstream systemd unit uses /usr/local/bin, whereas our packages use /usr/bin
+	sed 's#/usr/local/bin/containerd#/usr/bin/containerd#g' src/github.com/containerd/containerd/containerd.service > $@
 
 ifdef RUNC_DIR
 src/github.com/opencontainers/runc:
@@ -72,7 +77,7 @@ checkout: src
 	./scripts/checkout.sh src/github.com/containerd/containerd "$(REF)"
 
 .PHONY: build
-build: checkout
+build: checkout common/containerd.service
 build:
 	@echo "--------------------------------------------------------------------"
 	@echo "Building $(TARGET) on $(BUILD_IMAGE)"
