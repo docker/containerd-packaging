@@ -20,6 +20,8 @@ After=network.target
 [Service]
 ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/bin/containerd
+
+Type=notify
 KillMode=process
 Delegate=yes
 LimitNOFILE=1048576
