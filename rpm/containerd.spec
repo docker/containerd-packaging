@@ -121,8 +121,8 @@ make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin BUILD
 
 %install
 cd %{_topdir}/BUILD
-mkdir -p %{buildroot}%{_bindir}
-install -D -m 0755 bin/* %{buildroot}%{_bindir}
+mkdir -p %{buildroot}%{_exec_prefix}/local/bin
+install -D -m 0755 bin/* %{buildroot}%{_exec_prefix}/local/bin
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
 install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
 
@@ -149,7 +149,7 @@ done
 %files
 %license LICENSE
 %doc README.md
-%{_bindir}/*
+%{_exec_prefix}/local/bin/*
 %{_unitdir}/containerd.service
 %{_sysconfdir}/containerd
 %{_mandir}/man*/*
