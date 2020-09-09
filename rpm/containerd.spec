@@ -157,6 +157,10 @@ done
 
 
 %changelog
+* Wed Sep 09 2020 Sebastiaan van Stijn <github@gone.nl> - 1.3.7-3.1
+- Update to containerd 1.3.7
+- Update Golang runtime to 1.13.12.
+
 * Fri May 01 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.2.13-3.2
 - Build packages for RHEL-7 on s390x, CentOS 8, and Fedora 32
 - Add libseccomp as required dependency
