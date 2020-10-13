@@ -13,7 +13,8 @@ def images = [
     [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2024)
     [image: "docker.io/library/fedora:31",              arches: ["amd64", "aarch64"]],
     [image: "docker.io/library/fedora:32",              arches: ["amd64", "aarch64"]],
-    [image: "docker.io/library/fedora:rawhide",         arches: ["amd64"]],                              // Rawhide is the name given to the current development version of Fedora
+    [image: "docker.io/library/fedora:33",              arches: ["amd64", "aarch64"]],
+    [image: "docker.io/library/fedora:rawhide",         arches: ["amd64"]],                     // Rawhide is the name given to the current development version of Fedora
     [image: "docker.io/opensuse/leap:15",               arches: ["amd64"]],
     [image: "docker.io/balenalib/rpi-raspbian:buster",  arches: ["armhf"]],
     [image: "docker.io/library/ubuntu:xenial",          arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 16.04 LTS (End of support: April, 2021. EOL: April, 2024)
