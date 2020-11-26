@@ -157,6 +157,10 @@ done
 
 
 %changelog
+* Thu Nov 26 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.2-3.1
+- Update to containerd 1.4.2
+- Update Golang runtime to 1.15.5
+
 * Tue Oct 06 2020 Tibor Vass <tibor@docker.com> - 1.4.1-3.1
 - Update to containerd 1.4.1
 - Update Golang runtime to 1.13.15
