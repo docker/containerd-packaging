@@ -25,7 +25,7 @@ def images = [
 
 def generatePackageStep(opts, arch) {
     return {
-        node("linux&&${arch}") {
+        wrappedNode(label: "linux&&${arch}") {
             stage("${opts.image}-${arch}") {
                 try {
                     sh 'docker version'
