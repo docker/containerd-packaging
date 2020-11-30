@@ -157,6 +157,9 @@ done
 
 
 %changelog
+* Mon Nov 30 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.3.9-3.1
+- Update to containerd 1.3.9 to address CVE-2020-15257
+
 * Mon Nov 30 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.3.8-3.1
 - Update to containerd 1.3.8
 - Update Golang runtime to 1.13.15
