@@ -157,6 +157,10 @@ done
 
 
 %changelog
+* Mon Nov 30 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.3.8-3.1
+- Update to containerd 1.3.8
+- Update Golang runtime to 1.13.15
+
 * Wed Sep 09 2020 Sebastiaan van Stijn <github@gone.nl> - 1.3.7-3.1
 - Update to containerd 1.3.7
 - Update Golang runtime to 1.13.12.
