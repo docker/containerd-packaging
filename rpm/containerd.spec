@@ -157,9 +157,11 @@ done
 
 
 %changelog
+* Wed Dec 02 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.3-3.1
+- Update to containerd 1.4.3 to address CVE-2020-15257.
+
 * Thu Nov 26 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.2-3.1
 - Update to containerd 1.4.2
-- Update Golang runtime to 1.15.5
 
 * Tue Oct 06 2020 Tibor Vass <tibor@docker.com> - 1.4.1-3.1
 - Update to containerd 1.4.1
