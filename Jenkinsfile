@@ -36,7 +36,7 @@ def generatePackageStep(opts, arch) {
                     checkout scm
                     sh 'make clean'
                     withDockerRegistry([url: "", credentialsId: "dockerbuildbot-index.docker.io"]) {
-                        sh "make CREATE_ARCHIVE=1 ${opts.image}"
+                        sh "make GO_VERSION=1.13.15 CREATE_ARCHIVE=1 ${opts.image}"
                     }
                     archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
                 } finally {
@@ -59,7 +59,7 @@ def packageBuildSteps = [
             stage("windows") {
                 try {
                     checkout scm
-                    sh("make -f Makefile.win archive")
+                    sh("make -f Makefile.win GO_VERSION=1.13.15 archive")
                 } finally {
                     deleteDir()
                 }
@@ -78,7 +78,7 @@ pipeline {
             steps{
                 script{
                     checkout scm
-                    sh "make validate"
+                    sh "make GO_VERSION=1.13.15 validate"
                 }
             }
         }
