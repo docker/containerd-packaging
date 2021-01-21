@@ -79,7 +79,7 @@ ENV PACKAGE=${PACKAGE:-containerd.io}
 
 FROM build-env AS build-packages
 RUN mkdir -p /archive /build
-COPY common/containerd.service common/containerd.toml SOURCES/
+COPY common/containerd.service SOURCES/
 ARG CREATE_ARCHIVE
 # NOTE: not using a cache-mount for /root/.cache/go-build, to prevent issues
 #       with CGO when building multiple distros on the same machine / build-cache
@@ -124,4 +124,4 @@ COPY --from=verify-packages /build   /build
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime
 COPY --from=golang /usr/local/go/ /usr/local/go/
-COPY common/containerd.service common/containerd.toml SOURCES/
+COPY common/containerd.service SOURCES/
