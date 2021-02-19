@@ -30,7 +30,7 @@ all: build
 .PHONY: clean
 clean:
 	-$(RM) -r build/
-	-$(RM) -f common/containerd.service
+	-$(RM) common/containerd.service
 	-$(RM) -r artifacts
 	-$(RM) -r src
 	-docker builder prune -f --filter until=24h
