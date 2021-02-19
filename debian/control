@@ -3,8 +3,7 @@ Section: devel
 Priority: optional
 Maintainer: Containerd team <help@containerd.io>
 Build-Depends: libbtrfs-dev | btrfs-tools ,
-               debhelper,
-               dh-systemd,
+               debhelper (>= 10~) | dh-systemd,
                pkg-config,
                libseccomp-dev
 Standards-Version: 4.1.4
