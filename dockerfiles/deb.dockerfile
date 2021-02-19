@@ -37,7 +37,7 @@ ENV PATH="${PATH}:/usr/local/go/bin:${GOPATH}/bin"
 ENV IMPORT_PATH=github.com/containerd/containerd
 ENV GO_SRC_PATH="/go/src/${IMPORT_PATH}"
 ARG DEBIAN_FRONTEND=noninteractive
-WORKDIR /root/containerd
+WORKDIR /root/containerd.io
 
 # Install some pre-reqs
 # NOTE: not using a cache-mount for apt, to prevent issues when building multiple
