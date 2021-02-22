@@ -56,10 +56,41 @@ COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
 COPY debian/ debian/
 # NOTE: not using a cache-mount for apt, to prevent issues when building multiple
 #       distros on the same machine / build-cache
+#
+# NOTE: DO NOT REMOVE '/var/lib/apt/lists/', to allow building for Debian unstable.
+#
+# Debian "unstable" releases use apt caching information to get the codename
+# see discussion on https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=845651:
+#
+# > That's all to say that this bug is (to my belief) actually expected behaviour;
+# > and fixing it through forcing the codename to be interpreted as "stretch" when
+# > apt-cache information is unavailable would be wrong. When /etc/debian_version
+# > contains "potato/sid", the codename is either potato xor sid, and only apt-
+# > cache can discriminate a testing host from a sid host. Therefore, in such a
+# > situation, the correct answer is actually "I can't tell", aka "n/a".
+#
+# From testing on https://github.com/docker/containerd-packaging/pull/213#issuecomment-782172567,
+# it reads the information from these files:
+#
+#   - /var/lib/apt/lists/deb.debian.org_debian_dists_bullseye_InRelease
+#   - /var/lib/apt/lists/deb.debian.org_debian_dists_bullseye_main_binary-amd64_Packages.lz4
+#
+# Removing these files (`rm -rf /var/lib/apt/lists/*`) causes 'lsb_release -sc`
+# to print 'n/a'. While we could use '/etc/debian_version' as a fallback for our
+# own scripts (stripping everything after '/' (e.g. bullseye/sid -> bullseye),
+# dpkg-buildpackage will still depend on this information to be present, and
+# if not present, renames packages to use 'n/a' in their path:
+#
+#    dpkg-buildpackage: info: full upload; Debian-native package (full source is included)
+#    renamed '../containerd.io-dbgsym_0.20210219.014044~e58be59-1_amd64.deb' -> '/build/debian/n/a/amd64/containerd.io-dbgsym_0.20210219.014044~e58be59-1_amd64.deb'
+#    renamed '../containerd.io_0.20210219.014044~e58be59-1_amd64.deb' -> '/build/debian/n/a/amd64/containerd.io_0.20210219.014044~e58be59-1_amd64.deb'
+#
+# Given that we don't need the final image (as we only use it as a build environment
+# and copy the artifacts out), keeping some of the cache files should not be a problem.
 RUN apt-get update -q \
  && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control \
  && apt-get clean \
- && rm -rf /var/cache/apt /var/lib/apt/lists/*
+ && rm -rf /var/cache/apt
 COPY scripts/build-deb    /root/
 COPY scripts/.helpers     /root/
 

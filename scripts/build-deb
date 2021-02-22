@@ -55,6 +55,14 @@ DEST_DIR="/build/${DIST_ID}/${DIST_VERSION}/${ARCH}/"
 mkdir -p "${DEST_DIR}"
 mv -v ../*.deb "${DEST_DIR}"
 
+if [ "${DIST_VERSION}" = 'n/a' ]; then
+	# Give a more useful error message if we failed to get the "codename",
+	# which can be the case on Debian "unstable" releases. For more background:
+	# https://github.com/docker/containerd-packaging/pull/213#issuecomment-782172567
+	echo "Failed to get release codename"
+	exit 1
+fi
+
 # Only create an archive if env variable is specified
 if [ -n "${CREATE_ARCHIVE}" ]; then
 	tar -C /build -cvzf "/archive/${DIST_ID}-${DIST_VERSION}-${ARCH}.tar.gz" "${DIST_ID}/${DIST_VERSION}/${ARCH}"
