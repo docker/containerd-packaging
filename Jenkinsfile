@@ -11,6 +11,7 @@ def images = [
     [image: "docker.io/dockereng/rhel:7-s390x",         arches: ["s390x"]],
     [image: "docker.io/library/centos:8",               arches: ["amd64", "aarch64"]],
     [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2024)
+    [image: "docker.io/library/debian:bullseye",        arches: ["amd64", "aarch64", "armhf"]], // Debian 11 (Next stable)
     [image: "docker.io/library/fedora:32",              arches: ["amd64", "aarch64"]],
     [image: "docker.io/library/fedora:33",              arches: ["amd64", "aarch64"]],
     [image: "docker.io/library/fedora:rawhide",         arches: ["amd64"]],                     // Rawhide is the name given to the current development version of Fedora
