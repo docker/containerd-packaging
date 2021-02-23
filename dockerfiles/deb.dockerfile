@@ -48,8 +48,7 @@ RUN apt-get update -q && apt-get install -y --no-install-recommends \
     equivs \
     git \
     lsb-release \
- && apt-get clean \
- && rm -rf /var/cache/apt /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/*
 
 # Install build dependencies and build scripts
 COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
@@ -88,9 +87,7 @@ COPY debian/ debian/
 # Given that we don't need the final image (as we only use it as a build environment
 # and copy the artifacts out), keeping some of the cache files should not be a problem.
 RUN apt-get update -q \
- && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control \
- && apt-get clean \
- && rm -rf /var/cache/apt
+ && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control
 COPY scripts/build-deb    /root/
 COPY scripts/.helpers     /root/
 
@@ -121,8 +118,7 @@ COPY --from=build-packages /build /build
 RUN apt-get update -q \
  && dpkg --force-depends -i $(find /build -mindepth 3 -type f -name containerd.io_*.deb) || true; \
     apt-get -y install --no-install-recommends --fix-broken \
- && apt-get clean \
- && rm -rf /var/cache/apt /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/*
 RUN containerd --version
 RUN ctr --version
 RUN runc --version
