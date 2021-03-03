@@ -157,6 +157,9 @@ done
 
 
 %changelog
+* Wed Mar 03 2021 Tibor Vass <tibor@docker.com> - 1.4.3-3.2
+- Update runc to v1.0.0-rc93
+
 * Wed Dec 02 2020 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.3-3.1
 - Update to containerd 1.4.3 to address CVE-2020-15257.
 
