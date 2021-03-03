@@ -1,3 +1,9 @@
+containerd.io (1.4.3-2) release; urgency=medium
+
+  * Update runc to v1.0.0-rc93
+
+ -- Tibor Vass <tibor@docker.com> Wed, 03 Mar 2021 01:45:49 +0000
+
 containerd.io (1.4.3-1) release; urgency=high
 
   * Update to containerd 1.4.3 to address CVE-2020-15257.
