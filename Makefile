@@ -36,7 +36,7 @@ clean:
 	-docker builder prune -f --filter until=24h
 
 .PHONY: src
-src: src/github.com/opencontainers/runc src/github.com/containerd/containerd
+src: src/github.com/containerd/containerd src/github.com/opencontainers/runc
 
 common/containerd.service: checkout
 	# upstream systemd unit uses /usr/local/bin, whereas our packages use /usr/bin
@@ -73,8 +73,8 @@ docker.io/%:
 
 .PHONY: checkout
 checkout: src
-	./scripts/checkout.sh src/github.com/opencontainers/runc "$(RUNC_REF)"
 	./scripts/checkout.sh src/github.com/containerd/containerd "$(REF)"
+	./scripts/checkout.sh src/github.com/opencontainers/runc "$(RUNC_REF)"
 
 .PHONY: build
 build: checkout common/containerd.service
@@ -110,4 +110,4 @@ build:
 
 .PHONY: validate
 validate: ## Validate files license header
-	docker run --rm -v $(CURDIR):/work -w /work $(GOLANG_IMAGE) bash -c 'go get -u github.com/kunalkushwaha/ltag && ./scripts/validate/fileheader'
+	docker run --rm -v $(CURDIR):/work -w /work golang:alpine sh -c 'go install github.com/kunalkushwaha/ltag@latest && ./scripts/validate/fileheader'
