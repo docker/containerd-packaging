@@ -157,6 +157,9 @@ done
 
 
 %changelog
+* Mon Mar 08 2021 Wei Fu <fuweid89@gmail.com> - 1.4.4-3.1
+- Update to containerd 1.4.4 to address CVE-2021-21334.
+
 * Wed Mar 03 2021 Tibor Vass <tibor@docker.com> - 1.4.3-3.2
 - Update runc to v1.0.0-rc93
 
