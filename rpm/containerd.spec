@@ -102,21 +102,21 @@ cd %{_topdir}/BUILD/
 
 %build
 cd %{_topdir}/BUILD
-make man
+GO111MODULE=off make man
 
 BUILDTAGS="seccomp selinux"
 %if 1%{!?el8:1}
 BUILDTAGS="${BUILDTAGS} no_btrfs"
 %endif
 
-make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
+GO111MODULE=off make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
 
 # Remove containerd-stress, as we're not shipping it as part of the packages
 rm -f bin/containerd-stress
 bin/containerd --version
 bin/ctr --version
 
-make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin BUILDTAGS='seccomp apparmor selinux %{runc_nokmem}' runc install
+GO111MODULE=off make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin BUILDTAGS='seccomp apparmor selinux %{runc_nokmem}' runc install
 
 
 %install
