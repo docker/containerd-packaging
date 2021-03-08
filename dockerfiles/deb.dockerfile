@@ -43,6 +43,7 @@ WORKDIR /root/containerd
 # NOTE: not using a cache-mount for apt, to prevent issues when building multiple
 #       distros on the same machine / build-cache
 RUN apt-get update -q && apt-get install -y --no-install-recommends \
+    ca-certificates \
     curl \
     devscripts \
     equivs \
