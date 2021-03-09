@@ -31,7 +31,7 @@ VERSION is already there.
 Releases can then be built with:
 
 ```bash
-make REF=${TAG} docker.io/library/centos:7
+make REF=${TAG} docker.io/library/ubuntu:bionic
 ```
 
 or
