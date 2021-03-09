@@ -72,7 +72,8 @@ def packageBuildSteps = [
             stage("windows") {
                 try {
                     checkout scm
-                    sh("make -f Makefile.win archive")
+                    sh("make -f Makefile.win REF=v1.2.13 archive")
+                    archiveArtifacts(artifacts: 'build/windows/containerd.zip', onlyIfSuccessful: true)
                 } finally {
                     deleteDir()
                 }
