@@ -1,17 +1,5 @@
 #!groovy
 
-properties(
-    [
-        parameters(
-            [
-                booleanParam(name: 'ARCHIVE', defaultValue: false, description: 'Archive the build artifacts by pushing to an S3 bucket.'),
-                string(name: 'CONTAINERD_REF', defaultValue: 'master', description: 'Git ref of containerd repo to build.'),
-                string(name: 'RUNC_REF', defaultValue: '', description: 'Git ref of runc repo to build.'),
-            ]
-        )
-    ]
-)
-
 // List of packages to build. Note that this list is overridden in the packaging
 // repository, where additional variants may be added for enterprise.
 //
