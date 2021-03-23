@@ -32,7 +32,7 @@ checkout: src
 	@git -C src/github.com/containerd/containerd checkout -q FETCH_HEAD
 
 # Windows builder, only difference is we installed make
-windows-image:
+windows-image: checkout
 	docker build \
 		--pull \
 		--build-arg GOLANG_IMAGE=$(GOLANG_IMAGE) \
@@ -41,7 +41,7 @@ windows-image:
 		.
 	echo 1 > $@
 
-build/windows/%.exe: windows-image checkout
+build/windows/%.exe: windows-image
 	Powershell.exe New-Item -ItemType Directory -Force -Path build/windows/
 	docker run \
 		--rm \
