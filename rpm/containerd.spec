@@ -50,8 +50,7 @@ License: ASL 2.0
 URL: https://containerd.io
 Source0: containerd
 Source1: containerd.service
-Source2: containerd.toml
-Source3: runc
+Source2: runc
 # container-selinux isn't a thing in suse flavors
 %if %{undefined suse_version}
 # amazonlinux2 doesn't have container-selinux either
@@ -124,7 +123,6 @@ cd %{_topdir}/BUILD
 mkdir -p %{buildroot}%{_bindir}
 install -D -m 0755 bin/* %{buildroot}%{_bindir}
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
-install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
 
 # install manpages, taking into account that not all sections may be present
 for i in $(seq 1 8); do
@@ -151,9 +149,7 @@ done
 %doc README.md
 %{_bindir}/*
 %{_unitdir}/containerd.service
-%{_sysconfdir}/containerd
 %{_mandir}/man*/*
-%config(noreplace) %{_sysconfdir}/containerd/config.toml
 
 
 %changelog
