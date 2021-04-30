@@ -30,18 +30,23 @@ AutoReq: no
 
 Name: containerd.io
 Provides: containerd
-# For some reason on rhel 8 if we "provide" runc then it makes this package unsearchable
+# Since runc lives in in a module stream on RHEL 8, it won't work to provide
+# it here. Better to use the OS version.
 %if 0%{!?el8:1}
 Provides: runc
 %endif
 
 # Obsolete packages
 Obsoletes: containerd
+%if 0%{!?el8:1}
 Obsoletes: runc
+%endif
 
 # Conflicting packages
 Conflicts: containerd
+%if 0%{!?el8:1}
 Conflicts: runc
+%endif
 
 Version: %{getenv:RPM_VERSION}
 Release: %{getenv:RPM_RELEASE_VERSION}%{?dist}
@@ -58,6 +63,9 @@ Source2: runc
 Requires: container-selinux >= 2:2.74
 %endif
 Requires: libseccomp
+%endif
+%if 0%{?el8:1}
+Requires: runc
 %endif
 BuildRequires: make
 BuildRequires: gcc
@@ -92,10 +100,12 @@ fi
 # symlink the go source path to our build directory
 ln -s /go/src/%{import_path} %{_topdir}/BUILD
 
+%if 0%{!?el8:1}
 if [ ! -d %{_topdir}/SOURCES/runc ]; then
     # Copy over our source code from our gopath to our source directory
     cp -rf /go/src/github.com/opencontainers/runc %{_topdir}/SOURCES/runc
 fi
+%endif
 cd %{_topdir}/BUILD/
 
 
@@ -115,8 +125,9 @@ rm -f bin/containerd-stress
 bin/containerd --version
 bin/ctr --version
 
+%if 0%{!?el8:1}
 GO111MODULE=off make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin BUILDTAGS='seccomp apparmor selinux %{runc_nokmem}' runc install
-
+%endif
 
 %install
 cd %{_topdir}/BUILD
@@ -153,6 +164,9 @@ done
 
 
 %changelog
+* Fri Apr 30 2021 Göran Uddeborg <goeran@uddeborg.se>
+- Use OS version of runc on RHEL8 to avoid conflict with podman.
+
 * Mon Mar 08 2021 Wei Fu <fuweid89@gmail.com> - 1.4.4-3.1
 - Update to containerd 1.4.4 to address CVE-2021-21334.
 
