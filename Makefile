@@ -72,8 +72,15 @@ docker.io/%:
 	$(MAKE) BUILD_IMAGE="$@" build
 
 .PHONY: checkout
-checkout: src
+checkout: checkout-containerd checkout-runc
+
+.PHONY: checkout-containerd
+checkout-containerd: src
 	./scripts/checkout.sh src/github.com/containerd/containerd "$(REF)"
+
+# this must be a separate target, otherwise "RUNC_REF" is not evaluated correctly
+.PHONY: checkout-runc
+checkout-runc: checkout-containerd
 	./scripts/checkout.sh src/github.com/opencontainers/runc "$(RUNC_REF)"
 
 .PHONY: build
