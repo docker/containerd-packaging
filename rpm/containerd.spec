@@ -157,6 +157,10 @@ done
 
 
 %changelog
+* Fri May 21 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.6-3.1
+- Update to containerd 1.4.6
+- Update runc to v1.0.0-rc95 to address CVE-2021-30465.
+
 * Wed May 12 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.5-3.1
 - Update to containerd 1.4.5
 - Update runc to v1.0.0-rc94
