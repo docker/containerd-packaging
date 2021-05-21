@@ -1,3 +1,10 @@
+containerd.io (1.4.6-1) release; urgency=high
+
+  * Update to containerd 1.4.6
+  * Update runc to v1.0.0-rc95 to address CVE-2021-30465.
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Fri, 21 May 2021 07:30:42 +0000
+
 containerd.io (1.4.5-1) release; urgency=medium
 
   * Update to containerd 1.4.5
