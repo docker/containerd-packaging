@@ -22,8 +22,6 @@ BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 # For example, use "make PROGRESS=plain ..." to show build progress in plain test
 PROGRESS=auto
 TARGET=packages
-CONTAINERD_COMMIT=$(shell git -C "src/github.com/containerd/containerd" log -1 --pretty='%h')
-RUNC_COMMIT=$(shell git -C "src/github.com/opencontainers/runc" log -1 --pretty='%h')
 
 all: build
 
@@ -72,16 +70,9 @@ docker.io/%:
 	$(MAKE) BUILD_IMAGE="$@" build
 
 .PHONY: checkout
-checkout: checkout-containerd checkout-runc
-
-.PHONY: checkout-containerd
-checkout-containerd: src
+checkout: src
 	./scripts/checkout.sh src/github.com/containerd/containerd "$(REF)"
-
-# this must be a separate target, otherwise "RUNC_REF" is not evaluated correctly
-.PHONY: checkout-runc
-checkout-runc: checkout-containerd
-	./scripts/checkout.sh src/github.com/opencontainers/runc "$(RUNC_REF)"
+	./scripts/checkout.sh src/github.com/opencontainers/runc "$$(./scripts/determine-runc-version)"
 
 .PHONY: build
 build: checkout common/containerd.service
@@ -89,8 +80,8 @@ build:
 	@echo "--------------------------------------------------------------------"
 	@echo "Building $(TARGET) on $(BUILD_IMAGE)"
 	@echo ""
-	@echo "containerd   : $(REF) (commit: $(CONTAINERD_COMMIT))"
-	@echo "runc         : $(RUNC_REF) (commit: $(RUNC_COMMIT))"
+	@echo "containerd   : $(REF) (commit: $(shell git -C "src/github.com/containerd/containerd" log -1 --pretty='%h'))"
+	@echo "runc         : $$(./scripts/determine-runc-version) (commit: $$(git -C "src/github.com/opencontainers/runc" log -1 --pretty='%h'))"
 	@echo "architecture : $(shell uname -m)"
 	@echo "build image  : $(BUILD_IMAGE)"
 	@echo "golang image : $(GOLANG_IMAGE)"

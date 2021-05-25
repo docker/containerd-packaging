@@ -20,7 +20,6 @@ REF?=HEAD
 
 # Select the default version of Golang and runc based on the containerd source.
 GOVERSION?=$(shell grep "ARG GOLANG_VERSION" src/github.com/containerd/containerd/contrib/Dockerfile.test | awk -F'=' '{print $$2}')
-RUNC_REF?=$(shell scripts/determine-runc-version)
 
 GOLANG_IMAGE=golang:$(GOVERSION)
 ifeq ($(OS),Windows_NT)
