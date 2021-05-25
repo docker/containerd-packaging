@@ -27,7 +27,7 @@ runc_version() {
 	if [ -n "${RUNC_REF}" ]; then
 		# just a safe-guard if this script is called when RUNC_REF was already set.
 		echo "${RUNC_REF}"
-		>&2 echo "INFO: using runc version from RUNC_REF."
+		>&2 echo "INFO: using runc version (${RUNC_REF}) from RUNC_REF."
 		return
 	fi
 
@@ -38,23 +38,23 @@ runc_version() {
 	if [ -f "${containerd_src_dir}/script/setup/runc-version" ]; then
 		# containerd v1.5.0-beta.4 and up, and v1.4.5 and up specify the version of
 		# runc to use in script/setup/runc-version.
-		cat "${containerd_src_dir}/script/setup/runc-version"
-		>&2 echo "INFO: detected runc version from script/setup/runc-version"
+		runc_ref=$(cat "${containerd_src_dir}/script/setup/runc-version")
+		>&2 echo "INFO: detected runc version (${runc_ref}) from script/setup/runc-version"
 		return
 	elif [ -f "${containerd_src_dir}/go.mod" ]; then
 		# containerd master between v1.4.x and v1.5.0-beta.4 required the runc binary
 		# to be the same version as the vendored (libcontainer) dependency, specified
 		# in go.mod. containerd v1.5.0-beta.4 (and up), and v1.4.5 (and up) decoupled
 		# the binary version from the libnetwork version, and use script/setup/runc-version
-		grep 'opencontainers/runc' "${containerd_src_dir}/go.mod" | awk '{print $2}'
-		>&2 echo "INFO: detected runc version from go.mod"
+		runc_ref=$(grep 'opencontainers/runc' "${containerd_src_dir}/go.mod" | awk '{print $2}')
+		>&2 echo "INFO: detected runc version (${runc_ref}) from go.mod"
 		return
 	elif [ -f "${containerd_src_dir}/vendor.conf" ]; then
 		# containerd master between v1.4.x and v1.5.0-beta.4 required the runc binary
 		# to be the same version as the vendored (libcontainer) dependency, specified
 		# in vendor.conf.
-		grep 'opencontainers/runc' "${containerd_src_dir}/vendor.conf" | awk '{print $2}'
-		>&2 echo "INFO: detected runc version from vendor.conf"
+		runc_ref=$(grep 'opencontainers/runc' "${containerd_src_dir}/vendor.conf" | awk '{print $2}')
+		>&2 echo "INFO: detected runc version (${runc_ref}) from vendor.conf"
 		return
 	fi
 
