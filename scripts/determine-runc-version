@@ -40,6 +40,7 @@ runc_version() {
 		# runc to use in script/setup/runc-version.
 		runc_ref=$(cat "${containerd_src_dir}/script/setup/runc-version")
 		>&2 echo "INFO: detected runc version (${runc_ref}) from script/setup/runc-version"
+		echo "${runc_ref}"
 		return
 	elif [ -f "${containerd_src_dir}/go.mod" ]; then
 		# containerd master between v1.4.x and v1.5.0-beta.4 required the runc binary
@@ -48,6 +49,7 @@ runc_version() {
 		# the binary version from the libnetwork version, and use script/setup/runc-version
 		runc_ref=$(grep 'opencontainers/runc' "${containerd_src_dir}/go.mod" | awk '{print $2}')
 		>&2 echo "INFO: detected runc version (${runc_ref}) from go.mod"
+		echo "${runc_ref}"
 		return
 	elif [ -f "${containerd_src_dir}/vendor.conf" ]; then
 		# containerd master between v1.4.x and v1.5.0-beta.4 required the runc binary
@@ -55,6 +57,7 @@ runc_version() {
 		# in vendor.conf.
 		runc_ref=$(grep 'opencontainers/runc' "${containerd_src_dir}/vendor.conf" | awk '{print $2}')
 		>&2 echo "INFO: detected runc version (${runc_ref}) from vendor.conf"
+		echo "${runc_ref}"
 		return
 	fi
 
