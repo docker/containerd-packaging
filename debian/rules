@@ -19,9 +19,12 @@
 
 # GO_SRC_PATH and PACKAGE are defined in the dockerfile
 # VERSION and REF are defined in scripts/build-deb
+# TODO remove custom PREFIX variable once containerd release/1.4 and release/1.5
+#      are obsolete. See https://github.com/containerd/containerd/commit/b5f530a157
 binaries: ## Create containerd binaries
 	@set -x; GO111MODULE=off make -C $(GO_SRC_PATH) --no-print-directory \
 		DESTDIR="$$(pwd)" \
+		PREFIX="" \
 		VERSION=$${VERSION} \
 		REVISION=$${REF} \
 		PACKAGE=$${PACKAGE} \
