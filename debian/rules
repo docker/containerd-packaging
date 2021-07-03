@@ -49,6 +49,10 @@ man: ## Create containerd man pages
 
 override_dh_auto_build: binaries bin/runc man
 
+override_dh_strip:
+	# strip disabled as golang upstream doesn't support it and it makes go
+	# crash. See https://launchpad.net/bugs/1200255.
+
 override_dh_systemd_start:
 	dh_systemd_start --restart-after-upgrade
 	sed -i 's/_dh_action=try-restart/_dh_action=restart/g' ./debian/containerd.io.postinst.debhelper
