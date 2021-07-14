@@ -44,7 +44,7 @@ FROM redhat-base AS amzn-base
 
 FROM redhat-base AS ol-base
 RUN . "/etc/os-release"; if [ "${VERSION_ID%.*}" -eq 7 ]; then yum-config-manager --enable ol7_addons --enable ol7_optional_latest; fi
-RUN . "/etc/os-release"; if [ "${VERSION_ID%.*}" -eq 8 ]; then yum-config-manager --enable ol8_addons; fi
+RUN . "/etc/os-release"; if [ "${VERSION_ID%.*}" -eq 8 ]; then yum-config-manager --enable ol8_addons --enable ol8_codeready_builder; fi
 
 FROM ${BUILD_IMAGE} AS fedora-base
 RUN dnf install -y rpm-build git dnf-plugins-core
@@ -71,8 +71,11 @@ WORKDIR /root/rpmbuild
 COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
 COPY rpm/containerd.spec SPECS/containerd.spec
 COPY scripts/build-rpm    /root/
+COPY scripts/build-static /root/
 COPY scripts/.rpm-helpers /root/
-RUN . /root/.rpm-helpers; install_build_deps SPECS/containerd.spec
+RUN . /root/.rpm-helpers \
+ && install_build_deps SPECS/containerd.spec \
+ && install_package glibc-static
 
 ARG PACKAGE
 ENV PACKAGE=${PACKAGE:-containerd.io}
@@ -120,6 +123,26 @@ RUN runc --version
 FROM scratch AS packages
 COPY --from=build-packages  /archive /archive
 COPY --from=verify-packages /build   /build
+
+FROM build-env AS build-binaries
+# NOTE: not using a cache-mount for /root/.cache/go-build, to prevent issues
+#       with CGO when building multiple distros on the same machine / build-cache
+RUN --mount=type=bind,from=golang,source=/usr/local/go/,target=/usr/local/go/ \
+    --mount=type=bind,source=/src,target=/go/src,rw \
+    /root/build-static
+ARG UID=0
+ARG GID=0
+RUN chown -R ${UID}:${GID} /build
+
+FROM distro-image AS verify-binaries
+COPY --from=build-binaries /build /build
+RUN tar -C /usr/local/bin/ --strip-components 1 -xzf "$(find /build/static -type f -name containerd.io*.tar.gz)"
+RUN containerd --version
+RUN ctr --version
+RUN runc --version
+
+FROM scratch AS binaries
+COPY --from=verify-binaries /build /build
 
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime
