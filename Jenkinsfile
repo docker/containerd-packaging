@@ -61,6 +61,7 @@ def packageBuildSteps = [
                 try {
                     checkout scm
                     sh("make -f Makefile.win archive")
+                    archiveArtifacts(artifacts: 'build/windows/containerd.zip', onlyIfSuccessful: true)
                 } finally {
                     deleteDir()
                 }
