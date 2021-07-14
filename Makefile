@@ -12,6 +12,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+.POSIX:
+
 include common/common.mk
 
 BUILD_IMAGE=centos:7
