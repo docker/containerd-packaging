@@ -59,6 +59,10 @@ Source3: runc
 Requires: container-selinux >= 2:2.74
 %endif
 Requires: libseccomp
+%else
+# SUSE flavors do not have container-selinux,
+# and libseccomp is named libseccomp2
+Requires: libseccomp2
 %endif
 BuildRequires: make
 BuildRequires: gcc
