@@ -14,7 +14,7 @@
 
 include common/common.mk
 
-BUILD_IMAGE=centos:7
+BUILD_IMAGE=ubuntu:focal
 BUILD_TYPE=$(shell ./scripts/deb-or-rpm $(BUILD_IMAGE))
 BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 

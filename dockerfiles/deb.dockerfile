@@ -15,7 +15,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-ARG BUILD_IMAGE=ubuntu:bionic
+ARG BUILD_IMAGE=ubuntu:focal
 ARG GOLANG_IMAGE=golang:latest
 
 # Install golang from the official image, since the package managed
