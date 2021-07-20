@@ -87,7 +87,6 @@ ARG CREATE_ARCHIVE
 RUN --mount=type=bind,from=golang,source=/usr/local/go/,target=/usr/local/go/ \
     --mount=type=bind,source=/src,target=/go/src,rw \
     --mount=type=bind,source=/src/github.com/containerd/containerd,target=/root/rpmbuild/SOURCES/containerd \
-    --mount=type=bind,source=/src/github.com/opencontainers/runc,target=/root/rpmbuild/SOURCES/runc \
     /root/build-rpm
 ARG UID=0
 ARG GID=0
@@ -116,6 +115,7 @@ RUN createrepo /build \
  && rm -rf /build/repodata
 RUN containerd --version
 RUN ctr --version
+RUN dnf -y install runc
 RUN runc --version
 
 FROM scratch AS packages
