@@ -22,7 +22,7 @@
 # TODO remove custom PREFIX variable once containerd release/1.4 and release/1.5
 #      are obsolete. See https://github.com/containerd/containerd/commit/b5f530a157
 binaries: ## Create containerd binaries
-	@set -x; GO111MODULE=off make -C $(GO_SRC_PATH) --no-print-directory \
+	@set -x; GO111MODULE=auto make -C $(GO_SRC_PATH) --no-print-directory \
 		DESTDIR="$$(pwd)" \
 		PREFIX="" \
 		VERSION=$${VERSION} \
@@ -34,13 +34,13 @@ binaries: ## Create containerd binaries
 	rm -f bin/containerd-stress
 
 bin/runc:
-	@set -x; GO111MODULE=off make -C /go/src/github.com/opencontainers/runc  --no-print-directory \
+	@set -x; GO111MODULE=auto make -C /go/src/github.com/opencontainers/runc  --no-print-directory \
 		BINDIR="$$(pwd)/bin" \
 		BUILDTAGS='seccomp apparmor selinux' \
 		runc install
 
 man: ## Create containerd man pages
-	@set -x; GO111MODULE=off make -C $(GO_SRC_PATH) --no-print-directory man
+	@set -x; GO111MODULE=auto make -C $(GO_SRC_PATH) --no-print-directory man
 
 	# copy the generated man pages instead of using "make install-man" to allow
 	# dh_installman doing its magic
