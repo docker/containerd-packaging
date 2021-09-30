@@ -161,6 +161,11 @@ done
 
 
 %changelog
+* Thu Sep 30 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.10-3.1
+- Update to containerd 1.4.10
+- Update runc to v1.0.2
+- Update Golang runtime to 1.16.8
+
 * Thu Jul 29 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.9-3.1
 - Update to containerd 1.4.9
 - Update runc to v1.0.1
