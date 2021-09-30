@@ -14,7 +14,7 @@
 
 ARG GOLANG_IMAGE=golang:latest
 FROM ${GOLANG_IMAGE} AS golang
-ARG GO111MODULE=on
+ARG GO111MODULE=auto
 ENV GO111MODULE=$GO111MODULE \
     chocolateyUseWindowsCompression=false
 # Install make and gcc
