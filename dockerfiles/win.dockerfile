@@ -12,9 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-ARG  GOLANG_IMAGE
-FROM ${GOLANG_IMAGE}
-ENV  chocolateyUseWindowsCompression=false
+ARG GOLANG_IMAGE=golang:latest
+FROM ${GOLANG_IMAGE} AS golang
+ARG GO111MODULE=on
+ENV GO111MODULE=$GO111MODULE \
+    chocolateyUseWindowsCompression=false
 # Install make and gcc
 RUN  iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1')); \
      choco feature disable --name showDownloadProgress; \
