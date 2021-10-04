@@ -1,3 +1,9 @@
+containerd.io (1.4.11-1) release; urgency=high
+
+  * Update to containerd 1.4.11 to address CVE-2021-41103
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Mon, 04 Oct 2021 11:20:49 +0000
+
 containerd.io (1.4.10-1) release; urgency=medium
 
   * Update to containerd 1.4.10
