@@ -161,6 +161,9 @@ done
 
 
 %changelog
+* Mon Oct 04 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.11-3.1
+- Update to containerd 1.4.11 to address CVE-2021-41103
+
 * Thu Sep 30 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.10-3.1
 - Update to containerd 1.4.10
 - Update runc to v1.0.2
