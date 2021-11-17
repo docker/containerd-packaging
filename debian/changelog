@@ -1,3 +1,10 @@
+containerd.io (1.4.12-1) release; urgency=high
+
+  * Update containerd to v1.4.12 to address CVE-2021-41190
+  * Update Golang runtime to 1.16.10
+
+ --  Sebastiaan van Stijn <thajeztah@docker.com>  Wed, 17 Nov 2021 18:48:28 +0000
+
 containerd.io (1.4.11-1) release; urgency=high
 
   * Update to containerd 1.4.11 to address CVE-2021-41103
