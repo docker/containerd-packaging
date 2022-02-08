@@ -8,7 +8,7 @@
 def images = [
     [image: "docker.io/library/amazonlinux:2",          arches: ["aarch64"]],
     [image: "docker.io/library/centos:7",               arches: ["amd64", "aarch64"]],
-    [image: "docker.io/library/centos:8",               arches: ["amd64", "aarch64"]],
+    [image: "quay.io/centos/centos:stream8",            arches: ["amd64", "aarch64"]],
     [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2024)
     [image: "docker.io/library/debian:bullseye",        arches: ["amd64", "aarch64", "armhf"]], // Debian 11 (Next stable)
     [image: "docker.io/library/fedora:34",              arches: ["amd64", "aarch64"]],          // EOL: May 17, 2022
