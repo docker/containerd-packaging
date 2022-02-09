@@ -22,8 +22,3 @@ REF?=HEAD
 GOVERSION?=$(shell grep "ARG GOLANG_VERSION" src/github.com/containerd/containerd/contrib/Dockerfile.test | awk -F'=' '{print $$2}')
 
 GOLANG_IMAGE=golang:$(GOVERSION)
-ifeq ($(OS),Windows_NT)
-       GOLANG_IMAGE=docker.io/library/golang:$(GOVERSION)
-else
-       GOLANG_IMAGE=docker.io/library/golang:$(GOVERSION)-buster
-endif
