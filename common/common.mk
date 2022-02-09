@@ -27,4 +27,3 @@ ifeq ($(OS),Windows_NT)
 else
        GOLANG_IMAGE=docker.io/library/golang:$(GOVERSION)-buster
 endif
-GOARCH=$(shell docker run --rm $(GOLANG_IMAGE) go env GOARCH 2>/dev/null)
