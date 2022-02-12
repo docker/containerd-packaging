@@ -25,7 +25,7 @@ def images = [
 
 def generatePackageStep(opts, arch) {
     return {
-        wrappedNode(label: "linux&&${arch}") {
+        wrappedNode(label: "ubuntu-2004 && ${arch}") {
             stage("${opts.image}-${arch}") {
                 try {
                     sh 'docker version'
@@ -74,7 +74,7 @@ pipeline {
     agent none
     stages {
         stage('Check file headers') {
-            agent { label 'linux&&amd64' }
+            agent { label 'ubuntu-2004 && amd64' }
             steps{
                 script{
                     checkout scm
