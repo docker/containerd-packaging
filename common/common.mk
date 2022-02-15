@@ -19,6 +19,16 @@ RUNC_REMOTE       ?=https://github.com/opencontainers/runc.git
 REF?=HEAD
 
 # Select the default version of Golang and runc based on the containerd source.
-GOVERSION?=$(shell grep "ARG GOLANG_VERSION" src/github.com/containerd/containerd/contrib/Dockerfile.test | awk -F'=' '{print $$2}')
+GOLANG_VERSION?=$(shell grep "ARG GOLANG_VERSION" src/github.com/containerd/containerd/contrib/Dockerfile.test | awk -F'=' '{print $$2}')
 
-GOLANG_IMAGE=golang:$(GOVERSION)
+# Allow GOLANG_VERSION to be overridden through GOVERSION.
+#
+# We're using a separate variable for this to account for make being called as
+# either `GOVERSION=x make foo` or `make GOVERSION=x foo`, while also accounting
+# for `GOVERSION` to be an empty string (which may happen when triggered by some
+# Jenkins jobs in our pipeline).
+ifneq ($(strip $(GOVERSION)),)
+	GOLANG_VERSION=$(GOVERSION)
+endif
+
+GOLANG_IMAGE=golang:$(GOLANG_VERSION)
