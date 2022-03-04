@@ -161,6 +161,9 @@ done
 
 
 %changelog
+* Fri Mar 04 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.5.10-3.1
+- Update containerd to v1.5.10
+
 * Thu Mar 03 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.13-3.1
 - Update containerd to v1.4.13 to address CVE-2022-23648
 - Update runc to v1.0.3
