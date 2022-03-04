@@ -161,6 +161,11 @@ done
 
 
 %changelog
+* Thu Mar 03 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.13-3.1
+- Update containerd to v1.4.13 to address CVE-2022-23648
+- Update runc to v1.0.3
+- Update Golang runtime to 1.16.15
+
 * Wed Nov 17 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.12-3.1
 - Update containerd to v1.4.12 to address CVE-2021-41190
 - Update Golang runtime to 1.16.10
