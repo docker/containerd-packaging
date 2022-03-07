@@ -30,18 +30,22 @@ AutoReq: no
 
 Name: containerd.io
 Provides: containerd
-# For some reason on rhel >= 8 if we "provide" runc then it makes this package unsearchable
+# On RHEL >= 8, runc is packaged by Red Hat so it won't be provided by this package.
 %if %{undefined rhel} || 0%{?rhel} < 8
 Provides: runc
 %endif
 
 # Obsolete packages
 Obsoletes: containerd
+%if %{undefined rhel} || 0%{?rhel} < 8
 Obsoletes: runc
+%endif
 
 # Conflicting packages
 Conflicts: containerd
+%if %{undefined rhel} || 0%{?rhel} < 8
 Conflicts: runc
+%endif
 
 Version: %{getenv:RPM_VERSION}
 Release: %{getenv:RPM_RELEASE_VERSION}%{?dist}
@@ -51,7 +55,9 @@ URL: https://containerd.io
 Source0: containerd
 Source1: containerd.service
 Source2: containerd.toml
+%if %{undefined rhel} || 0%{?rhel} < 8
 Source3: runc
+%endif
 # container-selinux isn't a thing in suse flavors
 %if %{undefined suse_version}
 # amazonlinux2 doesn't have container-selinux either
@@ -63,6 +69,9 @@ Requires: libseccomp
 # SUSE flavors do not have container-selinux,
 # and libseccomp is named libseccomp2
 Requires: libseccomp2
+%endif
+%if 0%{?rhel} >= 8
+Requires: runc
 %endif
 BuildRequires: make
 BuildRequires: gcc
@@ -98,10 +107,12 @@ fi
 # symlink the go source path to our build directory
 ln -s /go/src/%{import_path} %{_topdir}/BUILD
 
+%if %{undefined rhel} || 0%{?rhel} < 8
 if [ ! -d %{_topdir}/SOURCES/runc ]; then
     # Copy over our source code from our gopath to our source directory
     cp -rf /go/src/github.com/opencontainers/runc %{_topdir}/SOURCES/runc
 fi
+%endif
 cd %{_topdir}/BUILD/
 
 
@@ -122,7 +133,9 @@ rm -f bin/containerd-stress
 bin/containerd --version
 bin/ctr --version
 
+%if %{undefined rhel} || 0%{?rhel} < 8
 GO111MODULE=auto make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin BUILDTAGS='seccomp apparmor selinux %{runc_nokmem}' runc install
+%endif
 
 
 %install
