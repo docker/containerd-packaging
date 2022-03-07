@@ -30,8 +30,8 @@ AutoReq: no
 
 Name: containerd.io
 Provides: containerd
-# For some reason on rhel 8 if we "provide" runc then it makes this package unsearchable
-%if 0%{!?el8:1}
+# For some reason on rhel >= 8 if we "provide" runc then it makes this package unsearchable
+%if 0%{?rhel} <= 7
 Provides: runc
 %endif
 
@@ -69,15 +69,6 @@ BuildRequires: gcc
 BuildRequires: systemd
 BuildRequires: libseccomp-devel
 
-# Should only return true if `el8` (rhel8) is NOT defined
-%if 0%{!?el8:1}
-%if 0%{?suse_version}
-BuildRequires: libbtrfs-devel
-%else
-BuildRequires: btrfs-progs-devel
-%endif
-%endif
-
 %{?systemd_requires}
 
 %description
@@ -108,10 +99,7 @@ cd %{_topdir}/BUILD/
 cd %{_topdir}/BUILD
 GO111MODULE=auto make man
 
-BUILDTAGS="seccomp selinux"
-%if 1%{!?el8:1}
-BUILDTAGS="${BUILDTAGS} no_btrfs"
-%endif
+BUILDTAGS="seccomp selinux no_btrfs"
 
 GO111MODULE=auto make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
 
