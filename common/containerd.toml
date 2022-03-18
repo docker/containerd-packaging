@@ -1,6 +1,4 @@
-#!/usr/bin/env sh
-
-#   Copyright 2018-2020 Docker Inc.
+#   Copyright 2018-2022 Docker Inc.
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -14,22 +12,20 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-GOVERSION=${GOVERSION:-1.12.16}
-HOST_ARCH=${HOST_ARCH:-$(uname -m)}
-DL_ARCH=${HOST_ARCH}
+disabled_plugins = ["cri"]
 
-# Why do they name them differently than their `uname -m` counterparts?
-# ¯\_(ツ)_/¯
-case $HOST_ARCH in
-	x86_64)
-		DL_ARCH="amd64"
-		;;
-	aarch64)
-		DL_ARCH="arm64"
-		;;
-	armv7l)
-		DL_ARCH="armv6l"
-		;;
-esac
+#root = "/var/lib/containerd"
+#state = "/run/containerd"
+#subreaper = true
+#oom_score = 0
 
-echo "https://dl.google.com/go/go${GOVERSION}.linux-${DL_ARCH}.tar.gz"
+#[grpc]
+#  address = "/run/containerd/containerd.sock"
+#  uid = 0
+#  gid = 0
+
+#[debug]
+#  address = "/run/containerd/debug.sock"
+#  uid = 0
+#  gid = 0
+#  level = "info"

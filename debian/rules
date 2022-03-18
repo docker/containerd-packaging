@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-#   Copyright 2018-2020 Docker Inc.
+#   Copyright 2018-2022 Docker Inc.
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -19,9 +19,12 @@
 
 # GO_SRC_PATH and PACKAGE are defined in the dockerfile
 # VERSION and REF are defined in scripts/build-deb
+# TODO remove custom PREFIX variable once containerd release/1.4 and release/1.5
+#      are obsolete. See https://github.com/containerd/containerd/commit/b5f530a157
 binaries: ## Create containerd binaries
-	@set -x; GO111MODULE=off make -C $(GO_SRC_PATH) --no-print-directory \
+	@set -x; GO111MODULE=auto make -C $(GO_SRC_PATH) --no-print-directory \
 		DESTDIR="$$(pwd)" \
+		PREFIX="" \
 		VERSION=$${VERSION} \
 		REVISION=$${REF} \
 		PACKAGE=$${PACKAGE} \
@@ -31,18 +34,23 @@ binaries: ## Create containerd binaries
 	rm -f bin/containerd-stress
 
 bin/runc:
-	@set -x; GO111MODULE=off make -C /go/src/github.com/opencontainers/runc  --no-print-directory \
+	@set -x; GO111MODULE=auto make -C /go/src/github.com/opencontainers/runc  --no-print-directory \
 		BINDIR="$$(pwd)/bin" \
 		BUILDTAGS='seccomp apparmor selinux' \
 		runc install
 
 man: ## Create containerd man pages
-	@set -x; GO111MODULE=off make -C $(GO_SRC_PATH) --no-print-directory man
+	@set -x; GO111MODULE=auto make -C $(GO_SRC_PATH) --no-print-directory man
 
 	# copy the generated man pages instead of using "make install-man" to allow
 	# dh_installman doing its magic
 	install -d man
 	install -D -m 0644 $(GO_SRC_PATH)/man/* man
+
+# force packages to be built with xz compression, as Ubuntu 21.10 and up use
+# zstd compression, which is non-standard, and breaks 'dpkg-sig --verify'
+override_dh_builddeb:
+	dh_builddeb -- -Zxz
 
 override_dh_auto_build: binaries bin/runc man
 
@@ -54,3 +62,4 @@ override_dh_auto_install: binaries bin/runc man
 	mkdir -p debian/containerd.io/usr/bin
 	install -D -m 0755 bin/* debian/containerd.io/usr/bin
 	install -D -m 0644 /root/common/containerd.service debian/containerd.io/lib/systemd/system/containerd.service
+	install -D -m 0644 /root/common/containerd.toml    debian/containerd.io/etc/containerd/config.toml

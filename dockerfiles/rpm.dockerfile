@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:experimental
 
 
-#   Copyright 2018-2020 Docker Inc.
+#   Copyright 2018-2022 Docker Inc.
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ FROM ${GOLANG_IMAGE} AS golang
 FROM golang AS go-md2man
 ARG GOPROXY=direct
 ARG GO111MODULE=on
-ARG MD2MAN_VERSION=v2.0.0
+ARG MD2MAN_VERSION=v2.0.1
 RUN go get github.com/cpuguy83/go-md2man/v2/@${MD2MAN_VERSION}
 
 FROM ${BUILD_IMAGE} AS redhat-base
@@ -35,10 +35,11 @@ RUN yum install -y yum-utils rpm-build git
 FROM redhat-base AS rhel-base
 
 FROM redhat-base AS centos-base
-RUN if [ -f /etc/yum.repos.d/CentOS-PowerTools.repo ]; then sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/CentOS-PowerTools.repo; fi
+# Using a wildcard: CentOS 7 uses "CentOS-RepoName", CentOS 8 uses "CentOS-Linux-RepoName"
+RUN if [ -f /etc/yum.repos.d/CentOS-*PowerTools.repo ]; then sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/CentOS-*PowerTools.repo; fi
 # In aarch64 (arm64) images, the altarch repo is specified as repository, but
 # failing, so replace the URL.
-RUN if [ -f /etc/yum.repos.d/CentOS-Sources.repo ]; then sed -i 's/altarch/centos/g' /etc/yum.repos.d/CentOS-Sources.repo; fi
+RUN if [ -f /etc/yum.repos.d/CentOS-*Sources.repo ]; then sed -i 's/altarch/centos/g' /etc/yum.repos.d/CentOS-*Sources.repo; fi
 
 FROM redhat-base AS amzn-base
 
@@ -79,7 +80,7 @@ ENV PACKAGE=${PACKAGE:-containerd.io}
 
 FROM build-env AS build-packages
 RUN mkdir -p /archive /build
-COPY common/containerd.service SOURCES/
+COPY common/containerd.service common/containerd.toml SOURCES/
 ARG CREATE_ARCHIVE
 # NOTE: not using a cache-mount for /root/.cache/go-build, to prevent issues
 #       with CGO when building multiple distros on the same machine / build-cache
@@ -124,4 +125,4 @@ COPY --from=verify-packages /build   /build
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime
 COPY --from=golang /usr/local/go/ /usr/local/go/
-COPY common/containerd.service SOURCES/
+COPY common/containerd.service common/containerd.toml SOURCES/

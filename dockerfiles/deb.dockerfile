@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:experimental
 
 
-#   Copyright 2018-2020 Docker Inc.
+#   Copyright 2018-2022 Docker Inc.
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-ARG BUILD_IMAGE=ubuntu:bionic
+ARG BUILD_IMAGE=ubuntu:focal
 ARG GOLANG_IMAGE=golang:latest
 
 # Install golang from the official image, since the package managed
@@ -25,7 +25,7 @@ FROM ${GOLANG_IMAGE} AS golang
 FROM golang AS go-md2man
 ARG GOPROXY=direct
 ARG GO111MODULE=on
-ARG MD2MAN_VERSION=v2.0.0
+ARG MD2MAN_VERSION=v2.0.1
 RUN go get github.com/cpuguy83/go-md2man/v2/@${MD2MAN_VERSION}
 
 FROM ${BUILD_IMAGE} AS distro-image
@@ -97,7 +97,7 @@ ENV PACKAGE=${PACKAGE:-containerd.io}
 
 FROM build-env AS build-packages
 RUN mkdir -p /archive /build
-COPY common/containerd.service /root/common/
+COPY common/containerd.service common/containerd.toml /root/common/
 ARG CREATE_ARCHIVE
 # NOTE: not using a cache-mount for /root/.cache/go-build, to prevent issues
 #       with CGO when building multiple distros on the same machine / build-cache
@@ -131,4 +131,4 @@ COPY --from=verify-packages /build   /build
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime
 COPY --from=golang /usr/local/go/ /usr/local/go/
-COPY common/containerd.service /root/common/
+COPY common/containerd.service common/containerd.toml /root/common/

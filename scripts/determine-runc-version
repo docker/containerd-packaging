@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-#   Copyright 2018-2020 Docker Inc.
+#   Copyright 2018-2022 Docker Inc.
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -15,19 +15,15 @@
 #   limitations under the License.
 
 # Select the default version of runc based on the containerd source if no
-# RUNC_REF is set manually. For containerd > 1.5.0-beta.4, and containerd > 1.4.4,
-# the runc version commit/tag is defined script/setup/runc-version. For older
-# versions, use go.mod or vendor.conf.
+# RUNC_REF is set manually.
 #
 # See the install-runc script in the containerd repository:
-# https://github.com/containerd/containerd/blob/v1.5.0-beta.4/script/setup/install-runc#L24-L27
-# https://github.com/containerd/containerd/blob/v1.5.0-beta.3/script/setup/install-runc#L24
-# https://github.com/containerd/containerd/blob/v1.4.0/script/setup/install-runc#L24
+# https://github.com/containerd/containerd/blob/v1.5.0/script/setup/install-runc#L24-L27
 runc_version() {
 	if [ -n "${RUNC_REF}" ]; then
 		# just a safe-guard if this script is called when RUNC_REF was already set.
 		echo "${RUNC_REF}"
-		>&2 echo "INFO: using runc version from RUNC_REF."
+		>&2 echo "INFO: using runc version (${RUNC_REF}) from RUNC_REF."
 		return
 	fi
 
@@ -36,30 +32,16 @@ runc_version() {
 	containerd_src_dir="${repo_abspath}/src/github.com/containerd/containerd"
 
 	if [ -f "${containerd_src_dir}/script/setup/runc-version" ]; then
-		# containerd v1.5.0-beta.4 and up, and v1.4.5 and up specify the version of
-		# runc to use in script/setup/runc-version.
-		cat "${containerd_src_dir}/script/setup/runc-version"
-		>&2 echo "INFO: detected runc version from script/setup/runc-version"
-		return
-	elif [ -f "${containerd_src_dir}/go.mod" ]; then
-		# containerd master between v1.4.x and v1.5.0-beta.4 required the runc binary
-		# to be the same version as the vendored (libcontainer) dependency, specified
-		# in go.mod. containerd v1.5.0-beta.4 (and up), and v1.4.5 (and up) decoupled
-		# the binary version from the libnetwork version, and use script/setup/runc-version
-		grep 'opencontainers/runc' "${containerd_src_dir}/go.mod" | awk '{print $2}'
-		>&2 echo "INFO: detected runc version from go.mod"
-		return
-	elif [ -f "${containerd_src_dir}/vendor.conf" ]; then
-		# containerd master between v1.4.x and v1.5.0-beta.4 required the runc binary
-		# to be the same version as the vendored (libcontainer) dependency, specified
-		# in vendor.conf.
-		grep 'opencontainers/runc' "${containerd_src_dir}/vendor.conf" | awk '{print $2}'
-		>&2 echo "INFO: detected runc version from vendor.conf"
+		# starting with v1.5.0-beta.4 and up, and v1.4.5, containerd specifies
+		# the version of runc to use in script/setup/runc-version.
+		runc_ref=$(cat "${containerd_src_dir}/script/setup/runc-version")
+		>&2 echo "INFO: detected runc version (${runc_ref}) from script/setup/runc-version"
+		echo "${runc_ref}"
 		return
 	fi
 
 	# if all else fails
-	>&2 echo "INFO: unable to detect runc version, using HEAD"
+	>&2 echo "WARNING: unable to detect runc version, using HEAD"
 	echo "HEAD"
 }
 

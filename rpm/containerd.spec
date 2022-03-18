@@ -55,7 +55,8 @@ License: ASL 2.0
 URL: https://containerd.io
 Source0: containerd
 Source1: containerd.service
-Source2: runc
+Source2: containerd.toml
+Source3: runc
 # container-selinux isn't a thing in suse flavors
 %if %{undefined suse_version}
 # amazonlinux2 doesn't have container-selinux either
@@ -63,6 +64,10 @@ Source2: runc
 Requires: container-selinux >= 2:2.74
 %endif
 Requires: libseccomp
+%else
+# SUSE flavors do not have container-selinux,
+# and libseccomp is named libseccomp2
+Requires: libseccomp2
 %endif
 %if 0%{?el8:1}
 Requires: runc
@@ -111,14 +116,14 @@ cd %{_topdir}/BUILD/
 
 %build
 cd %{_topdir}/BUILD
-GO111MODULE=off make man
+GO111MODULE=auto make man
 
 BUILDTAGS="seccomp selinux"
 %if 1%{!?el8:1}
 BUILDTAGS="${BUILDTAGS} no_btrfs"
 %endif
 
-GO111MODULE=off make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
+GO111MODULE=auto make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
 
 # Remove containerd-stress, as we're not shipping it as part of the packages
 rm -f bin/containerd-stress
@@ -126,7 +131,7 @@ bin/containerd --version
 bin/ctr --version
 
 %if 0%{!?el8:1}
-GO111MODULE=off make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin BUILDTAGS='seccomp apparmor selinux %{runc_nokmem}' runc install
+GO111MODULE=auto make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin BUILDTAGS='seccomp apparmor selinux %{runc_nokmem}' runc install
 %endif
 
 %install
@@ -134,6 +139,7 @@ cd %{_topdir}/BUILD
 mkdir -p %{buildroot}%{_bindir}
 install -D -m 0755 bin/* %{buildroot}%{_bindir}
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
+install -D -m 0644 %{S:2} %{buildroot}%{_sysconfdir}/containerd/config.toml
 
 # install manpages, taking into account that not all sections may be present
 for i in $(seq 1 8); do
@@ -160,12 +166,54 @@ done
 %doc README.md
 %{_bindir}/*
 %{_unitdir}/containerd.service
+%{_sysconfdir}/containerd
 %{_mandir}/man*/*
+%config(noreplace) %{_sysconfdir}/containerd/config.toml
 
 
 %changelog
-* Fri Apr 30 2021 Göran Uddeborg <goeran@uddeborg.se>
+* Fri Mar 18 2022 Göran Uddeborg <goeran@uddeborg.se>
 - Use OS version of runc on RHEL8 to avoid conflict with podman.
+
+* Fri Mar 04 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.5.10-3.1
+- Update containerd to v1.5.10
+
+* Thu Mar 03 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.13-3.1
+- Update containerd to v1.4.13 to address CVE-2022-23648
+- Update runc to v1.0.3
+- Update Golang runtime to 1.16.15
+
+* Wed Nov 17 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.12-3.1
+- Update containerd to v1.4.12 to address CVE-2021-41190
+- Update Golang runtime to 1.16.10
+
+* Mon Oct 04 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.11-3.1
+- Update to containerd 1.4.11 to address CVE-2021-41103
+
+* Thu Sep 30 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.10-3.1
+- Update to containerd 1.4.10
+- Update runc to v1.0.2
+- Update Golang runtime to 1.16.8
+
+* Thu Jul 29 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.9-3.1
+- Update to containerd 1.4.9
+- Update runc to v1.0.1
+
+* Mon Jul 19 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.8-3.1
+- Update to containerd 1.4.8 to address CVE-2021-32760
+
+* Mon Jul 19 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.7-3.1
+- Update to containerd 1.4.7
+- Update runc to v1.0.0
+- Update Golang runtime to 1.15.14
+
+* Fri May 21 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.6-3.1
+- Update to containerd 1.4.6
+- Update runc to v1.0.0-rc95 to address CVE-2021-30465.
+
+* Wed May 12 2021 Sebastiaan van Stijn <thajeztah@docker.com> - 1.4.5-3.1
+- Update to containerd 1.4.5
+- Update runc to v1.0.0-rc94
 
 * Mon Mar 08 2021 Wei Fu <fuweid89@gmail.com> - 1.4.4-3.1
 - Update to containerd 1.4.4 to address CVE-2021-21334.

@@ -1,4 +1,4 @@
-#   Copyright 2018-2020 Docker Inc.
+#   Copyright 2018-2022 Docker Inc.
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 include common/common.mk
 
-BUILD_IMAGE=centos:7
+BUILD_IMAGE=ubuntu:focal
 BUILD_TYPE=$(shell ./scripts/deb-or-rpm $(BUILD_IMAGE))
 BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 
@@ -22,17 +22,16 @@ BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 # For example, use "make PROGRESS=plain ..." to show build progress in plain test
 PROGRESS=auto
 TARGET=packages
-CONTAINERD_COMMIT=$(shell git -C "src/github.com/containerd/containerd" log -1 --pretty='%h')
-RUNC_COMMIT=$(shell git -C "src/github.com/opencontainers/runc" log -1 --pretty='%h')
 
 all: build
 
 .PHONY: clean
 clean:
-	-$(RM) -r build/
-	-$(RM) common/containerd.service
+	-$(RM) -r archive
 	-$(RM) -r artifacts
+	-$(RM) -r build
 	-$(RM) -r src
+	-$(RM) common/containerd.service
 	-docker builder prune -f --filter until=24h
 
 .PHONY: src
@@ -65,16 +64,17 @@ endif
 # This targets allows building multiple distros at once, for example:
 #
 #     make docker.io/library/ubuntu:bionic docker.io/library/centos:7
+#     make quay.io/centos/centos:stream8
 #
 # It is a shorthand for "make BUILD_IMAGE=mydistro:version build"
-.PHONY: docker.io/%
-docker.io/%:
+.PHONY: docker.io/% quay.io/%
+docker.io/% quay.io/%:
 	$(MAKE) BUILD_IMAGE="$@" build
 
 .PHONY: checkout
 checkout: src
 	./scripts/checkout.sh src/github.com/containerd/containerd "$(REF)"
-	./scripts/checkout.sh src/github.com/opencontainers/runc "$(RUNC_REF)"
+	./scripts/checkout.sh src/github.com/opencontainers/runc "$$(./scripts/determine-runc-version)"
 
 .PHONY: build
 build: checkout common/containerd.service
@@ -82,8 +82,8 @@ build:
 	@echo "--------------------------------------------------------------------"
 	@echo "Building $(TARGET) on $(BUILD_IMAGE)"
 	@echo ""
-	@echo "containerd   : $(REF) (commit: $(CONTAINERD_COMMIT))"
-	@echo "runc         : $(RUNC_REF) (commit: $(RUNC_COMMIT))"
+	@echo "containerd   : $(REF) (commit: $(shell git -C "src/github.com/containerd/containerd" log -1 --pretty='%h'))"
+	@echo "runc         : $$(./scripts/determine-runc-version) (commit: $$(git -C "src/github.com/opencontainers/runc" log -1 --pretty='%h'))"
 	@echo "architecture : $(shell uname -m)"
 	@echo "build image  : $(BUILD_IMAGE)"
 	@echo "golang image : $(GOLANG_IMAGE)"

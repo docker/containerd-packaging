@@ -1,4 +1,4 @@
-#   Copyright 2018-2020 Docker Inc.
+#   Copyright 2018-2022 Docker Inc.
 
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -12,9 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-ARG  GOLANG_IMAGE
-FROM ${GOLANG_IMAGE}
-ENV  chocolateyUseWindowsCompression=false
+ARG GOLANG_IMAGE=golang:latest
+FROM ${GOLANG_IMAGE} AS golang
+ARG GO111MODULE=auto
+ENV GO111MODULE=$GO111MODULE \
+    chocolateyUseWindowsCompression=false
 # Install make and gcc
 RUN  iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1')); \
      choco feature disable --name showDownloadProgress; \
