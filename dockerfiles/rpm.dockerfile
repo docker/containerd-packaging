@@ -27,7 +27,7 @@ FROM golang AS go-md2man
 ARG GOPROXY=direct
 ARG GO111MODULE=on
 ARG MD2MAN_VERSION=v2.0.1
-RUN go get github.com/cpuguy83/go-md2man/v2/@${MD2MAN_VERSION}
+RUN go install github.com/cpuguy83/go-md2man/v2@${MD2MAN_VERSION}
 
 FROM ${BUILD_IMAGE} AS redhat-base
 RUN yum install -y yum-utils rpm-build git
