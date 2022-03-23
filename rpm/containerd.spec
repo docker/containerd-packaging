@@ -161,6 +161,9 @@ done
 
 
 %changelog
+* Wed Mar 23 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.5.11-3.1
+- Update containerd to v1.5.11 to address CVE-2022-24769
+
 * Fri Mar 04 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.5.10-3.1
 - Update containerd to v1.5.10
 
