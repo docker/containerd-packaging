@@ -7,6 +7,7 @@ containerd.io (1.5.11-1) release; urgency=high
 containerd.io (1.5.10-1) release; urgency=medium
 
   * Update containerd to v1.5.10
+  * Update Golang runtime to 1.17.8
 
  -- Sebastiaan van Stijn <thajeztah@docker.com>  Fri, 04 Mar 2022 17:47:48 +0000
 
