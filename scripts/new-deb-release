@@ -36,7 +36,7 @@ cat > debian/new.changelog <<- EOF
 
 	  * TODO: Insert release changes here
 
-	 -- $(git config user.name) <$(git config user.email)>  $(date -R)
+	 -- $(git config user.name) <$(git config user.email)>  $(TZ=UTC date -R)
 
 EOF
 cat debian/changelog >> debian/new.changelog

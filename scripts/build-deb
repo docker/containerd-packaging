@@ -22,7 +22,7 @@ set -e
 VERSION="$(git --git-dir "${GO_SRC_PATH}/.git" describe --tags | sed 's/^v//')"
 # Check if we're on a tagged version, change VERSION to dev build if not
 if ! git --git-dir "${GO_SRC_PATH}/.git" describe --exact-match HEAD > /dev/null 2>&1; then
-	git_date=$(date --date "@$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
+	git_date=$(TZ=UTC date --date "@$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
 	git_sha=$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%h')
 	VERSION="${git_date}~${git_sha}"
 	# prepend a `0` so it'll never be greater than non-dev versions
@@ -31,7 +31,7 @@ if ! git --git-dir "${GO_SRC_PATH}/.git" describe --exact-match HEAD > /dev/null
 
 		  * Release for ${git_sha}
 
-		 -- $(control_field Maintainer)  $(date --rfc-2822)
+		 -- $(control_field Maintainer)  $(TZ=UTC date --rfc-2822)
 
 	EOF
 	cat debian/changelog >> debian/nightly.changelog
