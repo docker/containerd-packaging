@@ -37,7 +37,7 @@ while grep "$RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION" "${SPEC_FILE}" > /
 done
 
 cat > rpm/new.changelog << EOF
-* $(date +"%a %b %d %Y") $(git config user.name) <$(git config user.email)> - $RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION
+* $(TZ=UTC date +"%a %b %d %Y") $(git config user.name) <$(git config user.email)> - $RPM_VERSION-$RPM_RELEASE_VERSION.$RPM_ITERATION
 - TODO: Insert release changes here
 
 EOF
