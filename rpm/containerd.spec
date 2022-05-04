@@ -163,6 +163,9 @@ done
 
 
 %changelog
+* Wed May 04 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.4-3.1
+- Update containerd to v1.6.4
+
 * Thu Apr 28 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.3-3.1
 - Update containerd to v1.6.3
 - Update runc to v1.1.1
