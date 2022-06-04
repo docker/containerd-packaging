@@ -61,14 +61,6 @@ ARCH="$(uname -m)"
 DEST_DIR="/build/${DIST_ID}/${DIST_VERSION}/${ARCH}/"
 (
 	set -x
-	# Set 'runc_nokmem' build tag for RHEL/CentOS 7.x
-	if [ "$DIST_ID" = "centos" ] || [ "$DIST_ID" = "rhel" ]; then
-		case "$DIST_VERSION" in
-		"7"*)
-			export RUNC_NOKMEM="nokmem"
-			;;
-		esac
-	fi
 	rpmbuild -ba "${SPEC_FILE}"
 	mkdir -p "${DEST_DIR}"
 	mv -v RPMS/*/*.rpm "${DEST_DIR}"
