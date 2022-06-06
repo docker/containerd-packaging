@@ -162,6 +162,9 @@ done
 
 
 %changelog
+* Mon Jun 06 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.6-3.1
+- Update containerd to v1.6.6 to address CVE-2022-31030
+
 * Sat Jun 04 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.5-3.1
 - Update containerd to v1.6.5
 - Update runc to v1.1.2
