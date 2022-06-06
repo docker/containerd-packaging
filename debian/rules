@@ -36,7 +36,6 @@ binaries: ## Create containerd binaries
 bin/runc:
 	@set -x; GO111MODULE=auto make -C /go/src/github.com/opencontainers/runc  --no-print-directory \
 		BINDIR="$$(pwd)/bin" \
-		BUILDTAGS='seccomp apparmor selinux' \
 		runc install
 
 man: ## Create containerd man pages
