@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:experimental
+# syntax=docker/dockerfile:1
 
 
 #   Copyright 2018-2022 Docker Inc.
