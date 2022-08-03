@@ -106,7 +106,8 @@ RUN chown -R ${UID}:${GID} /archive /build
 # NOTE: Installation of source-packages is not currently tested here.
 FROM distro-image AS verify-packages
 COPY scripts/.rpm-helpers /root/
-RUN . /root/.rpm-helpers; install_package createrepo
+# On OpenSUSE/SLES, the package is now named `createrepo_c`
+RUN . /root/.rpm-helpers; if [ -d "/etc/zypp/repos.d/" ]; then install_package createrepo_c; else install_package createrepo; fi
 RUN if [ -d "/etc/zypp/repos.d/" ]; then ln -s "/etc/zypp/repos.d" "/etc/yum.repos.d"; fi \
  && echo -e "[local]\nname=Test Repo\nbaseurl=file:///build/\nenabled=1\ngpgcheck=0" >  "/etc/yum.repos.d/local.repo"
 COPY --from=build-packages /build/. /build/
