@@ -12,16 +12,15 @@ def images = [
     [image: "quay.io/centos/centos:stream9",            arches: ["amd64", "aarch64"]],
     [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2024)
     [image: "docker.io/library/debian:bullseye",        arches: ["amd64", "aarch64", "armhf"]], // Debian 11 (Next stable)
-    [image: "docker.io/library/fedora:34",              arches: ["amd64", "aarch64"]],          // EOL: May 17, 2022
     [image: "docker.io/library/fedora:35",              arches: ["amd64", "aarch64"]],          // EOL: November 30, 2022
     [image: "docker.io/library/fedora:36",              arches: ["amd64", "aarch64"]],          // EOL: May 24, 2023
+    [image: "docker.io/library/fedora:37",              arches: ["amd64", "aarch64"]],          // EOL: TBD
     [image: "docker.io/library/fedora:rawhide",         arches: ["amd64"]],                     // Rawhide is the name given to the current development version of Fedora
     [image: "docker.io/opensuse/leap:15",               arches: ["amd64"]],
     [image: "docker.io/balenalib/rpi-raspbian:buster",  arches: ["armhf"]],
     [image: "docker.io/balenalib/rpi-raspbian:bullseye",arches: ["armhf"]],
     [image: "docker.io/library/ubuntu:bionic",          arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 18.04 LTS (End of support: April, 2023. EOL: April, 2028)
     [image: "docker.io/library/ubuntu:focal",           arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 20.04 LTS (End of support: April, 2025. EOL: April, 2030)
-    [image: "docker.io/library/ubuntu:impish",          arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 21.10 (EOL: July, 2022)
     [image: "docker.io/library/ubuntu:jammy",           arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 22.04 LTS (End of support: April, 2027. EOL: April, 2032)
 ]
 
