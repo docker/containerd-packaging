@@ -1,8 +1,16 @@
+containerd.io (1.6.7-1) release; urgency=medium
+
+  * Update containerd to v1.6.7
+  * Update runc to v1.1.3
+  * Update Golang runtime to 1.17.13 to address CVE-2022-32189
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Thu, 04 Aug 2022 22:28:30 +0000
+
 containerd.io (1.6.6-1) release; urgency=high
 
   * Update containerd to v1.6.6 to address CVE-2022-31030
 
- -- Sebastiaan van Stijn <thajeztah@dockercom>  Mon, 06 Jun 2022 20:45:21 +0000
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Mon, 06 Jun 2022 20:45:21 +0000
 
 containerd.io (1.6.5-1) release; urgency=medium
 
@@ -10,7 +18,7 @@ containerd.io (1.6.5-1) release; urgency=medium
   * Update runc to v1.1.2
   * Update Golang runtime to 1.17.11
 
- -- Sebastiaan van Stijn <thajeztah@dockercom>  Sat, 04 Jun 2022 20:56:32 +0000
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Sat, 04 Jun 2022 20:56:32 +0000
 
 containerd.io (1.6.4-1) release; urgency=medium
 
