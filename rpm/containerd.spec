@@ -162,6 +162,10 @@ done
 
 
 %changelog
+* Mon Oct 24 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.9-3.1
+- Update containerd to v1.6.9
+- Update Golang runtime to 1.18.7
+
 * Thu Aug 25 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.8-3.1
 - Update containerd to v1.6.8
 - Update runc to v1.1.4
