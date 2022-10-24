@@ -18,6 +18,9 @@ ARG GO111MODULE=auto
 ENV GO111MODULE=$GO111MODULE \
     chocolateyUseWindowsCompression=false
 # Install make and gcc
+# We install an older version of MinGW to workaround issues in CGO;
+# see https://github.com/golang/go/issues/51007
 RUN  iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1')); \
      choco feature disable --name showDownloadProgress; \
-     choco install -y make mingw
+     choco install -y make; \
+     choco install -y mingw --version 10.2.0 --allow-downgrade
