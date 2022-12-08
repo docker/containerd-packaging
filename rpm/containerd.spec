@@ -162,6 +162,9 @@ done
 
 
 %changelog
+* Wed Dec 07 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.12-3.1
+- Update containerd to v1.6.12 to address CVE-2022-23471
+
 * Tue Dec 06 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.11-3.1
 - Update containerd to v1.6.11
 - Update Golang runtime to 1.18.9, which includes fixes for CVE-2022-41717,
