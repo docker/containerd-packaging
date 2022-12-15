@@ -1,3 +1,9 @@
+containerd.io (1.6.13-1) release; urgency=medium
+
+  * Update containerd to v1.6.13
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Thu, 15 Dec 2022 18:39:35 +0000
+
 containerd.io (1.6.12-1) release; urgency=high
 
   * Update containerd to v1.6.12 to address CVE-2022-23471
