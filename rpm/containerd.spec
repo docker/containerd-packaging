@@ -162,6 +162,9 @@ done
 
 
 %changelog
+* Mon Jan 09 2023 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.15-3.1
+- Update containerd to v1.6.15
+
 * Mon Dec 19 2022 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.14-3.1
 - Update containerd to v1.6.14
 
