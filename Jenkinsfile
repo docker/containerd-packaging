@@ -57,7 +57,7 @@ def generatePackageSteps(opts) {
 
 def packageBuildSteps = [
     "windows": { ->
-        node("windows-2019") {
+        node("windows-2022") {
             stage("windows") {
                 try {
                     checkout scm
