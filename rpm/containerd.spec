@@ -162,6 +162,10 @@ done
 
 
 %changelog
+* Mon Jan 30 2023 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.16-3.1
+- Update containerd to v1.6.16
+- Update Golang runtime to 1.18.10
+
 * Mon Jan 09 2023 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.15-3.1
 - Update containerd to v1.6.15
 
