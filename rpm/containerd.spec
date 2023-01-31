@@ -66,7 +66,18 @@ Requires: libseccomp2
 BuildRequires: make
 BuildRequires: gcc
 BuildRequires: systemd
-BuildRequires: libseccomp-devel
+
+# libseccomp-golang commit 9814e55a2e59df39b8ad4fbff1226585ebb84674 started using
+# a new seccomp_version API, which was introduced in libseccomp 2.3 (addded in
+# https://github.com/seccomp/libseccomp/commit/58a7c20). As a result, if the binary
+# is compiled with libseccomp 2.3 or up, the minimum requirement for libseccomp
+# to run the binary will also be libseccomp 2.3.0 (running on a system with an
+# older version of libseccomp, will produce "undefined symbol: seccomp_version")
+#
+# Here, we restrict the version of libseccomp-dev at compile time to 2.2.x, so
+# that the new API isn't used, and that the binary is compatible with libseccomp
+# 2.2.0 and up.
+BuildRequires: libseccomp-devel << 2.3.0
 
 %if %{undefined rhel} || 0%{?rhel} < 8
 %if %{defined suse_version}
