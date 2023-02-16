@@ -1,3 +1,9 @@
+containerd.io (1.6.17-1) release; urgency=medium
+
+  * Update containerd to v1.6.17
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Thu, 16 Feb 2023 10:27:26 +0000
+
 containerd.io (1.6.16-1) release; urgency=medium
 
   * Update containerd to v1.6.16
