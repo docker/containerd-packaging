@@ -2,6 +2,9 @@ Source: containerd.io
 Section: devel
 Priority: optional
 Maintainer: Containerd team <help@containerd.io>
+# btrfs dependencies no longer needed for containerd 1.7 and up, which now
+# uses the Linux kernel headers for this.
+# TODO(thaJeztah): remove btrfs build-dependencies once containerd 1.6 reaches EOL.
 Build-Depends: libbtrfs-dev | btrfs-tools ,
                debhelper (>= 10~) | dh-systemd,
                pkg-config,
