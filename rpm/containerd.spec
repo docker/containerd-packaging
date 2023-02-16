@@ -27,6 +27,8 @@ AutoReq: no
 %global import_path github.com/containerd/containerd
 %global gopath %{getenv:GOPATH}
 
+%global major_minor %(echo "${RPM_VERSION%%.*}")
+
 Name: containerd.io
 Provides: containerd
 # For some reason on rhel >= 8 if we "provide" runc then it makes this package unsearchable
@@ -68,6 +70,10 @@ BuildRequires: gcc
 BuildRequires: systemd
 BuildRequires: libseccomp-devel
 
+# containerd 1.7.x now use Linux kernel headers for btrfs, so we only
+# need this dependency when building older (1.5.x, 1.6.x) releases.
+# TODO(thaJeztah): remove btrfs build-dependencies once containerd 1.6 reaches EOL.
+%if "%{major_minor}" == "1.6" || "%{major_minor}" == "1.5"
 %if %{undefined rhel} || 0%{?rhel} < 8
 %if %{defined suse_version}
 # SUSE flavors
@@ -75,6 +81,7 @@ BuildRequires: libbtrfs-devel
 %else
 # Fedora / others, and CentOS/RHEL < 8
 BuildRequires: btrfs-progs-devel
+%endif
 %endif
 %endif
 
@@ -112,6 +119,13 @@ BUILDTAGS=""
 %if %{defined rhel} && 0%{?rhel} >= 8
 # btrfs support was removed in CentOS/RHEL 8
 BUILDTAGS="${BUILDTAGS} no_btrfs"
+%else
+# TODO(thaJeztah): remove this block once 1.5.x and 1.6.x reach EOL.
+%if %{defined rhel} && 0%{?rhel} >= 7 && "%{major_minor}" != "1.6" && "%{major_minor}" != "1.5"
+# containerd 1.7.x now use linux kernel headers for btrfs, which is not
+# provided by CentOS/RHEL 7, so don't build with btrfs for 1.7+.
+BUILDTAGS="${BUILDTAGS} no_btrfs"
+%endif
 %endif
 
 GO111MODULE=auto make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
