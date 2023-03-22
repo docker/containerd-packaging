@@ -1,3 +1,9 @@
+containerd.io (1.6.19-1) release; urgency=medium
+
+  * Update containerd to v1.6.19
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Wed, 22 Mar 2023 13:21:55 +0000
+
 containerd.io (1.6.18-1) release; urgency=high
 
   * update containerd binary to v1.6.18, which includes fixes for CVE-2023-25153
