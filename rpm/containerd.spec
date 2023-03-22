@@ -176,6 +176,9 @@ done
 
 
 %changelog
+* Wed Mar 22 2023 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.19-3.1
+- Update containerd to v1.6.19
+
 * Thu Feb 16 2023 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.18-3.1
 - update containerd binary to v1.6.18, which includes fixes for CVE-2023-25153
   and CVE-2023-25173.
