@@ -25,6 +25,7 @@ def images = [
     [image: "docker.io/library/ubuntu:focal",           arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 20.04 LTS (End of support: April, 2025. EOL: April, 2030)
     [image: "docker.io/library/ubuntu:jammy",           arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 22.04 LTS (End of support: April, 2027. EOL: April, 2032)
     [image: "docker.io/library/ubuntu:kinetic",         arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 22.10 (EOL: July, 2023)
+    [image: "docker.io/library/ubuntu:lunar"  ,         arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 23.04 (EOL: January, 2024)
 ]
 
 def generatePackageStep(opts, arch) {
