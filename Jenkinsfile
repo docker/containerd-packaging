@@ -13,9 +13,10 @@ def images = [
     [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2024)
     [image: "docker.io/library/debian:bullseye",        arches: ["amd64", "aarch64", "armhf"]], // Debian 11 (stable)
     [image: "docker.io/library/debian:bookworm",        arches: ["amd64", "aarch64", "armhf"]], // Debian 12 (next stable)
-    [image: "docker.io/library/fedora:36",              arches: ["amd64", "aarch64"]],          // EOL: May 24, 2023
-    [image: "docker.io/library/fedora:37",              arches: ["amd64", "aarch64"]],          // EOL: TBD
-    [image: "docker.io/library/fedora:38",              arches: ["amd64", "aarch64"]],          // EOL: TBD
+    [image: "docker.io/library/fedora:36",              arches: ["amd64", "aarch64"]],          // EOL: May 16, 2023
+    [image: "docker.io/library/fedora:37",              arches: ["amd64", "aarch64"]],          // EOL: November 14, 2023
+    [image: "docker.io/library/fedora:38",              arches: ["amd64", "aarch64"]],          // EOL: May 14, 2024
+    [image: "docker.io/library/fedora:39",              arches: ["amd64", "aarch64"]],          // EOL: November 12, 2024
     [image: "docker.io/library/fedora:rawhide",         arches: ["amd64", "aarch64"]],          // Rawhide is the name given to the current development version of Fedora
     [image: "docker.io/opensuse/leap:15",               arches: ["amd64"]],
     [image: "docker.io/balenalib/rpi-raspbian:buster",  arches: ["armhf"]],
