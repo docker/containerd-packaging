@@ -9,7 +9,7 @@ repository.
 Afterwards test if you can actually build the release with (for example):
 
 ```bash
-make REF=${TAG} docker.io/library/ubuntu:bionic
+make REF=${TAG} docker.io/library/ubuntu:jammy
 ```
 
 If you can actually build the package then start prepping
@@ -31,11 +31,11 @@ VERSION is already there.
 Releases can then be built with:
 
 ```bash
-make REF=${TAG} docker.io/library/ubuntu:bionic
+make REF=${TAG} docker.io/library/ubuntu:jammy
 ```
 
 or
 
 ```bash
-make REF=${TAG} BUILD_IMAGE=docker.io/library/ubuntu:bionic
+make REF=${TAG} BUILD_IMAGE=docker.io/library/ubuntu:jammy
 ```

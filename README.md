@@ -10,7 +10,7 @@ make docker.io/library/<distro>:<version> [docker.io/library/<distro>:<version> 
 
 # for example:
 # make docker.io/library/centos:7
-# make docker.io/library/ubuntu:bionic
+# make docker.io/library/ubuntu:jammy
 ```
 
 After build completes, packages can be found in the `build` directory.
@@ -28,7 +28,7 @@ For example:
 
 ```bash
 make clean
-make REF=HEAD CONTAINERD_DIR=/home/me/go/src/github.com/containerd/containerd docker.io/library/ubuntu:bionic
+make REF=HEAD CONTAINERD_DIR=/home/me/go/src/github.com/containerd/containerd docker.io/library/ubuntu:jammy
 ```
 
 ## For package maintainers:
