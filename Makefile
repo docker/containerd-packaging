@@ -63,7 +63,7 @@ endif
 
 # This targets allows building multiple distros at once, for example:
 #
-#     make docker.io/library/ubuntu:bionic docker.io/library/centos:7
+#     make docker.io/library/ubuntu:jammy docker.io/library/centos:7
 #     make quay.io/centos/centos:stream8
 #
 # It is a shorthand for "make BUILD_IMAGE=mydistro:version build"
