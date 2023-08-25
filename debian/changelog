@@ -1,3 +1,9 @@
+containerd.io (1.7.5-1) release; urgency=medium
+
+  * Update containerd binary to v1.7.5
+
+ -- Josh Seba <jseba@cloudflare.com>  Fri, 25 Aug 2023 22:02:55 +0000
+
 containerd.io (1.7.4-1) release; urgency=medium
 
   * Update containerd binary to v1.7.4

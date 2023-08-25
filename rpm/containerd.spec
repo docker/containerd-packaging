@@ -176,6 +176,9 @@ done
 
 
 %changelog
+* Fri Aug 25 2023 Josh Seba <jseba@cloudflare.com> - 1.7.5-3.1
+- Update containerd binary to v1.7.5
+
 * Fri Aug 25 2023 Josh Seba <jseba@cloudflare.com> - 1.7.4-3.1
 - Update containerd binary to v1.7.4
 - Update runc binary to v1.1.9
