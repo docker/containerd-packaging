@@ -1,3 +1,11 @@
+containerd.io (1.7.3-1) release; urgency=medium
+
+  * Update containerd binary to v1.7.3
+  * Update runc binary to v1.1.8
+  * Update Golang runtime to 1.20.6
+
+ -- Josh Seba <jseba@cloudflare.com>  Tue, 22 Aug 2023 01:38:20 +0000
+
 containerd.io (1.6.22-1) release; urgency=medium
 
   * update containerd binary to v1.6.22

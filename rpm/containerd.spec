@@ -176,6 +176,11 @@ done
 
 
 %changelog
+* Fri Aug 25 2023 Josh Seba <jseba@cloudflare.com> - 1.7.3-3.1
+- Update containerd binary to v1.7.3
+- Update runc binary to v1.1.8
+- Update Golang runtime to 1.20.6
+
 * Sat Jul 29 2023 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.22-3.1
 - update containerd binary to v1.6.22
 - update runc binary to v1.1.8
