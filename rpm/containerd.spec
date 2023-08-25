@@ -176,6 +176,11 @@ done
 
 
 %changelog
+* Fri Aug 25 2023 Josh Seba <jseba@cloudflare.com> - 1.7.4-3.1
+- Update containerd binary to v1.7.4
+- Update runc binary to v1.1.9
+- Update Golang runtime to 1.20.7
+
 * Fri Aug 25 2023 Josh Seba <jseba@cloudflare.com> - 1.7.3-3.1
 - Update containerd binary to v1.7.3
 - Update runc binary to v1.1.8
