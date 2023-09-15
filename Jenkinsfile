@@ -8,14 +8,14 @@
 def images = [
     [image: "docker.io/library/amazonlinux:2",          arches: ["aarch64"]],
     [image: "docker.io/library/centos:7",               arches: ["amd64", "aarch64"]],
-    [image: "quay.io/centos/centos:stream8",            arches: ["amd64", "aarch64"]],
-    [image: "quay.io/centos/centos:stream9",            arches: ["amd64", "aarch64"]],
-    [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2024)
-    [image: "docker.io/library/debian:bullseye",        arches: ["amd64", "aarch64", "armhf"]], // Debian 11 (stable)
-    [image: "docker.io/library/debian:bookworm",        arches: ["amd64", "aarch64", "armhf"]], // Debian 12 (next stable)
-    [image: "docker.io/library/fedora:37",              arches: ["amd64", "aarch64"]],          // EOL: November 14, 2023
-    [image: "docker.io/library/fedora:38",              arches: ["amd64", "aarch64"]],          // EOL: May 14, 2024
-    [image: "docker.io/library/fedora:39",              arches: ["amd64", "aarch64"]],          // EOL: November 12, 2024
+    [image: "quay.io/centos/centos:stream8",            arches: ["amd64", "aarch64"]],          // CentOS Stream 8 (EOL: 2024-05-31)
+    [image: "quay.io/centos/centos:stream9",            arches: ["amd64", "aarch64"]],          // CentOS Stream 9 (EOL: 2027)
+    [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2022-09-10, EOL LTS: 2024-06-30)
+    [image: "docker.io/library/debian:bullseye",        arches: ["amd64", "aarch64", "armhf"]], // Debian 11 (EOL: 2024)
+    [image: "docker.io/library/debian:bookworm",        arches: ["amd64", "aarch64", "armhf"]], // Debian 12 (stable)
+    [image: "docker.io/library/fedora:37",              arches: ["amd64", "aarch64"]],          // Fedora 37 (EOL: November 14, 2023)
+    [image: "docker.io/library/fedora:38",              arches: ["amd64", "aarch64"]],          // Fedora 38 (EOL: May 14, 2024)
+    [image: "docker.io/library/fedora:39",              arches: ["amd64", "aarch64"]],          // Fedora 39 (EOL: November 12, 2024)
     [image: "docker.io/library/fedora:rawhide",         arches: ["amd64", "aarch64"]],          // Rawhide is the name given to the current development version of Fedora
     [image: "docker.io/opensuse/leap:15",               arches: ["amd64"]],
     [image: "docker.io/balenalib/rpi-raspbian:buster",  arches: ["armhf"]],
