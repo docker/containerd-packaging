@@ -10,6 +10,10 @@ def images = [
     [image: "docker.io/library/centos:7",               arches: ["amd64", "aarch64"]],
     [image: "quay.io/centos/centos:stream8",            arches: ["amd64", "aarch64"]],          // CentOS Stream 8 (EOL: 2024-05-31)
     [image: "quay.io/centos/centos:stream9",            arches: ["amd64", "aarch64"]],          // CentOS Stream 9 (EOL: 2027)
+    [image: "docker.io/library/rockylinux:8",           arches: ["amd64", "aarch64"]],          // Rocky Linux 8 (EOL: 2029-05-31)
+    [image: "docker.io/library/rockylinux:9",           arches: ["amd64", "aarch64"]],          // Rocky Linux 9 (EOL: 2032-05-31)
+    [image: "docker.io/library/almalinux:8",            arches: ["amd64", "aarch64"]],          // AlmaLinux 8 (EOL: 2029)
+    [image: "docker.io/library/almalinux:9",            arches: ["amd64", "aarch64"]],          // AlmaLinux 9 (EOL: 2032)
     [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2022-09-10, EOL LTS: 2024-06-30)
     [image: "docker.io/library/debian:bullseye",        arches: ["amd64", "aarch64", "armhf"]], // Debian 11 (EOL: 2024)
     [image: "docker.io/library/debian:bookworm",        arches: ["amd64", "aarch64", "armhf"]], // Debian 12 (stable)
