@@ -47,6 +47,10 @@ FROM redhat-base AS ol-base
 RUN . "/etc/os-release"; if [ "${VERSION_ID%.*}" -eq 7 ]; then yum-config-manager --enable ol7_addons --enable ol7_optional_latest; fi
 RUN . "/etc/os-release"; if [ "${VERSION_ID%.*}" -eq 8 ]; then yum-config-manager --enable ol8_addons; fi
 
+FROM redhat-base AS rocky-base
+
+FROM redhat-base AS almalinux-base
+
 FROM ${BUILD_IMAGE} AS fedora-base
 RUN dnf install -y rpm-build git dnf-plugins-core
 
