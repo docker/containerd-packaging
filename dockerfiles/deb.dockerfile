@@ -25,6 +25,7 @@ FROM ${GOLANG_IMAGE} AS golang
 FROM golang AS go-md2man
 ARG GOPROXY=direct
 ARG GO111MODULE=on
+ENV GOTOOLCHAIN=local
 ARG MD2MAN_VERSION=v2.0.1
 RUN go install github.com/cpuguy83/go-md2man/v2@${MD2MAN_VERSION}
 
@@ -33,6 +34,7 @@ FROM ${BUILD_IMAGE} AS distro-image
 FROM distro-image AS build-env
 RUN mkdir -p /go
 ENV GOPATH=/go
+ENV GOTOOLCHAIN=local
 ENV PATH="${PATH}:/usr/local/go/bin:${GOPATH}/bin"
 ENV IMPORT_PATH=github.com/containerd/containerd
 ENV GO_SRC_PATH="/go/src/${IMPORT_PATH}"
@@ -130,5 +132,6 @@ COPY --from=verify-packages /build   /build
 
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime
+ENV GOTOOLCHAIN=local
 COPY --from=golang /usr/local/go/ /usr/local/go/
 COPY common/containerd.service common/containerd.toml /root/common/
