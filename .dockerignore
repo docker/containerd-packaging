@@ -4,6 +4,7 @@
 /archive
 /build
 /common/*.mk
+/dockerfiles
 /*.md
 /Jenkinsfile
 /Makefile

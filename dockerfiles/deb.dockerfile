@@ -92,6 +92,7 @@ COPY debian/ debian/
 RUN apt-get update -q \
  && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control
 COPY scripts/build-deb    /root/
+COPY scripts/build-static /root/
 COPY scripts/.helpers     /root/
 
 ARG PACKAGE
@@ -129,6 +130,26 @@ RUN runc --version
 FROM scratch AS packages
 COPY --from=build-packages  /archive /archive
 COPY --from=verify-packages /build   /build
+
+FROM build-env AS build-binaries
+# NOTE: not using a cache-mount for /root/.cache/go-build, to prevent issues
+#       with CGO when building multiple distros on the same machine / build-cache
+RUN --mount=type=bind,from=golang,source=/usr/local/go/,target=/usr/local/go/ \
+    --mount=type=bind,source=/src,target=/go/src,rw \
+    /root/build-static
+ARG UID=0
+ARG GID=0
+RUN chown -R ${UID}:${GID} /build
+
+FROM distro-image AS verify-binaries
+COPY --from=build-binaries /build /build
+RUN tar -C /usr/local/bin/ --strip-components 1 -xzf "$(find /build/static -type f -name containerd.io*.tar.gz)"
+RUN containerd --version
+RUN ctr --version
+RUN runc --version
+
+FROM scratch AS binaries
+COPY --from=verify-binaries /build /build
 
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime

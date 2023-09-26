@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+#   Copyright 2018-2022 Docker Inc.
+
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+
+#       http://www.apache.org/licenses/LICENSE-2.0
+
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+set -e
+
+REF=$(git --git-dir "${GO_SRC_PATH}/.git" rev-parse --verify "HEAD^{commit}")
+VERSION="$(git --git-dir "${GO_SRC_PATH}/.git" describe --tags | sed 's/^v//')"
+# Check if we're on a tagged version, change VERSION to dev build if not
+if ! git --git-dir "${GO_SRC_PATH}/.git" describe --exact-match HEAD >/dev/null 2>&1; then
+	git_date=$(date --date "@$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%at')" +'%Y%m%d.%H%M%S')
+	git_sha=$(git --git-dir "${GO_SRC_PATH}/.git" log -1 --pretty='%h')
+	VERSION="${git_date}~${git_sha}"
+fi
+
+ARCH=$(uname -m)
+DEST_DIR="/build/static/${ARCH}/"
+BIN_DIR="usr/local/bin"
+
+# Build containerd
+(
+	set -x
+	# see https://github.com/containerd/containerd/blob/main/BUILDING.md#static-binaries
+	make -C "/go/src/github.com/containerd/containerd" STATIC=1 VERSION="${VERSION}" REVISION="${REF}" PACKAGE="${PACKAGE}"
+
+	# containerd installs in ${DESTDIR}${PREFIX}/bin (${DESTDIR}/usr/local/bin)
+	make -C "/go/src/github.com/containerd/containerd" DESTDIR="${DEST_DIR}" install
+)
+
+# Build runc
+(
+	set -x
+	# runc installs in ${DEST_DIR}${BINDIR}
+	make -C "/go/src/github.com/opencontainers/runc" DESTDIR="${DEST_DIR}" BINDIR="${BIN_DIR}" static install
+)
+
+# Create archive and checksum
+(
+	set -x
+
+	archive_name="containerd.io-${VERSION}.linux-${ARCH}.tar.gz"
+
+	cd "${DEST_DIR:?}"
+	tar --exclude=containerd-stress --transform "s,^${BIN_DIR},containerd.io," -czf "${archive_name}" "${BIN_DIR}"
+	sha256sum "${archive_name}" > "${archive_name}".sha256sum
+	rm -r "${BIN_DIR}"
+)

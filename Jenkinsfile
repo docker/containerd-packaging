@@ -45,6 +45,10 @@ def generatePackageStep(opts, arch) {
                     sh 'make clean'
                     withDockerRegistry([url: "", credentialsId: "dockerbuildbot-index.docker.io"]) {
                         sh "make CREATE_ARCHIVE=1 ${opts.image}"
+                        if (opts.image == "docker.io/library/ubuntu:focal") {
+                            // also build static packages
+                            sh "make CREATE_ARCHIVE=1 ${opts.image} static"
+                        }
                     }
                     archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
                 } finally {
