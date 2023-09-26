@@ -62,8 +62,3 @@ if [ "${DIST_VERSION}" = 'n/a' ]; then
 	echo "Failed to get release codename"
 	exit 1
 fi
-
-# Only create an archive if env variable is specified
-if [ -n "${CREATE_ARCHIVE}" ]; then
-	tar -C /build -cvzf "/archive/${DIST_ID}-${DIST_VERSION}-${ARCH}.tar.gz" "${DIST_ID}/${DIST_VERSION}/${ARCH}"
-fi

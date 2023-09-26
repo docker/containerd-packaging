@@ -99,7 +99,6 @@ build:
 		--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
 		--build-arg BASE="$(BUILD_BASE)" \
-		--build-arg CREATE_ARCHIVE="$(CREATE_ARCHIVE)" \
 		--build-arg UID="$(shell id -u)" \
 		--build-arg GID="$(shell id -g)" \
 		--file="dockerfiles/$(BUILD_TYPE).dockerfile" \

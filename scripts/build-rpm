@@ -66,8 +66,3 @@ DEST_DIR="/build/${DIST_ID}/${DIST_VERSION}/${ARCH}/"
 	mv -v RPMS/*/*.rpm "${DEST_DIR}"
 	mv -v SRPMS/*.rpm "${DEST_DIR}"
 )
-
-# Only create an archive if env variable is specified
-if [ -n "${CREATE_ARCHIVE}" ]; then
-	tar -C /build -cvzf "/archive/${DIST_ID}-${DIST_VERSION}-${ARCH}.tar.gz" "${DIST_ID}/${DIST_VERSION}/${ARCH}"
-fi
