@@ -19,7 +19,7 @@ def images = [
     [image: "docker.io/library/debian:bookworm",        arches: ["amd64", "aarch64", "armhf"]], // Debian 12 (stable)
     [image: "docker.io/library/fedora:38",              arches: ["amd64", "aarch64"]],          // Fedora 38 (EOL: May 14, 2024)
     [image: "docker.io/library/fedora:39",              arches: ["amd64", "aarch64"]],          // Fedora 39 (EOL: November 12, 2024)
-    [image: "docker.io/library/fedora:rawhide",         arches: ["amd64", "aarch64"]],          // Rawhide is the name given to the current development version of Fedora
+    [image: "docker.io/library/fedora:40",              arches: ["amd64", "aarch64"]],          // Fedora 40 (EOL: May 13, 2025)
     [image: "docker.io/opensuse/leap:15",               arches: ["amd64"]],
     [image: "docker.io/balenalib/rpi-raspbian:buster",  arches: ["armhf"]],
     [image: "docker.io/balenalib/rpi-raspbian:bullseye",arches: ["armhf"]],
@@ -27,6 +27,7 @@ def images = [
     [image: "docker.io/library/ubuntu:focal",           arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 20.04 LTS (End of support: April, 2025. EOL: April, 2030)
     [image: "docker.io/library/ubuntu:jammy",           arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 22.04 LTS (End of support: April, 2027. EOL: April, 2032)
     [image: "docker.io/library/ubuntu:mantic",          arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 23.10 (EOL: July, 2024)
+    [image: "docker.io/library/ubuntu:noble",           arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 24.04 LTS (End of support: April, 2029. EOL: April, 2034)
 ]
 
 def generatePackageStep(opts, arch) {
