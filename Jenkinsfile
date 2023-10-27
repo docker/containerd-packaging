@@ -1,8 +1,5 @@
 #!groovy
 
-// List of packages to build. Note that this list is overridden in the packaging
-// repository, where additional variants may be added for enterprise.
-//
 // This list is ordered by Distro (alphabetically), and release (chronologically).
 // When adding a distro here, also open a pull request in the release repository.
 def images = [
