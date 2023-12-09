@@ -1,3 +1,10 @@
+containerd.io (1.6.26-1) release; urgency=medium
+
+  * update containerd binary to v1.6.26
+  * Update Golang runtime to 1.20.12
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Sat, 09 Dec 2023 00:13:28 +0000
+
 containerd.io (1.6.25-1) release; urgency=medium
 
   * update containerd binary to v1.6.25
