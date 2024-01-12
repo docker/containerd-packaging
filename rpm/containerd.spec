@@ -176,6 +176,11 @@ done
 
 
 %changelog
+* Fri Jan 12 2024 Sebastiaan van Stijn <thajeztah@docker.coml> - 1.6.27-3.1
+- update containerd binary to v1.6.27
+- update runc binary to v1.1.11
+- Update Golang runtime to 1.20.13
+
 * Sat Dec 09 2023 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.26-3.1
 - update containerd binary to v1.6.26
 - Update Golang runtime to 1.20.12
