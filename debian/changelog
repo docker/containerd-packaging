@@ -1,3 +1,10 @@
+containerd.io (1.6.28-1) release; urgency=high
+
+  * update containerd binary to v1.6.28.
+  * update runc binary to v1.1.12, which includes fixes for CVE-2024-21626.
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Wed, 31 Jan 2024 11:02:21 +0000
+
 containerd.io (1.6.27-1) release; urgency=medium
 
   * update containerd binary to v1.6.27
