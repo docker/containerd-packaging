@@ -34,6 +34,11 @@ FROM ${BUILD_IMAGE} AS redhat-base
 RUN yum install -y yum-utils rpm-build git
 
 FROM redhat-base AS rhel-base
+ARG RH_USER
+ARG RH_PASS
+RUN rm /etc/rhsm-host 
+RUN subscription-manager register --username=$RH_USER --password=$RH_PASS
+RUN subscription-manager repos --enable codeready-builder-for-rhel-$(source /etc/os-release && echo "${VERSION_ID%.*}")-$(arch)-rpms
 
 FROM redhat-base AS centos-base
 # Using a wildcard: CentOS 7 uses "CentOS-RepoName", CentOS 8 uses "CentOS-Linux-RepoName"

@@ -68,8 +68,8 @@ endif
 #     make quay.io/centos/centos:stream8
 #
 # It is a shorthand for "make BUILD_IMAGE=mydistro:version build"
-.PHONY: docker.io/% quay.io/%
-docker.io/% quay.io/%:
+.PHONY: docker.io/% quay.io/% registry.access.redhat.com/%
+docker.io/% quay.io/% registry.access.redhat.com/%:
 	$(MAKE) BUILD_IMAGE="$@" build
 
 .PHONY: checkout
@@ -97,6 +97,8 @@ build:
 
 	@set -x; DOCKER_BUILDKIT=1 docker build \
 		--pull \
+		--build-arg RH_USER=$(RH_USER) \
+		--build-arg RH_PASS=$(RH_PASS) \
 		--platform linux/$(ARCH) \
 		--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
