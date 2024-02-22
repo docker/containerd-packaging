@@ -97,6 +97,8 @@ build:
 
 	@set -x; DOCKER_BUILDKIT=1 docker build \
 		--pull \
+		--secret id=rh-user,env=RH_USER \
+		--secret id=rh-pass,env=RH_PASS \
 		--platform linux/$(ARCH) \
 		--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
