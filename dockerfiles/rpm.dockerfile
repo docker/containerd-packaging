@@ -34,6 +34,19 @@ FROM ${BUILD_IMAGE} AS redhat-base
 RUN yum install -y yum-utils rpm-build git
 
 FROM redhat-base AS rhel-base
+RUN --mount=type=secret,id=rh-user --mount=type=secret,id=rh-pass <<-EOT
+	rm -f /etc/rhsm-host
+
+	if [ ! -f /run/secrets/rh-user ] || [ ! -f /run/secrets/rh-pass ]; then
+		echo "Either RH_USER or RH_PASS is not set. Running build without subscription."
+	else
+		subscription-manager register \
+			--username="$(cat /run/secrets/rh-user)" \
+			--password="$(cat /run/secrets/rh-pass)"
+
+		subscription-manager repos --enable codeready-builder-for-rhel-$(source /etc/os-release && echo "${VERSION_ID%.*}"-$(arch)-rpms)
+	fi
+EOT
 
 FROM redhat-base AS centos-base
 # Using a wildcard: CentOS 7 uses "CentOS-RepoName", CentOS 8 uses "CentOS-Linux-RepoName"
