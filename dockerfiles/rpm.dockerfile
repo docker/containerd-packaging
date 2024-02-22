@@ -32,6 +32,11 @@ FROM ${BUILD_IMAGE} AS redhat-base
 RUN dnf install -y rpm-build git dnf-plugins-core
 
 FROM redhat-base AS rhel-base
+ARG RH_USER
+ARG RH_PASS
+RUN rm /etc/rhsm-host 
+RUN subscription-manager register --username=$RH_USER --password=$RH_PASS
+RUN subscription-manager repos --enable codeready-builder-for-rhel-$(source /etc/os-release && echo "${VERSION_ID%.*}")-$(arch)-rpms
 
 FROM redhat-base AS centos-base
 RUN dnf config-manager --set-enabled crb
