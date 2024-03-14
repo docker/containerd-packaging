@@ -14,6 +14,14 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+# FIXME: quick hardcoding of GOARM for raspbian; replace with a holistic
+# refactoring of how we handle target architecture
+distribution := $(shell . /etc/os-release; echo "$${ID}")
+ifeq ($(distribution),raspbian)
+	export GOARM=6
+endif
+
+
 %:
 	dh $@ --with systemd
 
