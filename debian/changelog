@@ -1,3 +1,11 @@
+containerd.io (1.6.28-2) release; urgency=medium
+
+  * Fix builds for Raspbian armhf producing armv7 binaries
+  * Build Debian armhf binaries as armv6
+  * Update Golang runtime to 1.21.8
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Fri, 15 Mar 2024 14:41:52 +0000
+
 containerd.io (1.6.28-1) release; urgency=high
 
   * update containerd binary to v1.6.28.
