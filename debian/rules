@@ -25,7 +25,7 @@ ifeq ($(DEB_TARGET_ARCH),armhf)
 endif
 
 %:
-	dh $@ --with systemd
+	dh $@
 
 # GO_SRC_PATH and PACKAGE are defined in the dockerfile
 # VERSION and REF are defined in scripts/build-deb
