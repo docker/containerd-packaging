@@ -8,7 +8,6 @@
 def images = [
     [image: "docker.io/library/amazonlinux:2",          arches: ["aarch64"]],
     [image: "docker.io/library/centos:7",               arches: ["amd64", "aarch64"]],
-    [image: "quay.io/centos/centos:stream8",            arches: ["amd64", "aarch64"]],          // CentOS Stream 8 (EOL: 2024-05-31)
     [image: "quay.io/centos/centos:stream9",            arches: ["amd64", "aarch64"]],          // CentOS Stream 9 (EOL: 2027)
     [image: "docker.io/library/rockylinux:8",           arches: ["amd64", "aarch64"]],          // Rocky Linux 8 (EOL: 2029-05-31)
     [image: "docker.io/library/rockylinux:9",           arches: ["amd64", "aarch64"]],          // Rocky Linux 9 (EOL: 2032-05-31)
