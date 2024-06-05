@@ -176,6 +176,10 @@ done
 
 
 %changelog
+* Tue Jun 04 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.33-3.1
+- Update containerd binary to v1.6.33
+- Update Golang runtime to 1.21.11, which includes fixes for CVE-2024-24789, CVE-2024-24790.
+
 * Wed May 22 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.32-3.1
 - Update containerd binary to v1.6.32
 - Update Golang runtime to 1.21.10
