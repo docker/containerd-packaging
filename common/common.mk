@@ -16,7 +16,7 @@
 #       GOVERSION, as it's hardcoded to look in the upstream repository
 CONTAINERD_REMOTE ?=https://github.com/containerd/containerd.git
 RUNC_REMOTE       ?=https://github.com/opencontainers/runc.git
-REF?=HEAD
+REF?=release/1.6
 
 # Select the default version of Golang and runc based on the containerd source.
 GOLANG_VERSION?=$(shell grep "ARG GOLANG_VERSION" src/github.com/containerd/containerd/contrib/Dockerfile.test | awk -F'=' '{print $$2}')
