@@ -113,7 +113,7 @@ cd %{_topdir}/BUILD/
 
 %build
 cd %{_topdir}/BUILD
-GO111MODULE=auto make man
+make man
 
 BUILDTAGS=""
 %if %{defined rhel} && 0%{?rhel} >= 8
@@ -128,14 +128,14 @@ BUILDTAGS="${BUILDTAGS} no_btrfs"
 %endif
 %endif
 
-GO111MODULE=auto make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
+make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
 
 # Remove containerd-stress, as we're not shipping it as part of the packages
 rm -f bin/containerd-stress
 bin/containerd --version
 bin/ctr --version
 
-GO111MODULE=auto make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin runc install
+make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin runc install
 
 
 %install
