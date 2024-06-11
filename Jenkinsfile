@@ -34,19 +34,30 @@ def generatePackageStep(opts, arch) {
     return {
         wrappedNode(label: "ubuntu-2004 && ${arch}") {
             stage("${opts.image}-${arch}") {
-                try {
-                    sh 'docker version'
-                    sh 'docker info'
-                    sh '''
-                    curl -fsSL "https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh" | bash || true
-                    '''
-                    checkout scm
-                    sh 'make clean'
-                    sh "make CREATE_ARCHIVE=1 ${opts.image}"
-                    archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
-                } finally {
-                    deleteDir()
-                }
+                // This is just a "dummy" stage to make the distro/arch visible
+                // in Jenkins' BlueOcean view, which truncates names....
+                sh 'echo starting...'
+            }
+            stage("info") {
+                sh 'docker version'
+                sh 'docker info'
+                sh '''
+                curl -fsSL "https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh" | bash || true
+                '''
+            }
+            stage("checkout") {
+                checkout scm
+                sh 'make clean'
+            }
+            stage("build") {
+                sh "make CREATE_ARCHIVE=1 ${opts.image}"
+                archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
+            }
+            stage("build-main") {
+                // We're not archiving these builds as they have the same name
+                // as the 1.7 builds, so would replace those. We're building
+                // the main branch to verify that the scripts work for main (2.0)
+                sh "make REF=main ${opts.image}"
             }
         }
     }
