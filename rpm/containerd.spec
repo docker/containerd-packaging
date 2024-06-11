@@ -70,21 +70,6 @@ BuildRequires: gcc
 BuildRequires: systemd
 BuildRequires: libseccomp-devel
 
-# containerd 1.7.x now use Linux kernel headers for btrfs, so we only
-# need this dependency when building older (1.5.x, 1.6.x) releases.
-# TODO(thaJeztah): remove btrfs build-dependencies once containerd 1.6 reaches EOL.
-%if "%{major_minor}" == "1.6" || "%{major_minor}" == "1.5"
-%if %{undefined rhel} || 0%{?rhel} < 8
-%if %{defined suse_version}
-# SUSE flavors
-BuildRequires: libbtrfs-devel
-%else
-# Fedora / others, and CentOS/RHEL < 8
-BuildRequires: btrfs-progs-devel
-%endif
-%endif
-%endif
-
 %{?systemd_requires}
 
 %description
@@ -116,16 +101,13 @@ cd %{_topdir}/BUILD
 make man
 
 BUILDTAGS=""
-%if %{defined rhel} && 0%{?rhel} >= 8
-# btrfs support was removed in CentOS/RHEL 8
+
+# TODO(thaJeztah): can we remove the version compare, or would that exclude other RHEL derivatives (Fedora, etc)?
+%if %{defined rhel} && 0%{?rhel} >= 7
+# btrfs support was removed in CentOS/RHEL 8, and containerd 1.7+ uses
+# linux kernel headers for btrfs, which are not provided by CentOS/RHEL 7
+# so build without btrfs support for any CentOS/RHEL version.
 BUILDTAGS="${BUILDTAGS} no_btrfs"
-%else
-# TODO(thaJeztah): remove this block once 1.5.x and 1.6.x reach EOL.
-%if %{defined rhel} && 0%{?rhel} >= 7 && "%{major_minor}" != "1.6" && "%{major_minor}" != "1.5"
-# containerd 1.7.x now use linux kernel headers for btrfs, which is not
-# provided by CentOS/RHEL 7, so don't build with btrfs for 1.7+.
-BUILDTAGS="${BUILDTAGS} no_btrfs"
-%endif
 %endif
 
 make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
