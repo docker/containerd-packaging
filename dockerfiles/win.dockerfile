@@ -14,8 +14,7 @@
 
 ARG GOLANG_IMAGE=golang:latest
 FROM ${GOLANG_IMAGE} AS golang
-ENV GOTOOLCHAIN=local \
-    chocolateyUseWindowsCompression=false
+ENV chocolateyUseWindowsCompression=false
 # Install make and gcc
 # We install an older version of MinGW to workaround issues in CGO;
 # see https://github.com/golang/go/issues/51007
