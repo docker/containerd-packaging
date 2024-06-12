@@ -52,8 +52,8 @@ RUN apt-get update -q && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 # Install build dependencies and build scripts
-COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
-COPY debian/ debian/
+COPY --link --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
+COPY --link debian/ debian/
 # NOTE: not using a cache-mount for apt, to prevent issues when building multiple
 #       distros on the same machine / build-cache
 #
@@ -89,8 +89,8 @@ COPY debian/ debian/
 # and copy the artifacts out), keeping some of the cache files should not be a problem.
 RUN apt-get update -q \
  && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i debian/control
-COPY scripts/build-deb    /root/
-COPY scripts/.helpers     /root/
+COPY --link scripts/build-deb    /root/
+COPY --link scripts/.helpers     /root/
 
 ARG PACKAGE
 ENV PACKAGE=${PACKAGE:-containerd.io}
@@ -113,7 +113,7 @@ RUN chown -R ${UID}:${GID} /archive /build
 # sure that package dependencies are installed and that the binaries are not
 # completely defunct.
 FROM distro-image AS verify-packages
-COPY --from=build-packages /build /build
+COPY --link --from=build-packages /build /build
 # NOTE: not using a cache-mount for apt, to prevent issues when building multiple
 #       distros on the same machine / build-cache
 RUN apt-get update -q \
@@ -125,11 +125,11 @@ RUN ctr --version
 RUN runc --version
 
 FROM scratch AS packages
-COPY --from=build-packages  /archive /archive
-COPY --from=verify-packages /build   /build
+COPY --link --from=build-packages  /archive /archive
+COPY --link --from=verify-packages /build   /build
 
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime
 ENV GOTOOLCHAIN=local
-COPY --from=golang /usr/local/go/ /usr/local/go/
-COPY common/containerd.service common/containerd.toml /root/common/
+COPY --link --from=golang /usr/local/go/ /usr/local/go/
+COPY --link common/containerd.service common/containerd.toml /root/common/
