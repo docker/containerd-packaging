@@ -81,23 +81,23 @@ low-level storage and network attachments, etc.
 
 
 %prep
-rm -rf %{_topdir}/BUILD/
-if [ ! -d %{_topdir}/SOURCES/containerd ]; then
+rm -rf %{_builddir}
+if [ ! -d %{_sourcedir}/containerd ]; then
     # Copy over our source code from our gopath to our source directory
-    cp -rf /go/src/%{import_path} %{_topdir}/SOURCES/containerd;
+    cp -rf /go/src/%{import_path} %{_sourcedir}/containerd;
 fi
 # symlink the go source path to our build directory
-ln -s /go/src/%{import_path} %{_topdir}/BUILD
+ln -s /go/src/%{import_path} %{_builddir}
 
-if [ ! -d %{_topdir}/SOURCES/runc ]; then
+if [ ! -d %{_sourcedir}/runc ]; then
     # Copy over our source code from our gopath to our source directory
-    cp -rf /go/src/github.com/opencontainers/runc %{_topdir}/SOURCES/runc
+    cp -rf /go/src/github.com/opencontainers/runc %{_sourcedir}/runc
 fi
-cd %{_topdir}/BUILD/
+cd %{_builddir}
 
 
 %build
-cd %{_topdir}/BUILD
+cd %{_builddir}
 make man
 
 BUILDTAGS=""
@@ -117,11 +117,11 @@ rm -f bin/containerd-stress
 bin/containerd --version
 bin/ctr --version
 
-make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin runc install
+make -C /go/src/github.com/opencontainers/runc BINDIR=%{_builddir}/bin runc install
 
 
 %install
-cd %{_topdir}/BUILD
+cd %{_builddir}
 mkdir -p %{buildroot}%{_bindir}
 install -D -m 0755 bin/* %{buildroot}%{_bindir}
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service
