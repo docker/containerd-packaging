@@ -31,7 +31,7 @@ The following example builds packages for containerd v1.7.18 with
 runc v1.1.12 for Ubuntu 24.04:
 
 ```bash
-make REF=v1.7.18 RUNC_REF= docker.io/library/ubuntu:24.04
+make REF=v1.7.18 RUNC_REF=v1.1.12 docker.io/library/ubuntu:24.04
 ```
 
 ## Building a package from a local source directory
