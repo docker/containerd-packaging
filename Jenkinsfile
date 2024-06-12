@@ -32,7 +32,7 @@ def images = [
 
 def generatePackageStep(opts, arch) {
     return {
-        wrappedNode(label: "ubuntu-2004 && ${arch}") {
+        wrappedNode(label: "ubuntu-2204 && ${arch}") {
             stage("${opts.image}-${arch}") {
                 // This is just a "dummy" stage to make the distro/arch visible
                 // in Jenkins' BlueOcean view, which truncates names....
@@ -92,7 +92,7 @@ pipeline {
     agent none
     stages {
         stage('Check file headers') {
-            agent { label 'ubuntu-2004 && amd64' }
+            agent { label 'ubuntu-2204' }
             steps{
                 script{
                     checkout scm
