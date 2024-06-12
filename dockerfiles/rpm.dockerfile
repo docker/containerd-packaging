@@ -73,10 +73,10 @@ ENV CC=gcc
 WORKDIR /root/rpmbuild
 
 # Install build dependencies and build scripts
-COPY --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
-COPY rpm/containerd.spec SPECS/containerd.spec
-COPY scripts/build-rpm    /root/
-COPY scripts/.rpm-helpers /root/
+COPY --link --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
+COPY --link rpm/containerd.spec SPECS/containerd.spec
+COPY --link scripts/build-rpm    /root/
+COPY --link scripts/.rpm-helpers /root/
 RUN . /root/.rpm-helpers; install_build_deps SPECS/containerd.spec
 
 ARG PACKAGE
@@ -124,11 +124,11 @@ RUN ctr --version
 RUN runc --version
 
 FROM scratch AS packages
-COPY --from=build-packages  /archive /archive
-COPY --from=verify-packages /build   /build
+COPY --link --from=build-packages  /archive /archive
+COPY --link --from=verify-packages /build   /build
 
 # This stage is mainly for debugging (running the build interactively with mounted source)
 FROM build-env AS runtime
 ENV GOTOOLCHAIN=local
-COPY --from=golang /usr/local/go/ /usr/local/go/
-COPY common/containerd.service common/containerd.toml SOURCES/
+COPY --link --from=golang /usr/local/go/ /usr/local/go/
+COPY --link common/containerd.service common/containerd.toml SOURCES/
