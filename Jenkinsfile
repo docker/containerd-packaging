@@ -13,7 +13,6 @@ def images = [
     [image: "docker.io/library/rockylinux:9",           arches: ["amd64", "aarch64"]],          // Rocky Linux 9 (EOL: 2032-05-31)
     [image: "docker.io/library/almalinux:8",            arches: ["amd64", "aarch64"]],          // AlmaLinux 8 (EOL: 2029)
     [image: "docker.io/library/almalinux:9",            arches: ["amd64", "aarch64"]],          // AlmaLinux 9 (EOL: 2032)
-    [image: "docker.io/library/debian:buster",          arches: ["amd64", "aarch64", "armhf"]], // Debian 10 (EOL: 2022-09-10, EOL LTS: 2024-06-30)
     [image: "docker.io/library/debian:bullseye",        arches: ["amd64", "aarch64", "armhf"]], // Debian 11 (EOL: 2024)
     [image: "docker.io/library/debian:bookworm",        arches: ["amd64", "aarch64", "armhf"]], // Debian 12 (stable)
     [image: "docker.io/library/fedora:39",              arches: ["amd64", "aarch64"]],          // Fedora 39 (EOL: November 12, 2024)
@@ -21,7 +20,6 @@ def images = [
 // FIXME(thaJeztah): temporarily disabled; see https://github.com/docker/runtime-team/issues/140 and https://github.com/docker/containerd-packaging/pull/354#issuecomment-2148423969
 //     [image: "docker.io/library/fedora:rawhide",         arches: ["amd64", "aarch64"]],          // Rawhide is the name given to the current development version of Fedora
     [image: "docker.io/opensuse/leap:15",               arches: ["amd64"]],
-    [image: "docker.io/balenalib/rpi-raspbian:buster",  arches: ["armhf"]],
     [image: "docker.io/balenalib/rpi-raspbian:bullseye",arches: ["armhf"]],
     [image: "docker.io/balenalib/rpi-raspbian:bookworm",arches: ["armhf"]],
     [image: "docker.io/library/ubuntu:focal",           arches: ["amd64", "aarch64", "armhf"]], // Ubuntu 20.04 LTS (End of support: April, 2025. EOL: April, 2030)
