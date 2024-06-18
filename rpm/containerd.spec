@@ -160,6 +160,7 @@ done
 %changelog
 * Tue Jun 18 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.7.18-3.1
 - Update containerd binary to v1.7.18
+- Update runc binary to v1.1.13
 
 * Tue Jun 04 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.6.33-3.1
 - Update containerd binary to v1.6.33
