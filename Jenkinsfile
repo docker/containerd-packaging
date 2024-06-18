@@ -47,14 +47,14 @@ def generatePackageStep(opts, arch) {
                 sh 'make clean'
             }
             stage("build") {
-                sh "make CREATE_ARCHIVE=1 ${opts.image}"
+                sh "make CREATE_ARCHIVE=1 ARCH=${arch} ${opts.image}"
                 archiveArtifacts(artifacts: 'archive/*.tar.gz', onlyIfSuccessful: true)
             }
             stage("build-main") {
                 // We're not archiving these builds as they have the same name
                 // as the 1.7 builds, so would replace those. We're building
                 // the main branch to verify that the scripts work for main (2.0)
-                sh "make REF=main ${opts.image}"
+                sh "make REF=main ARCH=${arch} ${opts.image}"
             }
         }
     }
