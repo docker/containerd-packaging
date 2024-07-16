@@ -1,3 +1,10 @@
+containerd.io (1.7.19-1) release; urgency=medium
+
+  * Update containerd binary to v1.7.19
+  * Update Golang runtime to 1.21.12, which includes a fix for CVE-2024-24791.
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Tue, 16 Jul 2024 21:05:17 +0000
+
 containerd.io (1.7.18-1) release; urgency=medium
 
   * Update containerd binary to v1.7.18
