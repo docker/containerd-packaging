@@ -54,10 +54,7 @@ FROM ${BUILD_IMAGE} AS fedora-base
 RUN dnf install -y rpm-build git dnf-plugins-core
 
 FROM ${BUILD_IMAGE} AS suse-base
-# On older versions of Docker the path may not be explicitly set
-# opensuse also does not set a default path in their docker images
 RUN zypper -n install rpm-build git
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}
 RUN echo "%_topdir    /root/rpmbuild" > /root/.rpmmacros
 
 FROM ${BASE}-base AS distro-image
