@@ -49,10 +49,13 @@ FROM ${BUILD_IMAGE} AS amzn-base
 RUN yum install -y yum-utils rpm-build git
 
 FROM ${BUILD_IMAGE} AS suse-base
-# On older versions of Docker the path may not be explicitly set
-# opensuse also does not set a default path in their docker images
 RUN zypper -n install rpm-build git
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}
+
+# Align the rpm directories used with other rpm-distros.
+#
+# CentOS, RHEL, and Fedora all use "~/rpmbuild" ("/root/rpmbuild") as default,
+# but SUSE uses "/usr/src/packages". Align the directory so that we can keep
+# our scripts universal.
 RUN echo "%_topdir    /root/rpmbuild" > /root/.rpmmacros
 
 FROM ${BASE}-base AS distro-image
