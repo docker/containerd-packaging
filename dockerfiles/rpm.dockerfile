@@ -55,6 +55,12 @@ RUN dnf install -y rpm-build git dnf-plugins-core
 
 FROM ${BUILD_IMAGE} AS suse-base
 RUN zypper -n install rpm-build git
+
+# Align the rpm directories used with other rpm-distros.
+#
+# CentOS, RHEL, and Fedora all use "~/rpmbuild" ("/root/rpmbuild") as default,
+# but SUSE uses "/usr/src/packages". Align the directory so that we can keep
+# our scripts universal.
 RUN echo "%_topdir    /root/rpmbuild" > /root/.rpmmacros
 
 FROM ${BASE}-base AS distro-image
