@@ -51,21 +51,21 @@ install_build_deps() (
 	export RPM_VERSION="${RPM_VERSION:=0.0.1}"
 	export RPM_RELEASE_VERSION="${RPM_RELEASE_VERSION:=dev}"
 
-	if type yum-builddep >/dev/null 2>/dev/null; then
-		# shellcheck disable=SC2086
-		yum-builddep -y ${EXTRA_REPOS} "${SPEC_FILE}"
-	elif type dnf >/dev/null 2>/dev/null; then
+	if type dnf >/dev/null 2>/dev/null; then
 		# shellcheck disable=SC2086
 		dnf builddep -y ${EXTRA_REPOS} "${SPEC_FILE}"
+	elif type yum-builddep >/dev/null 2>/dev/null; then
+		# shellcheck disable=SC2086
+		yum-builddep -y ${EXTRA_REPOS} "${SPEC_FILE}"
 	else
-		# either yum-utils is not installed, or we're running on SUSE/openSuSE.
+		# either dnf core-utils is not installed, or we're running on SUSE/openSuSE.
 		# Zypper does not have a proper equivalent for installing build dependencies.
 		#
 		# This manual approach does an attempt to install dependencies
-		if type yum >/dev/null 2>/dev/null; then
-			pkg_manager="yum -y ${EXTRA_REPOS}"
-		elif type zypper >/dev/null 2>/dev/null; then
+		if type zypper >/dev/null 2>/dev/null; then
 			pkg_manager="zypper -n ${EXTRA_REPOS}"
+		elif type yum >/dev/null 2>/dev/null; then
+			pkg_manager="yum -y ${EXTRA_REPOS}"
 		else
 			echo "unable to detect package manager";
 			exit 1;
@@ -76,10 +76,10 @@ install_build_deps() (
 )
 
 install_package() (
-	if type yum >/dev/null 2>/dev/null; then
-		pkg_manager="yum -y"
-	elif type dnf >/dev/null 2>/dev/null; then
+	if type dnf >/dev/null 2>/dev/null; then
 		pkg_manager="dnf -y"
+	elif type yum >/dev/null 2>/dev/null; then
+		pkg_manager="yum -y"
 	elif type zypper >/dev/null 2>/dev/null; then
 		pkg_manager="zypper -n"
 	else
