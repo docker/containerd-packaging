@@ -1,3 +1,9 @@
+containerd.io (1.7.20-1) release; urgency=medium
+
+  * Update containerd binary to v1.7.20
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Thu, 01 Aug 2024 11:48:25 +0000
+
 containerd.io (1.7.19-1) release; urgency=medium
 
   * Update containerd binary to v1.7.19
