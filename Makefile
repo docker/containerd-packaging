@@ -14,6 +14,7 @@
 
 include common/common.mk
 
+ARCH=$(shell uname -m)
 BUILD_IMAGE=ubuntu:focal
 BUILD_TYPE=$(shell ./scripts/deb-or-rpm $(BUILD_IMAGE))
 BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
@@ -67,8 +68,8 @@ endif
 #     make quay.io/centos/centos:stream8
 #
 # It is a shorthand for "make BUILD_IMAGE=mydistro:version build"
-.PHONY: docker.io/% quay.io/%
-docker.io/% quay.io/%:
+.PHONY: docker.io/% quay.io/% registry.access.redhat.com/%
+docker.io/% quay.io/% registry.access.redhat.com/%:
 	$(MAKE) BUILD_IMAGE="$@" build
 
 .PHONY: checkout
@@ -84,7 +85,7 @@ build:
 	@echo ""
 	@echo "containerd   : $(REF) (commit: $(shell git -C "src/github.com/containerd/containerd" log -1 --pretty='%h'))"
 	@echo "runc         : $$(./scripts/determine-runc-version) (commit: $$(git -C "src/github.com/opencontainers/runc" log -1 --pretty='%h'))"
-	@echo "architecture : $(shell uname -m)"
+	@echo "architecture : $(ARCH)"
 	@echo "build image  : $(BUILD_IMAGE)"
 	@echo "golang image : $(GOLANG_IMAGE)"
 	@echo "--------------------------------------------------------------------"
@@ -96,6 +97,9 @@ build:
 
 	@set -x; DOCKER_BUILDKIT=1 docker build \
 		--pull \
+		--secret id=rh-user,env=RH_USER \
+		--secret id=rh-pass,env=RH_PASS \
+		--platform linux/$(ARCH) \
 		--build-arg GOLANG_IMAGE="$(GOLANG_IMAGE)" \
 		--build-arg BUILD_IMAGE="$(BUILD_IMAGE)" \
 		--build-arg BASE="$(BUILD_BASE)" \
