@@ -57,7 +57,7 @@ Source3: runc
 %if %{undefined suse_version}
 # amazonlinux2 doesn't have container-selinux either
 %if "%{?dist}" != ".amzn2"
-Requires: container-selinux >= 2:2.74
+Requires: container-selinux
 %endif
 Requires: libseccomp
 %else
@@ -70,21 +70,6 @@ BuildRequires: gcc
 BuildRequires: systemd
 BuildRequires: libseccomp-devel
 
-# containerd 1.7.x now use Linux kernel headers for btrfs, so we only
-# need this dependency when building older (1.5.x, 1.6.x) releases.
-# TODO(thaJeztah): remove btrfs build-dependencies once containerd 1.6 reaches EOL.
-%if "%{major_minor}" == "1.6" || "%{major_minor}" == "1.5"
-%if %{undefined rhel} || 0%{?rhel} < 8
-%if %{defined suse_version}
-# SUSE flavors
-BuildRequires: libbtrfs-devel
-%else
-# Fedora / others, and CentOS/RHEL < 8
-BuildRequires: btrfs-progs-devel
-%endif
-%endif
-%endif
-
 %{?systemd_requires}
 
 %description
@@ -96,50 +81,48 @@ low-level storage and network attachments, etc.
 
 
 %prep
-rm -rf %{_topdir}/BUILD/
-if [ ! -d %{_topdir}/SOURCES/containerd ]; then
+rm -rf %{_builddir}
+if [ ! -d %{_sourcedir}/containerd ]; then
     # Copy over our source code from our gopath to our source directory
-    cp -rf /go/src/%{import_path} %{_topdir}/SOURCES/containerd;
+    cp -rf /go/src/%{import_path} %{_sourcedir}/containerd;
 fi
 # symlink the go source path to our build directory
-ln -s /go/src/%{import_path} %{_topdir}/BUILD
+ln -s /go/src/%{import_path} %{_builddir}
 
-if [ ! -d %{_topdir}/SOURCES/runc ]; then
+if [ ! -d %{_sourcedir}/runc ]; then
     # Copy over our source code from our gopath to our source directory
-    cp -rf /go/src/github.com/opencontainers/runc %{_topdir}/SOURCES/runc
+    cp -rf /go/src/github.com/opencontainers/runc %{_sourcedir}/runc
 fi
-cd %{_topdir}/BUILD/
+cd %{_builddir}
 
 
 %build
-cd %{_topdir}/BUILD
-GO111MODULE=auto make man
+cd %{_builddir}
+make man
 
 BUILDTAGS=""
-%if %{defined rhel} && 0%{?rhel} >= 8
-# btrfs support was removed in CentOS/RHEL 8
+
+# TODO(thaJeztah): can we remove the version compare, or would that exclude other RHEL derivatives (Fedora, etc)?
+%if %{defined rhel} && 0%{?rhel} >= 7
+# btrfs support was removed in CentOS/RHEL 8, and containerd 1.7+ uses
+# linux kernel headers for btrfs, which are not provided by CentOS/RHEL 7
+# so build without btrfs support for any CentOS/RHEL version.
 BUILDTAGS="${BUILDTAGS} no_btrfs"
-%else
-# TODO(thaJeztah): remove this block once 1.5.x and 1.6.x reach EOL.
-%if %{defined rhel} && 0%{?rhel} >= 7 && "%{major_minor}" != "1.6" && "%{major_minor}" != "1.5"
-# containerd 1.7.x now use linux kernel headers for btrfs, which is not
-# provided by CentOS/RHEL 7, so don't build with btrfs for 1.7+.
-BUILDTAGS="${BUILDTAGS} no_btrfs"
-%endif
 %endif
 
-GO111MODULE=auto make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
+make -C /go/src/%{import_path} VERSION=%{getenv:VERSION} REVISION=%{getenv:REF} PACKAGE=%{getenv:PACKAGE} BUILDTAGS="${BUILDTAGS}"
 
 # Remove containerd-stress, as we're not shipping it as part of the packages
 rm -f bin/containerd-stress
 bin/containerd --version
 bin/ctr --version
 
-GO111MODULE=auto make -C /go/src/github.com/opencontainers/runc BINDIR=%{_topdir}/BUILD/bin runc install
+# Unset the VERSION variable as it's meant for containerd's version, not runc.
+env -u VERSION make -C /go/src/github.com/opencontainers/runc BINDIR=%{_builddir}/bin runc install
 
 
 %install
-cd %{_topdir}/BUILD
+cd %{_builddir}
 mkdir -p %{buildroot}%{_bindir}
 install -D -m 0755 bin/* %{buildroot}%{_bindir}
 install -D -m 0644 %{S:1} %{buildroot}%{_unitdir}/containerd.service

@@ -9,7 +9,7 @@ repository.
 Afterwards test if you can actually build the release with (for example):
 
 ```bash
-make REF=${TAG} docker.io/library/centos:7
+make REF=${TAG} quay.io/centos/centos:stream9
 ```
 
 If you can actually build the package then start prepping
@@ -31,11 +31,11 @@ VERSION is already there.
 Releases can then be built with:
 
 ```bash
-make REF=${TAG} docker.io/library/centos:7
+make REF=${TAG} quay.io/centos/centos:stream9
 ```
 
 or
 
 ```bash
-make REF=${TAG} BUILD_IMAGE=docker.io/library/centos:7
+make REF=${TAG} BUILD_IMAGE=quay.io/centos/centos:stream9
 ```
