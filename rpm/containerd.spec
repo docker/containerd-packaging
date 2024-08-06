@@ -117,7 +117,8 @@ rm -f bin/containerd-stress
 bin/containerd --version
 bin/ctr --version
 
-make -C /go/src/github.com/opencontainers/runc BINDIR=%{_builddir}/bin runc install
+# Unset the VERSION variable as it's meant for containerd's version, not runc.
+env -u VERSION make -C /go/src/github.com/opencontainers/runc BINDIR=%{_builddir}/bin runc install
 
 
 %install
