@@ -22,7 +22,7 @@ src/github.com/containerd/containerd:
 	Xcopy /E /I "$(CONTAINERD_DIR)" $@
 else
 src/github.com/containerd/containerd:
-	git init $@
+	git init --initial-branch=main $@
 	git -C $@ remote add origin "$(CONTAINERD_REMOTE)"
 endif
 
