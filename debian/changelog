@@ -1,8 +1,9 @@
 containerd.io (1.7.20-1) release; urgency=medium
 
   * Update containerd binary to v1.7.20
+  * Fix runc binary showing the incorrect version.
 
- -- Sebastiaan van Stijn <thajeztah@docker.com>  Thu, 01 Aug 2024 11:48:25 +0000
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Thu, 08 Aug 2024 14:20:22 +0000
 
 containerd.io (1.7.19-1) release; urgency=medium
 

@@ -159,8 +159,9 @@ done
 
 
 %changelog
-* Thu Aug 01 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.7.20-3.1
+* Thu Aug 08 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.7.20-3.1
 - Update containerd binary to v1.7.20
+- Fix runc binary showing the incorrect version.
 
 * Tue Jul 16 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.7.19-3.1
 - Update containerd binary to v1.7.19
