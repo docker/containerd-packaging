@@ -57,6 +57,25 @@ FROM redhat-base AS rocky-base
 FROM redhat-base AS almalinux-base
 
 FROM redhat-base AS fedora-base
+# FIXME(thaJeztah): workaround for building on Fedora 41 on arm64
+#
+# go1.21 and up have a patch that enforces the use of ld.gold to work around
+# a bug in GNU binutils. See;
+# - https://github.com/golang/go/issues/22040.
+# - https://github.com/golang/go/commit/cd77738198ffe0c4a1db58352c89f9b2d2a4e85e
+#
+# Fedora 41 and up has a fixed version of binutils, and no longer requires that
+# patch, but will fail without ld.gold installed;
+#
+#   /usr/bin/gcc -Wl,-z,now -Wl,-z,nocopyreloc -fuse-ld=gold -o $WORK/b001/exe/a.out -rdynamic /tmp/go-link-1738353519/go.o /tmp/go-link-1738353519/000000.o /tmp/go-link-1738353519/000001.o /tmp/go-link-1738353519/000002.o /tmp/go-link-1738353519/000003.o /tmp/go-link-1738353519/000004.o /tmp/go-link-1738353519/000005.o /tmp/go-link-1738353519/000006.o /tmp/go-link-1738353519/000007.o /tmp/go-link-1738353519/000008.o /tmp/go-link-1738353519/000009.o /tmp/go-link-1738353519/000010.o /tmp/go-link-1738353519/000011.o /tmp/go-link-1738353519/000012.o /tmp/go-link-1738353519/000013.o /tmp/go-link-1738353519/000014.o /tmp/go-link-1738353519/000015.o /tmp/go-link-1738353519/000016.o /tmp/go-link-1738353519/000017.o /tmp/go-link-1738353519/000018.o /tmp/go-link-1738353519/000019.o /tmp/go-link-1738353519/000020.o /tmp/go-link-1738353519/000021.o /tmp/go-link-1738353519/000022.o /tmp/go-link-1738353519/000023.o /tmp/go-link-1738353519/000024.o -O2 -g -lresolv -O2 -g -lpthread -O2 -g -ldl -O2 -g
+#   collect2: fatal error: cannot find 'ld'
+#
+# Fedora's build of Go carries a patch for that, but it's not (yet) in upstream;
+# - https://src.fedoraproject.org/rpms/golang/blob/a867bd88a656c1d6e91e7b18bab696dc3fcf1e77/f/0006-Default-to-ld.bfd-on-ARM64.patch
+# - https://src.fedoraproject.org/rpms/golang/c/a867bd88a656c1d6e91e7b18bab696dc3fcf1e77?branch=rawhide
+#
+# As a workaround; install binutils-gold
+RUN if [ "$(arch)" = 'aarch64' ] && [ $(source /etc/os-release && echo "${VERSION_ID%.*}") -ge 41 ]; then dnf -y install binutils-gold; fi
 
 FROM ${BUILD_IMAGE} AS amzn-base
 RUN yum install -y yum-utils rpm-build git
