@@ -159,6 +159,10 @@ done
 
 
 %changelog
+* Tue Aug 27 2024 Paweł Gronowski <pawel.gronowski@docker.com> - 1.7.21-3.1
+- Update containerd binary to v1.7.21
+- Update Golang runtime to 1.22.6
+
 * Thu Aug 08 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.7.20-3.1
 - Update containerd binary to v1.7.20
 - Fix runc binary showing the incorrect version.
