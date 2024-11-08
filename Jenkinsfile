@@ -14,6 +14,7 @@ def images = [
     [image: "docker.io/library/almalinux:9",            arches: ["amd64", "aarch64"]],          // AlmaLinux 9 (EOL: 2032)
     [image: "docker.io/library/debian:bullseye",        arches: ["amd64", "aarch64", "armhf"]], // Debian 11 (EOL: 2024)
     [image: "docker.io/library/debian:bookworm",        arches: ["amd64", "aarch64", "armhf"]], // Debian 12 (stable)
+    [image: "docker.io/library/debian:trixie",          arches: ["amd64", "aarch64", "armhf"]], // Debian 13 (testing)
     [image: "docker.io/library/fedora:39",              arches: ["amd64", "aarch64"]],          // Fedora 39 (EOL: November 12, 2024)
     [image: "docker.io/library/fedora:40",              arches: ["amd64", "aarch64"]],          // Fedora 40 (EOL: May 13, 2025)
     [image: "docker.io/library/fedora:41",              arches: ["amd64", "aarch64"]],          // Fedora 41 (EOL: November, 2025)
