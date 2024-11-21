@@ -1,3 +1,11 @@
+containerd.io (1.7.24-1) release; urgency=medium
+
+  * Update containerd binary to v1.7.24
+  * Update systemd unit to start containerd service after dbus.service
+  * Update runc binary to v1.2.2
+
+ -- Sebastiaan van Stijn <thajeztah@docker.com>  Thu, 21 Nov 2024 16:37:21 +0000
+
 containerd.io (1.7.23-1) release; urgency=medium
 
   * Update containerd binary to v1.7.23

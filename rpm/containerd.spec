@@ -159,6 +159,11 @@ done
 
 
 %changelog
+* Thu Nov 21 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.7.24-3.1
+- Update containerd binary to v1.7.24
+- Update systemd unit to start containerd service after dbus.service
+- Update runc binary to v1.2.2
+
 * Mon Nov 11 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.7.23-3.1
 - Update containerd binary to v1.7.23
 - Update Golang runtime to 1.22.9
