@@ -1,3 +1,10 @@
+containerd.io (1.7.25-1) release; urgency=medium
+
+  * Update containerd binary to v1.7.25
+  * Update runc binary to v1.2.4
+
+ -- Paweł Gronowski <pawel.gronowski@docker.com>  Fri, 10 Jan 2025 13:41:35 +0000
+
 containerd.io (1.7.24-1) release; urgency=medium
 
   * Update containerd binary to v1.7.24

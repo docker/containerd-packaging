@@ -159,6 +159,11 @@ done
 
 
 %changelog
+* Fri Jan 10 2025 Paweł Gronowski <pawel.gronowski@docker.com> - 1.7.25-3.1
+- Update containerd binary to v1.7.25
+- Update runc binary to v1.2.4
+- Update the license fields to use the recommented SPDX identifier
+
 * Thu Nov 21 2024 Sebastiaan van Stijn <thajeztah@docker.com> - 1.7.24-3.1
 - Update containerd binary to v1.7.24
 - Update systemd unit to start containerd service after dbus.service
