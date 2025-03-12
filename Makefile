@@ -114,4 +114,4 @@ build:
 
 .PHONY: validate
 validate: ## Validate files license header
-	docker run --rm -v $(CURDIR):/work -w /work golang:alpine sh -c 'go install github.com/kunalkushwaha/ltag@latest && ./scripts/validate/fileheader'
+	docker run --rm -v $(CURDIR):/work -w /work golang:alpine sh -c 'go install github.com/kunalkushwaha/ltag@v0.2.6 && ./scripts/validate/fileheader'
