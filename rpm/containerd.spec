@@ -159,6 +159,10 @@ done
 
 
 %changelog
+* Wed Mar 12 2025 Paweł Gronowski <pawel.gronowski@docker.com> - 1.7.26-3.1
+- Update containerd binary to v1.7.26
+- Update runc binary to v1.2.5
+
 * Fri Jan 10 2025 Paweł Gronowski <pawel.gronowski@docker.com> - 1.7.25-3.1
 - Update containerd binary to v1.7.25
 - Update runc binary to v1.2.4
