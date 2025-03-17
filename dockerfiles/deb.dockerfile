@@ -51,6 +51,24 @@ RUN apt-get update -q && apt-get install -y --no-install-recommends \
     lsb-release \
  && rm -rf /var/lib/apt/lists/*
 
+# FIXME(vvoland): workaround for building on arm64 without ld.gold
+#
+# go1.21 and up have a patch that enforces the use of ld.gold to work around
+# a bug in GNU binutils. See;
+# - https://github.com/golang/go/issues/22040.
+# - https://github.com/golang/go/commit/cd77738198ffe0c4a1db58352c89f9b2d2a4e85e
+#
+# Debian Trixie and up has a fixed version of binutils, and no longer requires that
+# patch, but will fail without ld.gold installed;
+#
+#   /usr/bin/gcc -s -Wl,-z,relro -pie -Wl,-z,now -Wl,-z,nocopyreloc -fuse-ld=gold -Wl,--build-id=0x180b1b07171bd43d595eecf91a69ed0ef8a1e41f -o $WORK/b001/exe/a.out -rdynamic /tmp/go-link-443338093/go.o /tmp/go-link-443338093/000000.o /tmp/go-link-443338093/000001.o /tmp/go-link-443338093/000002.o /tmp/go-link-443338093/000003.o /tmp/go-link-443338093/000004.o /tmp/go-link-443338093/000005.o /tmp/go-link-443338093/000006.o /tmp/go-link-443338093/000007.o /tmp/go-link-443338093/000008.o /tmp/go-link-443338093/000009.o /tmp/go-link-443338093/000010.o /tmp/go-link-443338093/000011.o /tmp/go-link-443338093/000012.o /tmp/go-link-443338093/000013.o /tmp/go-link-443338093/000014.o /tmp/go-link-443338093/000015.o /tmp/go-link-443338093/000016.o /tmp/go-link-443338093/000017.o /tmp/go-link-443338093/000018.o /tmp/go-link-443338093/000019.o /tmp/go-link-443338093/000020.o /tmp/go-link-443338093/000021.o /tmp/go-link-443338093/000022.o /tmp/go-link-443338093/000023.o /tmp/go-link-443338093/000024.o /tmp/go-link-443338093/000025.o /tmp/go-link-443338093/000026.o /tmp/go-link-443338093/000027.o /tmp/go-link-443338093/000028.o /tmp/go-link-443338093/000029.o /tmp/go-link-443338093/000030.o /tmp/go-link-443338093/000031.o /tmp/go-link-443338093/000032.o -O2 -g -lresolv -O2 -g -lpthread -O2 -g -ldl -O2 -g -O2 -g -O2 -g -ldl
+#   collect2: fatal error: cannot find 'ld'
+#
+# Since Trixie, binutils-gold is no longer installed as a part of the binutils package and needs to be installed separately.
+#
+# As a workaround; install binutils-gold if it's not installed
+RUN if [ "$(dpkg --print-architecture)" = 'arm64' ] && ! command -v ld.gold; then apt-get update && apt-get install -y binutils-gold; fi
+
 # Install build dependencies and build scripts
 COPY --link --from=go-md2man /go/bin/go-md2man /go/bin/go-md2man
 COPY --link debian/ debian/
