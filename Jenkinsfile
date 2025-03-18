@@ -82,7 +82,7 @@ def packageBuildSteps = [
     }
 ]
 
-packageBuildSteps << images.collectEntries { generatePackageSteps(it) }
+// packageBuildSteps << images.collectEntries { generatePackageSteps(it) }
 
 pipeline {
     agent none
