@@ -74,8 +74,8 @@ FROM redhat-base AS fedora-base
 # - https://src.fedoraproject.org/rpms/golang/blob/a867bd88a656c1d6e91e7b18bab696dc3fcf1e77/f/0006-Default-to-ld.bfd-on-ARM64.patch
 # - https://src.fedoraproject.org/rpms/golang/c/a867bd88a656c1d6e91e7b18bab696dc3fcf1e77?branch=rawhide
 #
-# As a workaround; install binutils-gold
-RUN if [ "$(arch)" = 'aarch64' ] && [ $(source /etc/os-release && echo "${VERSION_ID%.*}") -ge 41 ]; then dnf -y install binutils-gold; fi
+# As a workaround; install binutils-gold if it's not installed
+RUN if [ "$(rpm --query --queryformat='%{ARCH}' rpm)" = 'aarch64' ] && ! command -v ld.gold; then dnf -y install binutils-gold; fi
 
 FROM ${BUILD_IMAGE} AS amzn-base
 RUN yum install -y yum-utils rpm-build git
