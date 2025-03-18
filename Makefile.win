@@ -28,6 +28,8 @@ endif
 
 .PHONY: checkout
 checkout: src
+	echo  GIT VERSION
+	git version
 	@git -C src/github.com/containerd/containerd fetch --depth 1 origin "$(REF)"
 	@git -C src/github.com/containerd/containerd checkout -q FETCH_HEAD
 	@git -C src/github.com/containerd/containerd config --add safe.directory C:/gopath/src/github.com/containerd/containerd
