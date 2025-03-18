@@ -67,22 +67,7 @@ def generatePackageSteps(opts) {
     }
 }
 
-def packageBuildSteps = [
-    "windows": { ->
-        node("windows-2022") {
-            stage("windows") {
-                try {
-                    checkout scm
-                    sh("make -f Makefile.win archive")
-                } finally {
-                    deleteDir()
-                }
-            }
-        }
-    }
-]
-
-packageBuildSteps << images.collectEntries { generatePackageSteps(it) }
+def packageBuildSteps = images.collectEntries { generatePackageSteps(it) }
 
 pipeline {
     agent none
