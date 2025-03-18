@@ -46,6 +46,7 @@ windows-image: checkout
 
 build/windows/%.exe: windows-image
 	Powershell.exe New-Item -ItemType Directory -Force -Path build/windows/
+	Powershell.exe Get-ChildItem -Path "$(CURDIR)/src/github.com/containerd/containerd"
 	docker run \
 		--rm \
 		-v "$(CURDIR)/src/:C:/gopath/src" \
