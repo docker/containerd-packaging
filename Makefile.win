@@ -38,6 +38,7 @@ checkout: src
 windows-image: checkout
 	docker build \
 		--pull \
+		--no-cache \
 		--build-arg GOLANG_IMAGE=$(GOLANG_IMAGE) \
 		-t dockereng/containerd-windows-builder \
 		-f dockerfiles/win.dockerfile \
