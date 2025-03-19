@@ -52,7 +52,7 @@ build/windows/%.exe: windows-image
 		-v "$(CURDIR)/build/windows:C:/gopath/src/github.com/containerd/containerd/bin" \
 		-w "C:/gopath/src/github.com/containerd/containerd" \
 		dockereng/containerd-windows-builder \
-		powershell.exe '$env:GIT_TRACE2 = "1"; git status'
+		powershell.exe '\$env:GIT_TRACE2 = "1"; git status'
 
 build/windows/containerd.zip: build/windows/containerd.exe build/windows/ctr.exe
 	Powershell.exe Compress-Archive -Force -Path 'build/windows/*.exe' -DestinationPath '$@'
