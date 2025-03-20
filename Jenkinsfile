@@ -71,11 +71,13 @@ def packageBuildSteps = [
     "windows": { ->
         node("windows-2022") {
             stage("windows") {
-                try {
-                    checkout scm
-                    sh("make -f Makefile.win archive")
-                } finally {
-                    deleteDir()
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    try {
+                        checkout scm
+                        sh("make -f Makefile.win archive")
+                    } finally {
+                        deleteDir()
+                    }
                 }
             }
         }
