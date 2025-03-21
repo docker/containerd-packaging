@@ -56,5 +56,5 @@ checkout() (
 # Only execute checkout function above if this file is executed, not sourced from another script
 prog=checkout.sh # needs to be in sync with this file's name
 if [ "$(basename -- $0)" = "$prog" ]; then
-	checkout $*
+	checkout "$@"
 fi
