@@ -18,6 +18,7 @@ def images = [
     [image: "docker.io/library/debian:trixie",          arches: ["amd64", "aarch64", "armhf"]], // Debian 13 (testing)
     [image: "docker.io/library/fedora:40",              arches: ["amd64", "aarch64"]],          // Fedora 40 (EOL: May 13, 2025)
     [image: "docker.io/library/fedora:41",              arches: ["amd64", "aarch64"]],          // Fedora 41 (EOL: November, 2025)
+    [image: "docker.io/library/fedora:42",              arches: ["amd64", "aarch64"]],          // Fedora 42 (EOL: May 13, 2026)
     [image: "docker.io/library/fedora:rawhide",         arches: ["amd64", "aarch64"]],          // Rawhide is the name given to the current development version of Fedora
     [image: "docker.io/opensuse/leap:15",               arches: ["amd64"]],
     [image: "docker.io/balenalib/rpi-raspbian:bullseye",arches: ["armhf"]],
