@@ -22,3 +22,8 @@ RUN  iex ((new-object net.webclient).DownloadString('https://chocolatey.org/inst
      choco feature disable --name showDownloadProgress; \
      choco install -y make; \
      choco install -y mingw --version 10.2.0 --allow-downgrade
+
+# Set safe git directory to prevent "dubious ownership" errors
+# when bind-mounting the source into the dev-container.
+# See https://github.com/moby/moby/pull/44930 and https://github.com/docker/containerd-packaging/pull/412
+RUN git config --global --add safe.directory '*'
