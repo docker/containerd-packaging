@@ -24,7 +24,7 @@ FROM ${GOLANG_IMAGE} AS golang
 
 FROM golang AS go-md2man
 ARG GOPROXY=direct
-ARG MD2MAN_VERSION=v2.0.5
+ARG MD2MAN_VERSION=v2.0.7
 RUN go install github.com/cpuguy83/go-md2man/v2@${MD2MAN_VERSION}
 
 FROM ${BUILD_IMAGE} AS distro-image
