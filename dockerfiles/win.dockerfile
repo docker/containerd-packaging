@@ -22,3 +22,5 @@ RUN  iex ((new-object net.webclient).DownloadString('https://chocolatey.org/inst
      choco feature disable --name showDownloadProgress; \
      choco install -y make; \
      choco install -y mingw --version 10.2.0 --allow-downgrade
+
+RUN git config --global --add safe.directory '*'
