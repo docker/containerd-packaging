@@ -15,7 +15,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-ARG BUILD_IMAGE=ubuntu:focal
+ARG BUILD_IMAGE=ubuntu:noble
 ARG GOLANG_IMAGE=golang:latest
 
 # Install golang from the official image, since the package managed
