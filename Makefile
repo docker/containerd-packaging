@@ -48,7 +48,7 @@ src/github.com/opencontainers/runc:
 	cp -r "$(RUNC_DIR)" $@
 else
 src/github.com/opencontainers/runc:
-	git init $@
+	git init --initial-branch=main $@
 	git -C $@ remote add origin "$(RUNC_REMOTE)"
 endif
 
@@ -58,7 +58,7 @@ src/github.com/containerd/containerd:
 	cp -r "$(CONTAINERD_DIR)" $@
 else
 src/github.com/containerd/containerd:
-	git init $@
+	git init --initial-branch=main $@
 	git -C $@ remote add origin "$(CONTAINERD_REMOTE)"
 endif
 
