@@ -15,7 +15,7 @@
 include common/common.mk
 
 ARCH=$(shell uname -m)
-BUILD_IMAGE=ubuntu:focal
+BUILD_IMAGE=ubuntu:noble
 BUILD_TYPE=$(shell ./scripts/deb-or-rpm $(BUILD_IMAGE))
 BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 
