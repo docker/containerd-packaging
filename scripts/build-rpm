@@ -61,7 +61,10 @@ ARCH="$(uname -m)"
 DEST_DIR="/build/${DIST_ID}/${DIST_VERSION}/${ARCH}/"
 (
 	set -x
-	rpmbuild -ba "${SPEC_FILE}"
+	rpmbuild -ba "${SPEC_FILE}" \
+		-D "want_reproducible_builds 1" \
+		-D "build_mtime_policy clamp_to_source_date_epoch" \
+		-D "use_source_date_epoch_as_buildtime 1"
 	mkdir -p "${DEST_DIR}"
 	mv -v RPMS/*/*.rpm "${DEST_DIR}"
 	mv -v SRPMS/*.rpm "${DEST_DIR}"
