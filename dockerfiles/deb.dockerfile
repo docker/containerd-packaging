@@ -117,6 +117,7 @@ FROM build-env AS build-packages
 RUN mkdir -p /archive /build
 COPY common/containerd.service common/containerd.toml /root/common/
 ARG CREATE_ARCHIVE
+ARG SOURCE_DATE_EPOCH
 # NOTE: not using a cache-mount for /root/.cache/go-build, to prevent issues
 #       with CGO when building multiple distros on the same machine / build-cache
 RUN --mount=type=bind,from=golang,source=/usr/local/go/,target=/usr/local/go/ \

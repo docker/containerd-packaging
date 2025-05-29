@@ -24,6 +24,12 @@ BUILD_BASE=$(shell ./scripts/determine-base $(BUILD_IMAGE))
 PROGRESS=auto
 TARGET=packages
 
+# SOURCE_DATE_EPOCH is set to make builds reproducible that would otherwise be
+# different due solely to file mtimes and derived changelog entries. It is set
+# to the most recent modification timestamp of all repos under src/. The rpm
+# and deb packaging toolchains support this variable.
+SOURCE_DATE_EPOCH=$(shell ./scripts/source-date-epoch src/)
+
 all: build
 
 .PHONY: clean
@@ -106,6 +112,7 @@ build:
 		--build-arg CREATE_ARCHIVE="$(CREATE_ARCHIVE)" \
 		--build-arg UID="$(shell id -u)" \
 		--build-arg GID="$(shell id -g)" \
+		--build-arg SOURCE_DATE_EPOCH="$(SOURCE_DATE_EPOCH)" \
 		--file="dockerfiles/$(BUILD_TYPE).dockerfile" \
 		--progress="$(PROGRESS)" \
 		--target="$(TARGET)" \
