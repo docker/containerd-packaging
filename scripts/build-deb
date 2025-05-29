@@ -19,6 +19,14 @@
 
 set -e
 
+DIST_ID="$(. /etc/os-release; echo "${ID}")"
+DIST_VERSION=$(lsb_release -sc)
+DIST_VERSION_ID="$(. /etc/os-release; echo "${VERSION_ID}")"
+
+# Append the version with distro information to match docker-ce packaging
+# See https://github.com/docker/docker-ce-packaging/blob/master/deb/build-deb
+DEB_SUFFIX="~${DIST_ID}.${DIST_VERSION_ID}~${DIST_VERSION}"
+
 VERSION="$(git --git-dir "${GO_SRC_PATH}/.git" describe --tags | sed 's/^v//')"
 # Check if we're on a tagged version, change VERSION to dev build if not
 if ! git --git-dir "${GO_SRC_PATH}/.git" describe --exact-match HEAD > /dev/null 2>&1; then
@@ -27,7 +35,7 @@ if ! git --git-dir "${GO_SRC_PATH}/.git" describe --exact-match HEAD > /dev/null
 	VERSION="${git_date}~${git_sha}"
 	# prepend a `0` so it'll never be greater than non-dev versions
 	cat > debian/nightly.changelog <<- EOF
-		$(control_field Package) (0.${VERSION}-1) development; urgency=medium
+		$(control_field Package) (0.${VERSION}-1${DEB_SUFFIX}) development; urgency=medium
 
 		  * Release for ${git_sha}
 
@@ -37,6 +45,8 @@ if ! git --git-dir "${GO_SRC_PATH}/.git" describe --exact-match HEAD > /dev/null
 	cat debian/changelog >> debian/nightly.changelog
 	cat debian/nightly.changelog
 	mv debian/nightly.changelog debian/changelog
+else
+	sed -i "1 s/) release;/${DEB_SUFFIX}) release;/" debian/changelog
 fi
 
 REF=$(git --git-dir "${GO_SRC_PATH}/.git" rev-parse HEAD)
@@ -48,8 +58,6 @@ export VERSION
 	dpkg-buildpackage -uc -us
 )
 
-DIST_ID="$(. /etc/os-release; echo "${ID}")"
-DIST_VERSION=$(lsb_release -sc)
 ARCH=$(dpkg --print-architecture)
 DEST_DIR="/build/${DIST_ID}/${DIST_VERSION}/${ARCH}/"
 mkdir -p "${DEST_DIR}"
