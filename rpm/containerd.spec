@@ -159,6 +159,11 @@ done
 
 
 %changelog
+* Tue Aug 19 2025 Sebastiaan van Stijn <github@gone.nl> - 1.7.28-3.1
+- Update containerd binary to v1.7.28
+- Update runc binary to v1.3.0
+- Update Golang runtime to 1.23.12
+
 * Mon Mar 31 2025 Paweł Gronowski <pawel.gronowski@docker.com> - 1.7.27-3.1
 - Update containerd binary to v1.7.27
 
