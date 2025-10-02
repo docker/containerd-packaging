@@ -1,5 +1,11 @@
 # containerd-packaging
 
+> **⚠️ DEPRECATED: This repository is no longer used for containerd packaging by Docker Inc.**
+>
+> The new location for containerd packaging is **[docker/packaging](https://github.com/docker/packaging/tree/main/pkg/containerd)**
+
+---
+
 # Usage:
 
 To build a distro-specific package (rpm or deb):
